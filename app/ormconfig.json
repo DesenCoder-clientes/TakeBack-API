@@ -1,0 +1,17 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "postgres",
+  "password": "wesley2772",
+  "database": "take_back_v1",
+  "logging": false,
+  "entities": ["src/models/**/*.ts"],
+  "migrations": ["src/database/migrations/**/*.ts"],
+  "subscribers": ["src/database/subscribers/**/*.ts"],
+  "cli": {
+    "entitiesDir": "src/models",
+    "migrationsDir": "src/database/migrations",
+    "subscribersDir": "src/database/subscribers"
+  }
+}
