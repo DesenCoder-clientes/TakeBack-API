@@ -5,7 +5,6 @@ import { State } from '../../models/State'
 import { City } from '../../models/City'
 
 import { StatesSeed } from '../../database/seeds/states.seed'
-import { Client } from '../../models/Client'
 import { ClientAddress } from '../../models/ClientAddress'
 
 export const GenerateSeedDataController = async (request: Request, response: Response) => {
@@ -20,6 +19,7 @@ export const GenerateSeedDataController = async (request: Request, response: Res
 
         const generatedCitiesData = await getRepository(City).save({
             name: 'Porteirinha',
+            zipCode: '39520000',
             state: minas
         })
 

@@ -25,7 +25,6 @@ type userDataTypes = {
     phone: string
     city: string
     cpf: string
-    sex: string
     email: string
     password: string
 }
@@ -61,10 +60,9 @@ export const signIn = async (request: Request, response: Response) => {
 
         const PAYLOAD = {
             id: client.id,
-            name: client.full_name,
+            name: client.fullName,
             email: client.email,
             cpf: client.cpf,
-            sex: client.sex,
             phone: client.phone
         }
 
@@ -87,7 +85,6 @@ export const registerNewClient = async (request: Request, response: Response) =>
             !userData.birthDate ||
             !userData.phone ||
             !userData.cpf ||
-            !userData.sex ||
             !userData.email ||
             !userData.password
         ) {
@@ -98,61 +95,62 @@ export const registerNewClient = async (request: Request, response: Response) =>
             return response.status(400).json({ message: 'CPF inválido' })
         }
 
-        const client = await getRepository(Client).findOne({
-            where: {
-                cpf: userData.cpf
-            }
-        })
+        return response.status(200).json({ msg: 'Is Running' })
 
-        if (client) {
-            if (client.pending_email_confirmation) {
-                return response.status(426).json({ message: 'Confirmação de email pendente' })
-            }
+        // const client = await getRepository(Client).findOne({
+        //     where: {
+        //         cpf: userData.cpf
+        //     }
+        // })
 
-            return response.status(302).json({ message: 'CPF já cadastrado' })
-        }
+        // if (client) {
+        //     if (!client.emailConfirmated) {
+        //         return response.status(426).json({ message: 'Confirmação de email pendente' })
+        //     }
 
-        const city = await getRepository(City).findOne({
-            where: {
-                name: userData.city
-            }
-        })
+        //     return response.status(302).json({ message: 'CPF já cadastrado' })
+        // }
 
-        const address = await getRepository(ClientAddress).save({
-            street: '',
-            city
-        })
+        // const city = await getRepository(City).findOne({
+        //     where: {
+        //         name: userData.city
+        //     }
+        // })
 
-        const passwordEncrypted = bcrypt.hashSync(userData.password, 10)
-        const MIN = 100000
-        const MAX = 999999
+        // const address = await getRepository(ClientAddress).save({
+        //     street: '',
+        //     city
+        // })
 
-        const confirmEmail = `TB-${generateRandomNumber(MIN, MAX)}`
+        // const passwordEncrypted = bcrypt.hashSync(userData.password, 10)
+        // const MIN = 100000
+        // const MAX = 999999
 
-        const newClient = await getRepository(Client).save({
-            full_name: userData.fullName,
-            birth_date: convertDate(userData.birthDate),
-            phone: userData.phone,
-            cpf: userData.cpf,
-            sex: userData.sex,
-            email: userData.email,
-            address,
-            signature: confirmEmail,
-            password: passwordEncrypted
-        })
+        // const confirmEmail = `TB-${generateRandomNumber(MIN, MAX)}`
 
-        if (newClient) {
-            const message = `Olá ${newClient.full_name}, já estamos quase lá! Para completar o seu cadastro, digite as seguintes credenciais ${confirmEmail}`
+        // const newClient = await getRepository(Client).save({
+        //     full_name: userData.fullName,
+        //     birth_date: convertDate(userData.birthDate),
+        //     phone: userData.phone,
+        //     cpf: userData.cpf,
+        //     email: userData.email,
+        //     address,
+        //     signature: confirmEmail,
+        //     password: passwordEncrypted
+        // })
+
+        // if (newClient) {
+        //     const message = `Olá ${newClient.full_name}, já estamos quase lá! Para completar o seu cadastro, digite as seguintes credenciais ${confirmEmail}`
             
-            sendMail(
-                newClient.email,
-                'Take Back - Confirmação de email',
-                message
-            )
-            return response.status(201).json({ id: newClient.id })
-        }
+        //     sendMail(
+        //         newClient.email,
+        //         'Take Back - Confirmação de email',
+        //         message
+        //     )
+        //     return response.status(201).json({ id: newClient.id })
+        // }
 
-        return response.status(400).json({ message: 'Houve um erro' })
+        // return response.status(400).json({ message: 'Houve um erro' })
     } catch (error) {
         return response.status(400).json(error)
     }
@@ -171,10 +169,9 @@ export const confirmationEmail = async (request: Request, response: Response) =>
         if (client.signature === confirmation) {
             const PAYLOAD = {
                 id: client.id,
-                name: client.full_name,
+                name: client.fullName,
                 email: client.email,
                 cpf: client.cpf,
-                sex: client.sex,
                 phone: client.phone
             }
 

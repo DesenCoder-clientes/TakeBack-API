@@ -16,12 +16,15 @@ export class City {
     @Column()
     name: string
 
+    @Column()
+    zipCode: string
+
     @ManyToOne(type => State, cities => City)
     state: State
 
     @CreateDateColumn()
-    created_at: Date
+    createdAt: Date
 
     @UpdateDateColumn()
-    updated_at: Date
+    updatedAt: Date
 }
