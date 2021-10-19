@@ -22,7 +22,7 @@ type userDataTypes = {
     id: string
     fullName: string
     cpf: string
-    birthDate: string
+    birthDate: Date
     email: string
     phone: string
     zipCode: string
@@ -90,12 +90,11 @@ export const registerNewClient = async (request: Request, response: Response) =>
             cpf,
             birthDate,
             email,
-            phone,
             zipCode,
             password
         }: userDataTypes = request.body.userData
 
-        if (!fullName || !birthDate || !phone || !zipCode || !email || !password) {
+        if (!fullName || !cpf || !birthDate || !zipCode || !email || !password) {
             return response.status(401).json({ message: 'Dados incompletos' })
         }
 
@@ -157,11 +156,11 @@ export const registerNewClient = async (request: Request, response: Response) =>
         const passwordEncrypted = bcrypt.hashSync(password, 10)
 
         const newClient = await getRepository(Client).save({
-            fullName: fullName,
-            birthDate: convertDate(birthDate),
-            phone: phone,
-            cpf: cpf,
-            email: email,
+            fullName,
+            birthDate: new Date(),
+            cpf,
+            phone: ' ',
+            email,
             address: address ? address : newAddress,
             password: passwordEncrypted
         })
@@ -174,11 +173,11 @@ export const registerNewClient = async (request: Request, response: Response) =>
                 email: newClient.email
             }, process.env.JWT_PRIVATE_KEY, process.env.JWT_EXPIRES_IN)
 
-            return response.status(400).json({ ACCESS_TOKEN: token })
+            return response.status(200).json({ ACCESS_TOKEN: token })
         }
 
         return response.status(400).json({ message: 'Houve um erro' })
     } catch (error) {
-        return response.status(400).json(error)
+        return response.status(400).json({ message: 'Erro inesperado'})
     }
 }
