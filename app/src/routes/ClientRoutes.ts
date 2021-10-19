@@ -9,6 +9,5 @@ routes.get('/find-all-cities', Generic.getAllCities)
 
 routes.post('/sign-in', Auth.signIn)
 routes.post('/sign-up', Auth.registerNewClient)
-routes.post('/confirm-email', Auth.confirmationEmail)
 
 export default routes

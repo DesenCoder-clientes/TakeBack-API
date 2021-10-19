@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Take Back API",
   "dependencies": {
+    "axios": "^0.23.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.18.1",
     "cors": "^2.8.5",
