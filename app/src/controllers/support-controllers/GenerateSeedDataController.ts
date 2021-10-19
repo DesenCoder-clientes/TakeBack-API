@@ -9,6 +9,12 @@ import { ClientAddress } from '../../models/ClientAddress'
 
 export const GenerateSeedDataController = async (request: Request, response: Response) => {
     try {
+        const [states, count] = await getRepository(State).findAndCount()
+
+        if (count > 0) {
+            return response.status(200).json({ message: 'Operação já executada' })
+        }
+
         const generetadStatesData = await getRepository(State).save(StatesSeed)
 
         const minas = await getRepository(State).findOne({

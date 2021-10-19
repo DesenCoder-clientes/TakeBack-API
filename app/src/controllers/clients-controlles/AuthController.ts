@@ -157,7 +157,7 @@ export const registerNewClient = async (request: Request, response: Response) =>
 
         const newClient = await getRepository(Client).save({
             fullName,
-            birthDate: new Date(),
+            birthDate,
             cpf,
             phone: ' ',
             email,

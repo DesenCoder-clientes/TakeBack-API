@@ -20,7 +20,9 @@ export class Client {
     @Column()
     birthDate: Date
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     phone: string
 
     @Column()
