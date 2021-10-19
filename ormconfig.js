@@ -7,10 +7,7 @@ module.exports = {
   "host": process.env.DB_HOST,
   "port": process.env.DB_PORT,
   "ssl": true,
-  "logging": false,
-  "dialectOptions": {
-    "ssl": true
-  },
+  "logging": true,
   "entities": [process.env.ENTITIES_DIR],
   "migrations": [process.env.MIGRATIONS_DIR],
   "subscribers": [process.env.SUBSCRIBERS_DIR],
