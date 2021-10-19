@@ -4,21 +4,19 @@ Steps to run this project:
 
 ## Configure the environment variables
 
-    DB_TYPE=
-    DB_HOST=
-    DB_PORT=
-    DB_USER=
-    DB_PASS=
-    DB_NAME=
+    DATABASE_URL=url-to-connection-your-database
+    ENTITIES_DIR=directory-of-the-entities
+    MIGRATIONS_DIR=directory-of-the-migrations
+    SUBSCRIBERS_DIR=directory-of-the-subscribers
 
-    MAIL_CONFIG_HOST=
-    MAIL_CONFIG_PORT=
-    MAIL_CONFIG_SECURE=
-    MAIL_CONFIG_USER=
-    MAIL_CONFIG_PASS=
+    MAIL_CONFIG_HOST=your-email-host
+    MAIL_CONFIG_PORT=email-connection-port
+    MAIL_CONFIG_SECURE=if-secure-or-not
+    MAIL_CONFIG_USER=your-email-user
+    MAIL_CONFIG_PASS=your-email-password
 
-    JWT_PRIVATE_KEY=
-    JWT_EXPIRES_IN=
+    JWT_PRIVATE_KEY=private-key-for-token-generation
+    JWT_EXPIRES_IN=token-expiration-time
 
 ## Install depencies
 _Run:_
