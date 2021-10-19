@@ -18,12 +18,22 @@ export class ClientAddress {
     })
     street: string
 
+    @Column({
+        nullable: true
+    })
+    district: string
+
+    @Column({
+        nullable: true
+    })
+    number: number
+
     @ManyToOne(type => City)
     city: City
 
     @CreateDateColumn()
-    created_at: Date
+    createdAt: Date
 
     @UpdateDateColumn()
-    updated_at: Date
+    updatedAt: Date
 }

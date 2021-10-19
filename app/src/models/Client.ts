@@ -15,15 +15,14 @@ export class Client {
     id: string
 
     @Column()
-    full_name: string
+    fullName: string
 
     @Column()
-    birth_date: Date
+    birthDate: Date
 
-    @Column()
-    sex: string
-
-    @Column()
+    @Column({
+        nullable: true
+    })
     phone: string
 
     @Column()
@@ -36,37 +35,37 @@ export class Client {
     password: string
 
     @Column({
-        default: false
-    })
-    remember: boolean
-
-    @Column({
         nullable: true
     })
     signature: string
 
     @Column({
-        nullable: true
+        default: 0
     })
     balance: number
 
     @Column({
-        nullable: true
+        default: 0
     })
-    blocked_balance: number
+    blockedBalance: number
 
     @Column({
-        default: true
+        default: false
     })
-    pending_email_confirmation: boolean
+    emailConfirmated: boolean
+
+    @Column({
+        default: false
+    })
+    phoneConfirmated: boolean
 
     @OneToOne(type => ClientAddress)
     @JoinColumn()
     address: ClientAddress
 
     @CreateDateColumn()
-    created_at: Date
+    createdAt: Date
 
     @UpdateDateColumn()
-    updated_at: Date
+    updatedAt: Date
 }

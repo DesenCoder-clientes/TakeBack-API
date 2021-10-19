@@ -5,11 +5,16 @@ import { State } from '../../models/State'
 import { City } from '../../models/City'
 
 import { StatesSeed } from '../../database/seeds/states.seed'
-import { Client } from '../../models/Client'
 import { ClientAddress } from '../../models/ClientAddress'
 
 export const GenerateSeedDataController = async (request: Request, response: Response) => {
     try {
+        const [states, count] = await getRepository(State).findAndCount()
+
+        if (count > 0) {
+            return response.status(200).json({ message: 'Operação já executada' })
+        }
+
         const generetadStatesData = await getRepository(State).save(StatesSeed)
 
         const minas = await getRepository(State).findOne({
@@ -20,6 +25,7 @@ export const GenerateSeedDataController = async (request: Request, response: Res
 
         const generatedCitiesData = await getRepository(City).save({
             name: 'Porteirinha',
+            zipCode: '39520000',
             state: minas
         })
 

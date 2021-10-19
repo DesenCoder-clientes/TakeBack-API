@@ -15,4 +15,4 @@ app.use(express.urlencoded({ extended: false }))
 app.use('/support', SupportRoutes)
 app.use('/client', ClientRoutes)
 
-app.listen(3333)
+app.listen(process.env.PORT || 3333)
