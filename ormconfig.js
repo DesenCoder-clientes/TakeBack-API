@@ -6,7 +6,7 @@ module.exports = {
   "database": process.env.DB_NAME,
   "host": process.env.DB_HOST,
   "port": process.env.DB_PORT,
-  "ssl": true,
+  // "ssl": true,
   "logging": true,
   "entities": [process.env.ENTITIES_DIR],
   "migrations": [process.env.MIGRATIONS_DIR],
