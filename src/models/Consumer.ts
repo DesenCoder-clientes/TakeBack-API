@@ -13,7 +13,7 @@ import { ConsumerAddress } from './ConsumerAddress'
 import { Transactions } from './Transaction'
 
 @Entity()
-export class Consumer {
+export class Consumers {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
@@ -66,7 +66,7 @@ export class Consumer {
     @JoinColumn()
     address: ConsumerAddress
 
-    @ManyToOne(() => Transactions, () => Consumer)
+    @ManyToOne(() => Transactions, () => Consumers)
     transactions: Transactions[]
 
     @CreateDateColumn()

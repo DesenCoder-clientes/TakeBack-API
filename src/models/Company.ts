@@ -3,12 +3,14 @@ import {
     CreateDateColumn,
     Entity,
     JoinColumn,
+    ManyToOne,
     OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from 'typeorm'
 
 import { CompaniesAddress } from './CompanyAddress'
+import { Transactions } from './Transaction'
 
 @Entity()
 export class Companies {
@@ -63,6 +65,9 @@ export class Companies {
     @OneToOne(() => CompaniesAddress)
     @JoinColumn()
     address: CompaniesAddress
+
+    @ManyToOne(() => Transactions, () => Companies)
+    transactions: Transactions[]
 
     @CreateDateColumn()
     createdAt: Date

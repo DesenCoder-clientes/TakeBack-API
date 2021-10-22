@@ -4,8 +4,13 @@ import { Request, Response } from 'express'
 import { State } from '../../models/State'
 import { City } from '../../models/City'
 
-import { StatesSeed } from '../../database/seeds/states.seed'
 import { ConsumerAddress } from '../../models/ConsumerAddress'
+import { TransactionTypes } from '../../models/TransactionType'
+import { TransactionStatus } from '../../models/TransactionStatus'
+
+import { StatesSeed } from '../../database/seeds/states.seed'
+import { TransactionTypesSeed } from '../../database/seeds/transactionTypes.seed'
+import { TransactionStatusSeed } from '../../database/seeds/transactionStatus.seed'
 
 export const GenerateSeedDataController = async (request: Request, response: Response) => {
     try {
@@ -15,6 +20,7 @@ export const GenerateSeedDataController = async (request: Request, response: Res
             return response.status(200).json({ message: 'Operação já executada' })
         }
 
+        // Gerando os Estados
         const generetadStatesData = await getRepository(State).save(StatesSeed)
 
         const minas = await getRepository(State).findOne({
@@ -23,13 +29,25 @@ export const GenerateSeedDataController = async (request: Request, response: Res
             }
         })
 
+        // Gerando a Cidade de Porteirinha
         const generatedCitiesData = await getRepository(City).save({
             name: 'Porteirinha',
             zipCode: '39520000',
             state: minas
         })
 
-        return response.json({ generetadStatesData, generatedCitiesData })
+        // Gerando os Tipos de Transações
+        const generatedTransactionTypes = await getRepository(TransactionTypes).save(TransactionTypesSeed)
+
+        // Gerando os Status das Transações
+        const generatedTransactionStatus = await getRepository(TransactionStatus).save(TransactionStatusSeed)
+        
+        return response.json({
+            generetadStatesData,
+            generatedCitiesData,
+            generatedTransactionTypes,
+            generatedTransactionStatus
+        })
     } catch (error) {
         return response.json(error)
     }

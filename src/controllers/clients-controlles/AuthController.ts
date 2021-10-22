@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import axios from 'axios'
 import * as bcrypt from 'bcrypt'
 
-import { Consumer } from '../../models/Consumer'
+import { Consumers } from '../../models/Consumer'
 import { ConsumerAddress } from '../../models/ConsumerAddress'
 import { City } from '../../models/City'
 
@@ -54,7 +54,7 @@ export const signIn = async (request: Request, response: Response) => {
             return response.status(401).json({ message: 'Dados incompletos' })
         }
 
-        const client = await getRepository(Consumer).findOne({
+        const client = await getRepository(Consumers).findOne({
             where: {
                 cpf
             }
@@ -102,7 +102,7 @@ export const registerNewClient = async (request: Request, response: Response) =>
             return response.status(400).json({ message: 'CPF inválido' })
         }
 
-        const client = await getRepository(Consumer).findOne({ where: { cpf } })
+        const client = await getRepository(Consumers).findOne({ where: { cpf } })
 
         if (client) {
             return response.status(302).json({ message: 'CPF já cadastrado' })
@@ -155,7 +155,7 @@ export const registerNewClient = async (request: Request, response: Response) =>
 
         const passwordEncrypted = bcrypt.hashSync(password, 10)
 
-        const newClient = await getRepository(Consumer).save({
+        const newClient = await getRepository(Consumers).save({
             fullName,
             birthDate,
             cpf,

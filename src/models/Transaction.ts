@@ -10,7 +10,8 @@ import {
 
 import { TransactionTypes } from './TransactionType'
 import { TransactionStatus } from './TransactionStatus'
-import { Consumer } from './Consumer'
+import { Consumers } from './Consumer'
+import { Companies } from './Company'
 
 @Entity()
 export class Transactions {
@@ -34,8 +35,11 @@ export class Transactions {
     @ManyToOne(() => TransactionStatus, () => Transactions)
     transactionStatus: TransactionStatus
 
-    @OneToMany(() => Consumer, () => Transactions)
-    consumer: Consumer
+    @OneToMany(() => Consumers, () => Transactions)
+    consumer: Consumers
+
+    @OneToMany(() => Companies, () => Transactions)
+    company: Companies
 
     @CreateDateColumn()
     createdAt: Date

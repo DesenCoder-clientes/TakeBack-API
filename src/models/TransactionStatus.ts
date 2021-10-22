@@ -17,9 +17,6 @@ export class TransactionStatus {
     @Column()
     description: string
 
-    @Column()
-    saledFee: number
-
     @Column({
         default: false
     })

@@ -17,9 +17,6 @@ export class TransactionTypes {
     @Column()
     description: string
 
-    @Column()
-    saledFee: number
-
     @Column({
         default: false
     })
