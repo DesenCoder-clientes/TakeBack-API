@@ -2,26 +2,31 @@ import {
     Column,
     CreateDateColumn,
     Entity,
-    ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from 'typeorm'
 
-import { State } from './State'
+import { Transactions } from './Transaction'
 
 @Entity()
-export class City {
+export class TransactionStatus {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
     @Column()
-    name: string
+    description: string
 
     @Column()
-    zipCode: string
+    saledFee: number
 
-    @ManyToOne(() => State, () => City)
-    state: State
+    @Column({
+        default: false
+    })
+    blocked: boolean
+
+    @OneToMany(() => Transactions, () => TransactionStatus)
+    transactions: Transactions
 
     @CreateDateColumn()
     createdAt: Date

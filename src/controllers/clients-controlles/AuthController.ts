@@ -3,8 +3,8 @@ import { Request, Response } from 'express'
 import axios from 'axios'
 import * as bcrypt from 'bcrypt'
 
-import { Client } from '../../models/Client'
-import { ClientAddress } from '../../models/ClientAddress'
+import { Consumer } from '../../models/Consumer'
+import { ConsumerAddress } from '../../models/ConsumerAddress'
 import { City } from '../../models/City'
 
 import { convertDate } from '../../utils/ConvertDateToISOString'
@@ -54,7 +54,7 @@ export const signIn = async (request: Request, response: Response) => {
             return response.status(401).json({ message: 'Dados incompletos' })
         }
 
-        const client = await getRepository(Client).findOne({
+        const client = await getRepository(Consumer).findOne({
             where: {
                 cpf
             }
@@ -102,7 +102,7 @@ export const registerNewClient = async (request: Request, response: Response) =>
             return response.status(400).json({ message: 'CPF inválido' })
         }
 
-        const client = await getRepository(Client).findOne({ where: { cpf } })
+        const client = await getRepository(Consumer).findOne({ where: { cpf } })
 
         if (client) {
             return response.status(302).json({ message: 'CPF já cadastrado' })
@@ -115,7 +115,7 @@ export const registerNewClient = async (request: Request, response: Response) =>
         })
 
         if (city) {
-            var address = await getRepository(ClientAddress).save({
+            var address = await getRepository(ConsumerAddress).save({
                 city,
                 street: '',
                 district: '',
@@ -146,7 +146,7 @@ export const registerNewClient = async (request: Request, response: Response) =>
                 state
             })
 
-            var newAddress = await getRepository(ClientAddress).save({
+            var newAddress = await getRepository(ConsumerAddress).save({
                 city: newCity,
                 street: logradouro,
                 district: bairro,
@@ -155,7 +155,7 @@ export const registerNewClient = async (request: Request, response: Response) =>
 
         const passwordEncrypted = bcrypt.hashSync(password, 10)
 
-        const newClient = await getRepository(Client).save({
+        const newClient = await getRepository(Consumer).save({
             fullName,
             birthDate,
             cpf,

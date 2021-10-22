@@ -6,10 +6,11 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from 'typeorm'
+
 import { City } from './City'
 
 @Entity()
-export class ClientAddress {
+export class ConsumerAddress {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
@@ -28,7 +29,7 @@ export class ClientAddress {
     })
     number: number
 
-    @ManyToOne(type => City)
+    @ManyToOne(() => City)
     city: City
 
     @CreateDateColumn()

@@ -2,7 +2,7 @@ import {
     Column,
     CreateDateColumn,
     Entity,
-    OneToMany,
+    ManyToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from 'typeorm'
@@ -10,18 +10,27 @@ import {
 import { City } from './City'
 
 @Entity()
-export class State {
+export class CompaniesAddress {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @Column()
-    name: string
+    @Column({
+        nullable: true
+    })
+    street: string
 
-    @Column()
-    initials: string
+    @Column({
+        nullable: true
+    })
+    district: string
 
-    @OneToMany(() => City, () => State)
-    cities: City
+    @Column({
+        nullable: true
+    })
+    number: number
+
+    @ManyToOne(() => City)
+    city: City
 
     @CreateDateColumn()
     createdAt: Date

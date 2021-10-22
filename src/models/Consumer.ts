@@ -3,14 +3,17 @@ import {
     CreateDateColumn,
     Entity,
     JoinColumn,
+    ManyToOne,
     OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from 'typeorm'
-import { ClientAddress } from './ClientAddress'
+
+import { ConsumerAddress } from './ConsumerAddress'
+import { Transactions } from './Transaction'
 
 @Entity()
-export class Client {
+export class Consumer {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
@@ -59,9 +62,12 @@ export class Client {
     })
     phoneConfirmated: boolean
 
-    @OneToOne(type => ClientAddress)
+    @OneToOne(() => ConsumerAddress)
     @JoinColumn()
-    address: ClientAddress
+    address: ConsumerAddress
+
+    @ManyToOne(() => Transactions, () => Consumer)
+    transactions: Transactions[]
 
     @CreateDateColumn()
     createdAt: Date

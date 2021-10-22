@@ -5,7 +5,7 @@ import { State } from '../../models/State'
 import { City } from '../../models/City'
 
 import { StatesSeed } from '../../database/seeds/states.seed'
-import { ClientAddress } from '../../models/ClientAddress'
+import { ConsumerAddress } from '../../models/ConsumerAddress'
 
 export const GenerateSeedDataController = async (request: Request, response: Response) => {
     try {
@@ -36,7 +36,7 @@ export const GenerateSeedDataController = async (request: Request, response: Res
 }
 
 export const FindAllClients = async (request: Request, response: Response) => {
-    const clients = await getRepository(ClientAddress).find({
+    const clients = await getRepository(ConsumerAddress).find({
         relations: ['city']
     })
 
