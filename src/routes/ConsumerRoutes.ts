@@ -14,6 +14,7 @@ routes.post("/sign-up", Auth.registerNewClient);
 routes.use(AuthMiddleware);
 
 routes.get("/find-app-data", Data.findAppData);
-routes.put("/update-data", Update.updateConsumerData);
+routes.put("/update-data", Update.updateData);
+routes.put("/update-phone", Update.updatePhone);
 
 export default routes;
