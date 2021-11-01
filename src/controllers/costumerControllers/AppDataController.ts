@@ -6,10 +6,10 @@ import { Consumers } from "../../models/Consumer";
 
 export const findAppData = async (request: Request, response: Response) => {
   try {
-    const userData = request["tokenPayload"];
+    const consumerID = request["tokenPayload"];
 
     const companies = await getRepository(Companies).find();
-    const consumer = await getRepository(Consumers).findOne(userData.id, {
+    const consumer = await getRepository(Consumers).findOne(consumerID.id, {
       relations: ["address", "address.city", "address.city.state"],
     });
 

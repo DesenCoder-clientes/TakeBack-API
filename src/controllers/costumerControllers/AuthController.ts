@@ -71,14 +71,9 @@ export const signIn = async (request: Request, response: Response) => {
     }
 
     const token = generateToken(
-      {
-        id: client.id,
-        fullName: client.fullName,
-        cpf: client.cpf,
-        email: client.email,
-      },
+      { id: client.id },
       process.env.JWT_PRIVATE_KEY,
-      process.env.JWT_EXPIRES_IN
+      parseInt(process.env.JWT_EXPIRES_IN)
     );
 
     return response.status(200).json({ ACCESS_TOKEN: token });

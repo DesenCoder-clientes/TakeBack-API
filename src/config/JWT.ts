@@ -1,30 +1,30 @@
-import * as jwt from 'jsonwebtoken'
+import * as jwt from "jsonwebtoken";
 
 export function generateToken(payload, privateKey, expiresIn) {
-    const token = jwt.sign(payload, privateKey, {
-        // algorithm: 'RS256', // This algorith require private key generate
-        expiresIn
-    })
+  const token = jwt.sign(payload, privateKey, {
+    // algorithm: 'RS256', // This algorith require private key generate
+    expiresIn,
+  });
 
-    return token
+  return token;
 }
 
 export function verifyToken(authHeader, hash) {
-    if (!authHeader) return new Error('Token nao informado')
-    
-    const parts = authHeader.split(" ")
+  if (!authHeader) return new Error("Token nao informado");
 
-    if (parts.length !== 2) return new Error('Erro no Token')
+  const parts = authHeader.split(" ");
 
-    const [schema, token] = parts
+  if (parts.length !== 2) return new Error("Erro no Token");
 
-    if (!/^Bearer$/i.test(schema)) return new Error('Token mau formado')
+  const [schema, token] = parts;
 
-    const authPayload = jwt.verify(token, hash, (err, decoded) => {
-        if (err) return new Error('Token inválido')
+  if (!/^Bearer$/i.test(schema)) return new Error("Token mau formado");
 
-        return decoded.payload
-    })
+  const authPayload = jwt.verify(token, hash, (err, decoded) => {
+    if (err) return new Error("Token inválido");
 
-    return authPayload
+    return decoded.payload;
+  });
+
+  return authPayload;
 }

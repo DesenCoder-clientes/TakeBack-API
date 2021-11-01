@@ -1,8 +1,8 @@
 import { Router } from "express";
 
-import * as Generic from "../controllers/generalControllers/FindGenericDataController";
 import * as Auth from "../controllers/costumerControllers/AuthController";
 import * as Data from "../controllers/costumerControllers/AppDataController";
+import * as Update from "../controllers/costumerControllers/UpdateController";
 
 import { AuthMiddleware } from "../middlewares/costumerMiddlewares/AuthMiddleware";
 
@@ -14,6 +14,6 @@ routes.post("/sign-up", Auth.registerNewClient);
 routes.use(AuthMiddleware);
 
 routes.get("/find-app-data", Data.findAppData);
-routes.get("/find-all-cities", Generic.getAllCities);
+routes.put("/update-data", Update.updateConsumerData);
 
 export default routes;
