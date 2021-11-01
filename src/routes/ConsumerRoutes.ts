@@ -16,5 +16,6 @@ routes.use(AuthMiddleware);
 routes.get("/find-app-data", Data.findAppData);
 routes.put("/update-data", Update.updateData);
 routes.put("/update-phone", Update.updatePhone);
+routes.put("/update-email", Update.updateEmail);
 
 export default routes;
