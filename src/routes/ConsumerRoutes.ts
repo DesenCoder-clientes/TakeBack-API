@@ -17,5 +17,6 @@ routes.get("/find-app-data", Data.findAppData);
 routes.put("/update-data", Update.updateData);
 routes.put("/update-phone", Update.updatePhone);
 routes.put("/update-email", Update.updateEmail);
+routes.put("/update-address", Update.updateAddress);
 
 export default routes;

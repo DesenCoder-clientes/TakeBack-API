@@ -11,6 +11,8 @@ import { CPFValidate } from "../../utils/CPFValidate";
 import { generateToken } from "../../config/JWT";
 import { State } from "../../models/State";
 
+import { apiCorreiosResponseType } from "../../types/ApiCorreiosResponse";
+
 type loginTypes = {
   cpf: string;
   password: string;
@@ -26,23 +28,6 @@ type userDataTypes = {
   phone: string;
   zipCode: string;
   password: string;
-};
-
-type data = {
-  cep: string;
-  logradouro: string;
-  complemento: string;
-  bairro: string;
-  localidade: string;
-  uf: string;
-  ibge: string;
-  gia: string;
-  ddd: string;
-  siafi: string;
-};
-
-type apiCorreiosResponseType = {
-  data: data;
 };
 
 export const signIn = async (request: Request, response: Response) => {
