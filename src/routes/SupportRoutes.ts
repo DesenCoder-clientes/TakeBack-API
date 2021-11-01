@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
-import * as SupportController from '../controllers/support-controllers/GenerateSeedDataController'
-import * as TestsController from '../controllers/support-controllers/TestSendMailController'
+import * as SupportController from '../controllers/supportControllers/GenerateSeedDataController'
+import * as TestsController from '../controllers/supportControllers/TestSendMailController'
 
 const routes = Router()
 

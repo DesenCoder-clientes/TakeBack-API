@@ -5,7 +5,7 @@ import * as cors from 'cors'
 import './database'
 
 import SupportRoutes from './routes/SupportRoutes'
-import ClientRoutes from './routes/ClientRoutes'
+import ConsumerRoutes from './routes/ConsumerRoutes'
 
 const app = express()
 
@@ -16,6 +16,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 app.use('/support', SupportRoutes)
-app.use('/client', ClientRoutes)
+app.use('/consumer', ConsumerRoutes)
 
 app.listen(process.env.PORT || 3333)

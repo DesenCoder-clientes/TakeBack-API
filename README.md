@@ -4,7 +4,12 @@ Steps to run this project:
 
 ## Configure the environment variables
 
-    DATABASE_URL=url-to-connection-your-database
+    DB_HOST=host-of-your-database-server
+    DB_PORT=port-of-your-database-server
+    DB_NAME=name-of-your-database
+    DB_USER=database-user-name
+    DB_PASS=database-user-password
+
     ENTITIES_DIR=directory-of-the-entities
     MIGRATIONS_DIR=directory-of-the-migrations
     SUBSCRIBERS_DIR=directory-of-the-subscribers
@@ -19,6 +24,7 @@ Steps to run this project:
     JWT_EXPIRES_IN=token-expiration-time
 
 ## Install depencies
+
 _Run:_
 
     yarn
@@ -30,6 +36,7 @@ _Run:_
     npm run typeorm migration:run
 
 ## Generate seed data
+
 _Access the route in api:_
 
     /support/generate-initial-data

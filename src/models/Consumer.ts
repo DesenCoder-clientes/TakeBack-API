@@ -34,7 +34,9 @@ export class Consumers {
     @Column()
     cpf: string
 
-    @Column()
+    @Column({
+        select: false
+    })
     password: string
 
     @Column({

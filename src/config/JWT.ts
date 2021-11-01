@@ -9,35 +9,22 @@ export function generateToken(payload, privateKey, expiresIn) {
     return token
 }
 
-// module.exports = {
-//   async generate(payload, auth, expiresIn) {
-//     const token = jwt.sign({ payload }, auth, {
-//       expiresIn: expiresIn,
-//     });
+export function verifyToken(authHeader, hash) {
+    if (!authHeader) return new Error('Token nao informado')
+    
+    const parts = authHeader.split(" ")
 
-//     return token;
-//   },
+    if (parts.length !== 2) return new Error('Erro no Token')
 
-//   async verify(res, authHeader, hash) {
-//     if (!authHeader)
-//       return res.status(400).send({ error: "Token nao informado" });
+    const [schema, token] = parts
 
-//     const parts = authHeader.split(" ");
+    if (!/^Bearer$/i.test(schema)) return new Error('Token mau formado')
 
-//     if (parts.length !== 2)
-//       return res.status(400).send({ error: "Erro no Token" });
+    const authPayload = jwt.verify(token, hash, (err, decoded) => {
+        if (err) return new Error('Token inválido')
 
-//     const [schema, token] = parts;
+        return decoded.payload
+    })
 
-//     if (!/^Bearer$/i.test(schema))
-//       return res.status(400).send({ error: "Token mau formado" });
-
-//     const authPayload = jwt.verify(token, hash, (err, decoded) => {
-//       if (err) return res.status(401).send({ error: "Token inválido" });
-
-//       return decoded.payload;
-//     });
-
-//     return authPayload;
-//   },
-// };
+    return authPayload
+}
