@@ -9,6 +9,10 @@ type ConsumerRequestToUpdatePassword = {
   newPassword: string;
 };
 
+type ConsumerRequestToRegisterSignature = {
+  newSignature: string;
+};
+
 export const updatePassword = async (request: Request, response: Response) => {
   try {
     const consumerID = request["tokenPayload"].id;
@@ -37,6 +41,34 @@ export const updatePassword = async (request: Request, response: Response) => {
 
     if (affected === 1) {
       return response.status(200).json({ message: "Senha alterada" });
+    }
+
+    return response.status(417).json({ message: "Houve um erro" });
+  } catch (error) {
+    return response.status(500).json(error);
+  }
+};
+
+export const registerSignature = async (
+  request: Request,
+  response: Response
+) => {
+  try {
+    const consumerID = request["tokenPayload"].id;
+    const { newSignature }: ConsumerRequestToRegisterSignature = request.body;
+
+    if (!newSignature || newSignature.length != 6) {
+      return response.status(400).json({ message: "Dados não informados" });
+    }
+
+    const newSignatureEncrypted = bcrypt.hashSync(newSignature, 10);
+
+    const { affected } = await getRepository(Consumers).update(consumerID, {
+      signature: newSignatureEncrypted,
+    });
+
+    if (affected === 1) {
+      return response.status(200).json({ message: "Assinatura cadastrada" });
     }
 
     return response.status(417).json({ message: "Houve um erro" });

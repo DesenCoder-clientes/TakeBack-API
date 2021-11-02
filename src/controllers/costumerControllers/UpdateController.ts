@@ -134,7 +134,7 @@ export const updateAddress = async (request: Request, response: Response) => {
     });
 
     if (!consumer) {
-      return response.status(404).json({ message: "Usuário não encontrado " });
+      return response.status(404).json({ message: "Usuário não encontrado" });
     }
 
     const city = await getRepository(City).findOne({
