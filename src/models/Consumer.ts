@@ -75,6 +75,11 @@ export class Consumers {
   })
   codeToConfirmEmail: string;
 
+  @Column({
+    default: false,
+  })
+  deactivedAccount: boolean;
+
   @OneToOne(() => ConsumerAddress)
   @JoinColumn()
   address: ConsumerAddress;
