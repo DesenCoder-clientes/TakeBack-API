@@ -98,6 +98,7 @@ export const updateEmail = async (request: Request, response: Response) => {
 
     const { affected } = await getRepository(Consumers).update(consumerID, {
       email,
+      emailConfirmated: false,
     });
 
     if (affected === 1) {

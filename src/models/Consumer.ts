@@ -65,6 +65,11 @@ export class Consumers {
   })
   phoneConfirmated: boolean;
 
+  @Column({
+    nullable: true,
+  })
+  codeToConfirmEmail: string;
+
   @OneToOne(() => ConsumerAddress)
   @JoinColumn()
   address: ConsumerAddress;
