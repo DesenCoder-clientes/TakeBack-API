@@ -46,6 +46,11 @@ export class Consumers {
   signature: string;
 
   @Column({
+    default: false,
+  })
+  signatureRegistered: boolean;
+
+  @Column({
     default: 0,
   })
   balance: number;

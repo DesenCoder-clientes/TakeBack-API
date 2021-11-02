@@ -23,6 +23,7 @@ routes.put("/update-email", Update.updateEmail);
 routes.put("/update-address", Update.updateAddress);
 routes.put("/update-password", Pass.updatePassword);
 routes.post("/register-signature", Pass.registerSignature);
+routes.put("/update-signature", Pass.updateSignature);
 
 routes.get("/send-mail-to-verify", Verify.sendMailToVerify);
 routes.post("/verify-email", Verify.verifyEmail);
