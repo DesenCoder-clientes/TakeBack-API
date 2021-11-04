@@ -2,26 +2,26 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
-import { State } from "./State";
+import { Companies } from "./Company";
 
 @Entity()
-export class City {
+export class Categories {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
-  name: string;
+  description: string;
 
   @Column()
-  zipCode: string;
+  categoryFee: number;
 
-  @ManyToOne(() => State, () => City)
-  state: State;
+  @OneToMany(() => Categories, () => Companies)
+  companies: Companies[];
 
   @CreateDateColumn()
   createdAt: Date;
