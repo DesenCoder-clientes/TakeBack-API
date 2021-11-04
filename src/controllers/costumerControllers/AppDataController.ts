@@ -10,6 +10,8 @@ export const findAppData = async (request: Request, response: Response) => {
 
     const companies = await getRepository(Companies).find({
       select: ["id", "fantasyName"],
+      relations: ["category"],
+      take: 4,
     });
 
     const consumer = await getRepository(Consumers).findOne(consumerID.id, {

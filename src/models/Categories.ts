@@ -20,6 +20,11 @@ export class Categories {
   @Column()
   categoryFee: number;
 
+  @Column({
+    default: 1,
+  })
+  iconCategory: number;
+
   @OneToMany(() => Categories, () => Companies)
   companies: Companies[];
 
