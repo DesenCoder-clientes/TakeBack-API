@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -67,8 +68,8 @@ export class Companies {
   @JoinColumn()
   address: CompaniesAddress;
 
-  @ManyToOne(() => Transactions, () => Companies)
-  transactions: Transactions[];
+  @OneToMany(() => Transactions, () => Companies)
+  transactions: Transactions;
 
   @ManyToOne(() => Categories, () => Companies)
   category: Categories;

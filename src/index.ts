@@ -4,6 +4,7 @@ import * as express from "express";
 import * as cors from "cors";
 import "./database";
 
+import GlobalRoutes from "./routes/GlobalRoutes";
 import SupportRoutes from "./routes/SupportRoutes";
 import ConsumerRoutes from "./routes/ConsumerRoutes";
 import CompanyRoutes from "./routes/CompanyRoutes";
@@ -17,6 +18,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use("/global", GlobalRoutes);
 app.use("/support", SupportRoutes);
 app.use("/consumer", ConsumerRoutes);
 app.use("/company", CompanyRoutes);

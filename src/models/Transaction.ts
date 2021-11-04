@@ -1,49 +1,48 @@
 import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn
-} from 'typeorm'
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
-import { TransactionTypes } from './TransactionType'
-import { TransactionStatus } from './TransactionStatus'
-import { Consumers } from './Consumer'
-import { Companies } from './Company'
+import { TransactionTypes } from "./TransactionType";
+import { TransactionStatus } from "./TransactionStatus";
+import { Consumers } from "./Consumer";
+import { Companies } from "./Company";
 
 @Entity()
 export class Transactions {
-    @PrimaryGeneratedColumn('uuid')
-    id: string
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-    @Column()
-    value: number
+  @Column()
+  value: number;
 
-    @Column()
-    salesFee: number
+  @Column()
+  salesFee: number;
 
-    @Column({
-        nullable: true
-    })
-    cashbackAmount: number
+  @Column({
+    nullable: true,
+  })
+  cashbackAmount: number;
 
-    @ManyToOne(() => TransactionTypes, () => Transactions)
-    transactionType: TransactionTypes
+  @ManyToOne(() => TransactionTypes, () => Transactions)
+  transactionType: TransactionTypes;
 
-    @ManyToOne(() => TransactionStatus, () => Transactions)
-    transactionStatus: TransactionStatus
+  @ManyToOne(() => TransactionStatus, () => Transactions)
+  transactionStatus: TransactionStatus;
 
-    @OneToMany(() => Consumers, () => Transactions)
-    consumer: Consumers
+  @ManyToOne(() => Consumers, () => Transactions)
+  consumer: Consumers;
 
-    @OneToMany(() => Companies, () => Transactions)
-    company: Companies
+  @ManyToOne(() => Companies, () => Transactions)
+  company: Companies;
 
-    @CreateDateColumn()
-    createdAt: Date
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @UpdateDateColumn()
-    updatedAt: Date
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

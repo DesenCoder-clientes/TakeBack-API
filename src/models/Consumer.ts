@@ -3,7 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -84,8 +84,8 @@ export class Consumers {
   @JoinColumn()
   address: ConsumerAddress;
 
-  @ManyToOne(() => Transactions, () => Consumers)
-  transactions: Transactions[];
+  @OneToMany(() => Transactions, () => Consumers)
+  transactions: Transactions;
 
   @CreateDateColumn()
   createdAt: Date;
