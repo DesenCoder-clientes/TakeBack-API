@@ -26,6 +26,8 @@ routes.put("/update-password", Auth.updatePassword);
 routes.post("/register-signature", Auth.registerSignature);
 routes.put("/update-signature", Auth.updateSignature);
 
+routes.get("/find-companies/:skip", Data.findCompanies);
+
 routes.get("/send-mail-to-verify", Verify.sendMailToVerify);
 routes.post("/verify-email", Verify.verifyEmail);
 

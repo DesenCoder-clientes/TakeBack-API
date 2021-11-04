@@ -27,3 +27,20 @@ export const findAppData = async (request: Request, response: Response) => {
     return response.status(500).json(error);
   }
 };
+
+export const findCompanies = async (request: Request, response: Response) => {
+  try {
+    const skip = request.params.skip;
+
+    const companies = await getRepository(Companies).find({
+      select: ["id", "fantasyName"],
+      relations: ["category"],
+      take: 2,
+      skip: parseInt(skip),
+    });
+
+    return response.status(200).json(companies);
+  } catch (error) {
+    return response.status(500).json(error);
+  }
+};
