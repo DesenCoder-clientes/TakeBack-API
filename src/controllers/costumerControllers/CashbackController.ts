@@ -2,21 +2,29 @@ import { getRepository } from "typeorm";
 import { Request, Response } from "express";
 
 import { Transactions } from "../../models/Transaction";
-import { TransactionStatus } from "../../models/TransactionStatus";
-import { TransactionTypes } from "../../models/TransactionType";
 
-export const findTransactionHistoric = async (
+export const findTransactions = async (
   request: Request,
   response: Response
 ) => {
   try {
     const consumerID = request["tokenPayload"].id;
 
+    const skip = request.params.skip;
+
     const transactions = await getRepository(Transactions).find({
-      where: {
-        consumer: consumerID,
+      select: ["id", "cashbackAmount", "createdAt"],
+      relations: ["company", "transactionType", "transactionStatus"],
+      take: 20,
+      skip: parseInt(skip),
+      order: {
+        createdAt: "DESC",
       },
     });
+
+    if (transactions.length === 0) {
+      return response.status(204).json({ message: "Fim da lista" });
+    }
 
     return response.status(200).json(transactions);
   } catch (error) {

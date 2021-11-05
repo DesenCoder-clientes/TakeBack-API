@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 
 import { Companies } from "../../models/Company";
 import { Consumers } from "../../models/Consumer";
+import { Transactions } from "../../models/Transaction";
 
 export const findAppData = async (request: Request, response: Response) => {
   try {
@@ -30,14 +31,18 @@ export const findAppData = async (request: Request, response: Response) => {
 
 export const findCompanies = async (request: Request, response: Response) => {
   try {
-    const skip = request.params.skip;
+    const { skip } = request.params;
 
     const companies = await getRepository(Companies).find({
       select: ["id", "fantasyName"],
       relations: ["category"],
-      take: 2,
+      take: 15,
       skip: parseInt(skip),
     });
+
+    if (companies.length === 0) {
+      return response.status(204).json({ message: "Fim da lista" });
+    }
 
     return response.status(200).json(companies);
   } catch (error) {

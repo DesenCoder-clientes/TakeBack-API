@@ -5,6 +5,7 @@ import * as Data from "../controllers/costumerControllers/AppDataController";
 import * as Update from "../controllers/costumerControllers/UpdateController";
 import * as Verify from "../controllers/costumerControllers/VerifyController";
 import * as Account from "../controllers/costumerControllers/AccountController";
+import * as Cashback from "../controllers/costumerControllers/CashbackController";
 
 import { AuthMiddleware } from "../middlewares/costumerMiddlewares/AuthMiddleware";
 
@@ -27,6 +28,8 @@ routes.post("/register-signature", Auth.registerSignature);
 routes.put("/update-signature", Auth.updateSignature);
 
 routes.get("/find-companies/:skip", Data.findCompanies);
+
+routes.get("/find-transactions/:skip", Cashback.findTransactions);
 
 routes.get("/send-mail-to-verify", Verify.sendMailToVerify);
 routes.post("/verify-email", Verify.verifyEmail);
