@@ -31,13 +31,14 @@ export const findAppData = async (request: Request, response: Response) => {
 
 export const findCompanies = async (request: Request, response: Response) => {
   try {
-    const { skip } = request.params;
+    const { offset, limit } = request.params;
 
     const companies = await getRepository(Companies).find({
-      select: ["id", "fantasyName"],
+      select: ["id", "fantasyName", "createdAt"],
       relations: ["category"],
-      take: 15,
-      skip: parseInt(skip),
+      take: parseInt(limit),
+      skip: parseInt(offset) * parseInt(limit),
+      order: { createdAt: "ASC" },
     });
 
     if (companies.length === 0) {

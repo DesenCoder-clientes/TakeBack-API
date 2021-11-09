@@ -10,13 +10,13 @@ export const findTransactions = async (
   try {
     const consumerID = request["tokenPayload"].id;
 
-    const skip = request.params.skip;
+    const { offset, limit } = request.params;
 
     const transactions = await getRepository(Transactions).find({
       select: ["id", "cashbackAmount", "createdAt"],
       relations: ["company", "transactionType", "transactionStatus"],
-      take: 20,
-      skip: parseInt(skip),
+      take: parseInt(limit),
+      skip: parseInt(offset) * parseInt(limit),
       order: {
         createdAt: "DESC",
       },
