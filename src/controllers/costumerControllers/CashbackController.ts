@@ -17,9 +17,7 @@ export const findTransactions = async (
       relations: ["company", "transactionType", "transactionStatus"],
       take: parseInt(limit),
       skip: parseInt(offset) * parseInt(limit),
-      order: {
-        createdAt: "DESC",
-      },
+      order: { createdAt: "DESC" },
     });
 
     if (transactions.length === 0) {

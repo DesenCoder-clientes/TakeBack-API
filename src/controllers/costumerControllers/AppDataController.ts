@@ -10,20 +10,28 @@ export const findAppData = async (request: Request, response: Response) => {
     const consumerID = request["tokenPayload"];
 
     const companies = await getRepository(Companies).find({
-      select: ["id", "fantasyName"],
+      select: ["id", "fantasyName", "createdAt"],
       relations: ["category"],
-      take: 4,
+      take: 20,
+      order: { createdAt: "ASC" },
     });
 
     const consumer = await getRepository(Consumers).findOne(consumerID.id, {
       relations: ["address", "address.city", "address.city.state"],
     });
 
+    const transactions = await getRepository(Transactions).find({
+      select: ["id", "cashbackAmount", "createdAt"],
+      relations: ["company", "transactionType", "transactionStatus"],
+      take: 20,
+      order: { createdAt: "DESC" },
+    });
+
     if (!consumer) {
       return response.status(404).json({ message: "Usuário não encontrado" });
     }
 
-    return response.status(200).json({ consumer, companies });
+    return response.status(200).json({ consumer, companies, transactions });
   } catch (error) {
     return response.status(500).json(error);
   }
