@@ -6,6 +6,7 @@ import * as Update from "../controllers/costumerControllers/UpdateController";
 import * as Verify from "../controllers/costumerControllers/VerifyController";
 import * as Account from "../controllers/costumerControllers/AccountController";
 import * as Cashback from "../controllers/costumerControllers/CashbackController";
+import * as Forgot from "../controllers/costumerControllers/ForgotController";
 
 import { AuthMiddleware } from "../middlewares/costumerMiddlewares/AuthMiddleware";
 
@@ -13,6 +14,9 @@ const routes = Router();
 
 routes.post("/sign-in", Auth.signIn);
 routes.post("/sign-up", Account.newAccount);
+
+routes.post("/confirm-data", Forgot.confirmDataToForgotPassword);
+routes.put("/forgot-password/:id", Forgot.forgotPassword);
 
 routes.use(AuthMiddleware);
 
