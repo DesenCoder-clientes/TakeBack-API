@@ -46,21 +46,25 @@ export class Companies {
 
   @Column({
     default: 0,
+    type: "float",
   })
   cashbackPercentDefault: number;
 
   @Column({
     default: 0,
+    type: "float",
   })
   balance: number;
 
   @Column({
     default: 0,
+    type: "float",
   })
   blockedBalance: number;
 
   @Column({
     default: 0,
+    type: "float",
   })
   monthlyPayment: number;
 

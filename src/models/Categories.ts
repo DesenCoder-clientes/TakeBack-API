@@ -17,7 +17,9 @@ export class Categories {
   @Column()
   description: string;
 
-  @Column()
+  @Column({
+    type: "float",
+  })
   categoryFee: number;
 
   @Column({

@@ -17,16 +17,39 @@ export class Transactions {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({
+    type: "float",
+  })
   value: number;
 
-  @Column()
+  @Column({
+    nullable: true,
+    type: "float",
+  })
   salesFee: number;
 
   @Column({
     nullable: true,
+    type: "float",
+  })
+  cashbackPercent: number;
+
+  @Column({
+    nullable: true,
+    type: "float",
   })
   cashbackAmount: number;
+
+  @Column({
+    nullable: true,
+  })
+  keyTransaction: number;
+
+  @Column({
+    nullable: true,
+    length: 180,
+  })
+  cancellationDescription: string;
 
   @ManyToOne(() => TransactionTypes, () => Transactions)
   transactionType: TransactionTypes;

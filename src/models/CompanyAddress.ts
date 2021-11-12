@@ -29,6 +29,11 @@ export class CompaniesAddress {
   })
   number: number;
 
+  @Column({
+    nullable: true,
+  })
+  complement: string;
+
   @ManyToOne(() => City)
   city: City;
 

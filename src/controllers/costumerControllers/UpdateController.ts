@@ -11,7 +11,6 @@ import { apiCorreiosResponseType } from "../../types/ApiCorreiosResponse";
 
 type ConsumerRequestToUpdateData = {
   fullName: string;
-  cpf: string;
   birthDate: Date;
 };
 
@@ -33,16 +32,14 @@ type ConsumerRequestToUpdateAddress = {
 export const updateData = async (request: Request, response: Response) => {
   try {
     const consumerID = request["tokenPayload"].id;
-    const { fullName, cpf, birthDate }: ConsumerRequestToUpdateData =
-      request.body;
+    const { fullName, birthDate }: ConsumerRequestToUpdateData = request.body;
 
-    if (!fullName || !cpf || !birthDate) {
+    if (!fullName || !birthDate) {
       return response.status(400).json({ message: "Dados não informados" });
     }
 
     const { affected } = await getRepository(Consumers).update(consumerID, {
       fullName,
-      cpf,
       birthDate,
     });
 

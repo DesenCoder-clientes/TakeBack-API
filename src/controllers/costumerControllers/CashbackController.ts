@@ -3,6 +3,29 @@ import { Request, Response } from "express";
 
 import { Transactions } from "../../models/Transaction";
 
+type AuthorizedTransactionProps = {
+  value: number;
+};
+
+export const authorizePurchase = async (
+  request: Request,
+  response: Response
+) => {
+  try {
+    const consumerID = request["tokenPayload"].id;
+
+    const { value }: AuthorizedTransactionProps = request.body;
+
+    const newTransaction = getRepository(Transactions).save({
+      value,
+    });
+
+    return response.status(200);
+  } catch (error) {
+    return response.status(500).json(error);
+  }
+};
+
 export const findTransactions = async (
   request: Request,
   response: Response

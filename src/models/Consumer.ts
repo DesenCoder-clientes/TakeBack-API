@@ -52,11 +52,13 @@ export class Consumers {
 
   @Column({
     default: 0,
+    type: "float",
   })
   balance: number;
 
   @Column({
     default: 0,
+    type: "float",
   })
   blockedBalance: number;
 
