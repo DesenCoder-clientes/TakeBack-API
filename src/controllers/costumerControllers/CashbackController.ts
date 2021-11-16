@@ -106,13 +106,15 @@ export const dropTransaction = async (request: Request, response: Response) => {
       }
     );
 
-    if (transaction.transactionStatus.description === "Aguardando") {
-      await getRepository(Transactions).delete(transactionID);
-
-      return response.status(200).json({ message: "Operação cancelada" });
+    if (transaction.transactionStatus.description !== "Aguardando") {
+      return response
+        .status(200)
+        .json({ message: "Erro ao inutilizar código" });
     }
 
-    return response.status(200).json({ message: "Erro ao inutilizar código" });
+    await getRepository(Transactions).delete(transactionID);
+
+    return response.status(200).json({ message: "Operação cancelada" });
   } catch (error) {
     return response.status(500).json(error);
   }
