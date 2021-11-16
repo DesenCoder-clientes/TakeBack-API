@@ -12,13 +12,19 @@ export const TransactionStatusSeed = [
     updatedAt: new Date(),
   },
   {
-    description: "Cancelada pelo cliente",
+    description: "Aguardando",
     blocked: true,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
     description: "Cancelada pelo parceiro",
+    blocked: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Cancelada pelo cliente",
     blocked: true,
     createdAt: new Date(),
     updatedAt: new Date(),

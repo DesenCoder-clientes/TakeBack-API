@@ -34,6 +34,8 @@ routes.put("/update-signature", Auth.updateSignature);
 routes.get("/find-companies/:offset/:limit", Data.findCompanies);
 
 routes.get("/find-transactions/:offset/:limit", Cashback.findTransactions);
+routes.post("/authorized-purchase", Cashback.authorizePurchase);
+routes.delete("/delete-transaction/:id", Cashback.dropTransaction);
 
 routes.get("/send-mail-to-verify", Verify.sendMailToVerify);
 routes.post("/verify-email", Verify.verifyEmail);

@@ -1,4 +1,4 @@
-import { getRepository } from "typeorm";
+import { getRepository, Not } from "typeorm";
 import { Request, Response } from "express";
 
 import { Companies } from "../../models/Company";
@@ -25,6 +25,12 @@ export const findAppData = async (request: Request, response: Response) => {
       relations: ["company", "transactionType", "transactionStatus"],
       take: 20,
       order: { createdAt: "DESC" },
+      where: {
+        consumer: consumerID,
+        transactionStatus: {
+          description: Not("Aguardando"),
+        },
+      },
     });
 
     if (!consumer) {
