@@ -44,6 +44,10 @@ export const authorizePurchase = async (
       },
     });
 
+    getRepository(Transactions).delete({
+      transactionStatus,
+    });
+
     const newCode = generateRandomNumber(1000, 9999);
 
     const transaction = await getRepository(Transactions).save({
