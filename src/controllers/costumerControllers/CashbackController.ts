@@ -23,7 +23,7 @@ export const authorizePurchase = async (
     const { value, signature }: AuthorizedTransactionProps = request.body;
 
     const consumer = await getRepository(Consumers).findOne(consumerID, {
-      select: ["id", "signature"],
+      select: ["id", "signature", "balance"],
     });
 
     const passwordMatch = await bcrypt.compare(signature, consumer.signature);
@@ -46,7 +46,7 @@ export const authorizePurchase = async (
 
     getRepository(Transactions).delete({
       transactionStatus,
-    });
+    }); // Adicionar um where para deletar apenas a transação do usuário correto
 
     const newCode = generateRandomNumber(1000, 9999);
 

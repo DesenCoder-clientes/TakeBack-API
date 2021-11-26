@@ -27,6 +27,7 @@ type ConsumerRequestToUpdateAddress = {
   district: string;
   number: string;
   zipCode: string;
+  complement: string;
 };
 
 export const updateData = async (request: Request, response: Response) => {
@@ -120,14 +121,23 @@ export const updateAddress = async (request: Request, response: Response) => {
       district,
       number,
       zipCode,
+      complement,
     }: ConsumerRequestToUpdateAddress = request.body;
+
+    console.log({
+      street,
+      district,
+      number,
+      zipCode,
+      complement,
+    });
 
     if (!street && !district && !number && !zipCode) {
       return response.status(400).json({ message: "Dados não informados" });
     }
 
     const consumer = await getRepository(Consumers).findOne(consumerID, {
-      relations: ["address"],
+      relations: ["address", "address.city", "address.city.state"],
     });
 
     if (!consumer) {
@@ -140,11 +150,7 @@ export const updateAddress = async (request: Request, response: Response) => {
       },
     });
 
-    if (city) {
-      await getRepository(ConsumerAddress).update(consumer.address.id, {
-        city,
-      });
-    } else {
+    if (!city) {
       var {
         data: { localidade, uf },
       }: apiCorreiosResponseType = await axios.get(
@@ -165,6 +171,7 @@ export const updateAddress = async (request: Request, response: Response) => {
         name: localidade,
         zipCode,
         state,
+        complement,
       });
     }
 
@@ -174,6 +181,8 @@ export const updateAddress = async (request: Request, response: Response) => {
         street,
         district,
         number,
+        complement,
+        city,
       }
     );
 
