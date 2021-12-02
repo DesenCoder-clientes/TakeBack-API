@@ -10,7 +10,7 @@ import {
 import { Companies } from "./Company";
 
 @Entity()
-export class Categories {
+export class Industries {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
@@ -27,7 +27,7 @@ export class Categories {
   })
   iconCategory: number;
 
-  @OneToMany(() => Categories, () => Companies)
+  @OneToMany(() => Industries, () => Companies)
   companies: Companies[];
 
   @CreateDateColumn()

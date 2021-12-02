@@ -1,16 +1,14 @@
-import { getRepository } from "typeorm";
-import { Request, Response } from "express";
 import axios from "axios";
-
-import { Companies } from "../../models/Company";
+import { getRepository } from "typeorm";
+import { InternalError } from "../../config/GenerateErros";
 import { Industries } from "../../models/Industry";
-import { CompaniesAddress } from "../../models/CompanyAddress";
 import { City } from "../../models/City";
+import { Companies } from "../../models/Company";
+import { CompaniesAddress } from "../../models/CompanyAddress";
 import { State } from "../../models/State";
-
 import { apiCorreiosResponseType } from "../../types/ApiCorreiosResponse";
 
-type companyDataTypes = {
+interface Props {
   corporateName: string;
   fantasyName: string;
   registeredNumber: string;
@@ -18,20 +16,18 @@ type companyDataTypes = {
   email: string;
   category: Industries;
   zipCode: string;
-};
+}
 
-export const signUp = async (request: Request, response: Response) => {
-  try {
-    const {
-      category,
-      corporateName,
-      email,
-      fantasyName,
-      phone,
-      registeredNumber,
-      zipCode,
-    }: companyDataTypes = request.body;
-
+class RegisterCompanyUseCase {
+  async execute({
+    category,
+    corporateName,
+    email,
+    fantasyName,
+    phone,
+    registeredNumber,
+    zipCode,
+  }: Props) {
     if (
       !category ||
       !corporateName ||
@@ -41,7 +37,7 @@ export const signUp = async (request: Request, response: Response) => {
       !registeredNumber ||
       !zipCode
     ) {
-      return response.status(401).json({ message: "Dados incompletos" });
+      throw new InternalError("Dados incompletos", 401);
     }
 
     const company = await getRepository(Companies).findOne({
@@ -51,7 +47,7 @@ export const signUp = async (request: Request, response: Response) => {
     });
 
     if (company) {
-      return response.status(302).json({ message: "CNPJ já cadastrado" });
+      throw new InternalError("CNPJ já cadastrado", 302);
     }
 
     const city = await getRepository(City).findOne({
@@ -74,7 +70,7 @@ export const signUp = async (request: Request, response: Response) => {
       );
 
       if (!uf) {
-        return response.status(404).json({ message: "Cep não localizado" });
+        throw new InternalError("CEP não localizado", 404);
       }
 
       const state = await getRepository(State).findOne({
@@ -107,11 +103,11 @@ export const signUp = async (request: Request, response: Response) => {
     });
 
     if (newCompany) {
-      return response.status(200).json(newCompany);
+      return newCompany;
     }
 
-    return response.status(400).json({ message: "Houve um erro" });
-  } catch (error) {
-    return response.status(500).json(error);
+    throw new InternalError("Houve um erro", 500);
   }
-};
+}
+
+export { RegisterCompanyUseCase };

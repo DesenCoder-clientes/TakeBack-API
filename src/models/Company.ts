@@ -11,7 +11,7 @@ import {
 } from "typeorm";
 
 import { CompaniesAddress } from "./CompanyAddress";
-import { Categories } from "./Categories";
+import { Industries } from "./Industry";
 import { Transactions } from "./Transaction";
 
 @Entity()
@@ -75,8 +75,8 @@ export class Companies {
   @OneToMany(() => Transactions, () => Companies)
   transactions: Transactions;
 
-  @ManyToOne(() => Categories, () => Companies)
-  category: Categories;
+  @ManyToOne(() => Industries, () => Companies)
+  category: Industries;
 
   @CreateDateColumn()
   createdAt: Date;

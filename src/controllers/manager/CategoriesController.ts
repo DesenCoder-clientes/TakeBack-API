@@ -1,7 +1,7 @@
 import { getRepository } from "typeorm";
 import { Request, Response } from "express";
 
-import { Categories } from "../../models/Categories";
+import { Industries } from "../../models/Industry";
 
 type RequestCategoryTypes = {
   description: string;
@@ -19,7 +19,7 @@ export const registerCategory = async (
       return response.status(401).json({ message: "Dados incompletos" });
     }
 
-    const category = await getRepository(Categories).findOne({
+    const category = await getRepository(Industries).findOne({
       where: {
         description,
       },
@@ -29,7 +29,7 @@ export const registerCategory = async (
       return response.status(302).json({ message: "Categoria já cadastrada" });
     }
 
-    const newCategory = await getRepository(Categories).save({
+    const newCategory = await getRepository(Industries).save({
       description,
       categoryFee,
     });

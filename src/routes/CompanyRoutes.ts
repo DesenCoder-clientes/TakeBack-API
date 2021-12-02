@@ -1,17 +1,15 @@
 import { Router } from "express";
 
-import * as Account from "../controllers/company/AccountController";
 import * as Data from "../controllers/company/AppDataController";
 import * as Cashback from "../controllers/company/CashbackController";
 
-import { RegisterCompanyController } from "../controllers/register/RegisterCompanyController";
+import { AuthController } from "../controllers/company/Auth";
 
-const register = new RegisterCompanyController();
+const Auth = new AuthController();
 
 const routes = Router();
 
-routes.post("/sign-up", Account.signUp);
-routes.post("/teste", register.handle);
+routes.post("/sign-up", Auth.registerNewCompany);
 
 routes.get("/find-transaction-utils", Data.findTransactionUtils);
 routes.post("/new-cashback", Cashback.newCashback);
