@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import * as Category from "../controllers/globalControllers/FindCategories";
+import * as Category from "../controllers/global/FindCategories";
 
 const routes = Router();
 

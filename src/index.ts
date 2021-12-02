@@ -1,5 +1,6 @@
 import * as dotenv from "dotenv";
 import "reflect-metadata";
+import "express-async-errors";
 import * as express from "express";
 import { Request, Response, NextFunction } from "express";
 import * as cors from "cors";
@@ -24,6 +25,12 @@ app.use("/support", SupportRoutes);
 app.use("/consumer", ConsumerRoutes);
 app.use("/company", CompanyRoutes);
 app.use("/admin", AdminRoutes);
+
+app.use(
+  (error: Error, request: Request, response: Response, next: NextFunction) => {
+    return response.json(error);
+  }
+);
 
 app.use((request: Request, response: Response, next: NextFunction) => {
   response.status(404).json({ message: "Endpoint inexistente" });

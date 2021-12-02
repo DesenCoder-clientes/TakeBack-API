@@ -1,8 +1,8 @@
 import { Router } from "express";
 
-import * as Account from "../controllers/companyControllers/AccountController";
-import * as Data from "../controllers/companyControllers/AppDataController";
-import * as Cashback from "../controllers/companyControllers/CashbackController";
+import * as Account from "../controllers/company/AccountController";
+import * as Data from "../controllers/company/AppDataController";
+import * as Cashback from "../controllers/company/CashbackController";
 
 const routes = Router();
 

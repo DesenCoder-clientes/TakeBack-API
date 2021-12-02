@@ -1,12 +1,15 @@
-import { Router } from 'express'
+import { Router } from "express";
 
-import * as SupportController from '../controllers/supportControllers/GenerateSeedDataController'
-import * as TestsController from '../controllers/supportControllers/TestSendMailController'
+import * as SupportController from "../controllers/support/GenerateSeedDataController";
+import * as TestsController from "../controllers/support/TestSendMailController";
 
-const routes = Router()
+const routes = Router();
 
-routes.get('/generate-initial-data', SupportController.GenerateSeedDataController)
-routes.get('/find-all-clients', SupportController.FindAllClients)
-routes.post('/test-send-mail', TestsController.TestSendMail)
+routes.get(
+  "/generate-initial-data",
+  SupportController.GenerateSeedDataController
+);
+routes.get("/find-all-clients", SupportController.FindAllClients);
+routes.post("/test-send-mail", TestsController.TestSendMail);
 
-export default routes
+export default routes;
