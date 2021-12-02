@@ -11,6 +11,7 @@ import SupportRoutes from "./routes/SupportRoutes";
 import ConsumerRoutes from "./routes/ConsumerRoutes";
 import CompanyRoutes from "./routes/CompanyRoutes";
 import AdminRoutes from "./routes/AdminRoutes";
+import { InternalError } from "./config/GenerateErros";
 
 const app = express();
 
@@ -26,16 +27,20 @@ app.use("/consumer", ConsumerRoutes);
 app.use("/company", CompanyRoutes);
 app.use("/admin", AdminRoutes);
 
-app.use(
-  (error: Error, request: Request, response: Response, next: NextFunction) => {
-    return response.json(error);
-  }
-);
-
 app.use((request: Request, response: Response, next: NextFunction) => {
   response.status(404).json({ message: "Endpoint inexistente" });
   next();
 });
+
+app.use(
+  (err: InternalError, req: Request, res: Response, next: NextFunction) => {
+    if (err && err.statusCode) {
+      res
+        .status(err.statusCode)
+        .json({ name: err.name, status: err.statusCode, message: err.message });
+    }
+  }
+);
 
 app.use((request: Request, response: Response) => {
   return response.status(500).json({ message: "Erro inexperado" });
