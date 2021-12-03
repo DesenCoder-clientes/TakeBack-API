@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { Industries } from "../../models/Industry";
 import { RegisterCompanyUseCase } from "../../useCases/authCompany/RegisterCompanyUseCase";
 
 interface RegisterCompanyDataProps {
@@ -8,14 +7,14 @@ interface RegisterCompanyDataProps {
   registeredNumber: string;
   phone: string;
   email: string;
-  category: Industries;
+  industry: string;
   zipCode: string;
 }
 
 class AuthController {
   async registerNewCompany(request: Request, response: Response) {
     const {
-      category,
+      industry,
       corporateName,
       email,
       fantasyName,
@@ -27,7 +26,7 @@ class AuthController {
     const registerCompanyUseCase = new RegisterCompanyUseCase();
 
     const result = await registerCompanyUseCase.execute({
-      category,
+      industry,
       corporateName,
       email,
       fantasyName,

@@ -21,7 +21,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/global", PublicRoutes);
+app.use("/public", PublicRoutes);
 app.use("/support", SupportRoutes);
 app.use("/consumer", ConsumerRoutes);
 app.use("/company", CompanyRoutes);

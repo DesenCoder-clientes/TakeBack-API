@@ -13,6 +13,7 @@ import {
 import { CompaniesAddress } from "./CompanyAddress";
 import { Industries } from "./Industry";
 import { Transactions } from "./Transaction";
+import { CompanyUsers } from "./CompanyUsers";
 
 @Entity()
 export class Companies {
@@ -77,6 +78,9 @@ export class Companies {
 
   @ManyToOne(() => Industries, () => Companies)
   category: Industries;
+
+  @OneToMany(() => CompanyUsers, () => Companies)
+  cities: CompanyUsers;
 
   @CreateDateColumn()
   createdAt: Date;

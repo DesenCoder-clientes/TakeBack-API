@@ -8,19 +8,21 @@ import { CompaniesAddress } from "../../models/CompanyAddress";
 import { State } from "../../models/State";
 import { apiCorreiosResponseType } from "../../types/ApiCorreiosResponse";
 
+import { RegisterUserUseCase } from "./RegisterUserUseCase";
+
 interface Props {
   corporateName: string;
   fantasyName: string;
   registeredNumber: string;
   phone: string;
   email: string;
-  category: Industries;
+  industry: string;
   zipCode: string;
 }
 
 class RegisterCompanyUseCase {
   async execute({
-    category,
+    industry,
     corporateName,
     email,
     fantasyName,
@@ -29,7 +31,7 @@ class RegisterCompanyUseCase {
     zipCode,
   }: Props) {
     if (
-      !category ||
+      !industry ||
       !corporateName ||
       !email ||
       !fantasyName ||
@@ -92,6 +94,8 @@ class RegisterCompanyUseCase {
       });
     }
 
+    const localizedIndustry = await getRepository(Industries).findOne(industry);
+
     const newCompany = await getRepository(Companies).save({
       corporateName,
       fantasyName,
@@ -99,11 +103,15 @@ class RegisterCompanyUseCase {
       email,
       phone,
       address: address ? address : newAddress,
-      category: category,
+      industry: localizedIndustry,
     });
 
     if (newCompany) {
-      return newCompany;
+      const registerUser = new RegisterUserUseCase();
+
+      await registerUser.execute({ companyId: newCompany.id });
+
+      return "Solicitação recebida";
     }
 
     throw new InternalError("Houve um erro", 500);
