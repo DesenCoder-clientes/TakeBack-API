@@ -10,7 +10,7 @@ import PublicRoutes from "./routes/PublicRoutes";
 import SupportRoutes from "./routes/SupportRoutes";
 import ConsumerRoutes from "./routes/ConsumerRoutes";
 import CompanyRoutes from "./routes/CompanyRoutes";
-import AdminRoutes from "./routes/AdminRoutes";
+import ManagerRoutes from "./routes/ManagerRoutes";
 import { InternalError } from "./config/GenerateErros";
 
 const app = express();
@@ -25,7 +25,7 @@ app.use("/public", PublicRoutes);
 app.use("/support", SupportRoutes);
 app.use("/consumer", ConsumerRoutes);
 app.use("/company", CompanyRoutes);
-app.use("/admin", AdminRoutes);
+app.use("/manager", ManagerRoutes);
 
 app.use((request: Request, response: Response, next: NextFunction) => {
   response.status(404).json({ message: "Endpoint inexistente" });
