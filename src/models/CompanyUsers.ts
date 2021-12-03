@@ -3,11 +3,13 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
 import { Companies } from "./Company";
+import { CompanyUserTypes } from "./CompanyUserTypes";
 
 @Entity()
 export class CompanyUsers {
@@ -27,6 +29,9 @@ export class CompanyUsers {
 
   @ManyToOne(() => Companies, () => CompanyUsers)
   company: Companies;
+
+  @OneToMany(() => CompanyUserTypes, () => CompanyUsers)
+  userType: CompanyUserTypes;
 
   @CreateDateColumn()
   createdAt: Date;

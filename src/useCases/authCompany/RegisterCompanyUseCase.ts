@@ -107,10 +107,6 @@ class RegisterCompanyUseCase {
     });
 
     if (newCompany) {
-      const registerUser = new RegisterUserUseCase();
-
-      await registerUser.execute({ companyId: newCompany.id });
-
       return "Solicitação recebida";
     }
 
