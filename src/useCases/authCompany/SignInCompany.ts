@@ -13,6 +13,10 @@ interface Props {
 
 class SignInCompany {
   async signIn({ registeredNumber, user, password }: Props) {
+    if (!registeredNumber || !user || !password) {
+      return new InternalError("Dados incompletos", 400);
+    }
+
     const company = await getRepository(Companies).findOne({
       where: { registeredNumber },
     });
