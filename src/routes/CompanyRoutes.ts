@@ -5,11 +5,12 @@ import * as Cashback from "../controllers/company/CashbackController";
 
 import { AuthController } from "../controllers/company/Auth";
 
-const Auth = new AuthController();
+const auth = new AuthController();
 
 const routes = Router();
 
-routes.post("/sign-up", Auth.registerNewCompany);
+routes.post("/sign-up", auth.registerNewCompany);
+routes.post("/sign-in", auth.signUserCompany);
 
 routes.get("/find-transaction-utils", Data.findTransactionUtils);
 routes.post("/new-cashback", Cashback.newCashback);
