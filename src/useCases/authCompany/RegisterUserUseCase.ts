@@ -18,11 +18,11 @@ class RegisterUserUseCase {
   async execute({ companyId, name, userTypeId, password }: Props) {
     const company = await getRepository(Companies).findOne(companyId);
 
-    if (userTypeId && name && password) {
-      const userType = await getRepository(CompanyUserTypes).findOne(
-        userTypeId
-      );
+    if (!company) {
+      return new InternalError("Empresa não localizada", 404);
+    }
 
+    if (userTypeId && name && password) {
       const companyUser = await getRepository(CompanyUsers).find({
         where: { name, company },
       });
@@ -30,6 +30,10 @@ class RegisterUserUseCase {
       if (companyUser) {
         return new InternalError("Usuário já cadastrado", 400);
       }
+
+      const userType = await getRepository(CompanyUserTypes).findOne(
+        userTypeId
+      );
 
       const passwordEncrypted = bcrypt.hashSync(password, 10);
 

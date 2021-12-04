@@ -39,13 +39,4 @@ class AuthController {
   }
 }
 
-// const registerUser = new RegisterUserUseCase();
-
-// await registerUser.execute({
-//   companyId: newCompany.id,
-//   name: "Gerente",
-//   type: "Administrador",
-//   password: "123456",
-// });
-
 export { AuthController };

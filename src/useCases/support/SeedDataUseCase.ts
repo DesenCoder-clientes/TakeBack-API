@@ -6,11 +6,13 @@ import { City } from "../../models/City";
 import { TransactionTypes } from "../../models/TransactionType";
 import { TransactionStatus } from "../../models/TransactionStatus";
 import { CompanyUserTypes } from "../../models/CompanyUserTypes";
+import { CompanyStatus } from "../../models/CompanyStatus";
 
 import { StatesSeed } from "../../database/seeds/states.seed";
 import { TransactionTypesSeed } from "../../database/seeds/transactionTypes.seed";
 import { TransactionStatusSeed } from "../../database/seeds/transactionStatus.seed";
 import { CompanyUserTypesSeed } from "../../database/seeds/companyUserTypes.seed";
+import { CompanyStatusSeed } from "../../database/seeds/companyStatus.seed";
 
 class GenerateSeedData {
   async execute() {
@@ -69,6 +71,14 @@ class GenerateSeedData {
 
     if (generatedUserTypes.length === 0) {
       return new InternalError("Erro ao gerar os tipos de usuários", 400);
+    }
+
+    // Gerando os Status das Empresas Parceiras
+    const generatedCompanyStatus = await getRepository(CompanyStatus).save(
+      CompanyStatusSeed
+    );
+    if (generatedCompanyStatus.length === 0) {
+      return new InternalError("Erro ao gerar os status das empresas", 400);
     }
 
     return "Dados semeados";

@@ -9,6 +9,7 @@ import { State } from "../../models/State";
 import { apiCorreiosResponseType } from "../../types/ApiCorreiosResponse";
 
 import { RegisterUserUseCase } from "./RegisterUserUseCase";
+import { CompanyStatus } from "../../models/CompanyStatus";
 
 interface Props {
   corporateName: string;
@@ -50,6 +51,12 @@ class RegisterCompanyUseCase {
 
     if (company) {
       throw new InternalError("CNPJ já cadastrado", 302);
+    }
+
+    const localizedIndustry = await getRepository(Industries).findOne(industry);
+
+    if (!localizedIndustry) {
+      throw new InternalError("Ramo de atividade não encontrado", 404);
     }
 
     const city = await getRepository(City).findOne({
@@ -94,7 +101,9 @@ class RegisterCompanyUseCase {
       });
     }
 
-    const localizedIndustry = await getRepository(Industries).findOne(industry);
+    const companyStatus = await getRepository(CompanyStatus).findOne({
+      where: { description: "Bloqueado" },
+    });
 
     const newCompany = await getRepository(Companies).save({
       corporateName,
@@ -104,6 +113,7 @@ class RegisterCompanyUseCase {
       phone,
       address: address ? address : newAddress,
       industry: localizedIndustry,
+      status: companyStatus,
     });
 
     if (newCompany) {

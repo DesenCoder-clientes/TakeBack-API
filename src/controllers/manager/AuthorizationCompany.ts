@@ -6,7 +6,7 @@ interface Props {
 }
 
 class AuthorizationCompanyController {
-  async authorizeCompany(request: Request, response: Response) {
+  async toggleCompanyStatus(request: Request, response: Response) {
     return response.status(200);
   }
 
