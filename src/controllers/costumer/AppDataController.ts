@@ -11,7 +11,7 @@ export const findAppData = async (request: Request, response: Response) => {
 
     const companies = await getRepository(Companies).find({
       select: ["id", "fantasyName", "createdAt"],
-      relations: ["category"],
+      relations: ["industry"],
       take: 20,
       order: { createdAt: "ASC" },
     });
@@ -49,7 +49,7 @@ export const findCompanies = async (request: Request, response: Response) => {
 
     const companies = await getRepository(Companies).find({
       select: ["id", "fantasyName", "createdAt"],
-      relations: ["category"],
+      relations: ["industry"],
       take: parseInt(limit),
       skip: parseInt(offset) * parseInt(limit),
       order: { createdAt: "ASC" },

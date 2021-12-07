@@ -118,7 +118,7 @@ export const registerSignature = async (
     const consumerID = request["tokenPayload"].id;
     const { newSignature }: ConsumerRequestToRegisterSignature = request.body;
 
-    if (!newSignature || newSignature.length != 6) {
+    if (!newSignature || newSignature.length != 4) {
       return response.status(400).json({ message: "Dados não informados" });
     }
 
@@ -151,9 +151,9 @@ export const updateSignature = async (request: Request, response: Response) => {
 
     if (
       !newSignature ||
-      newSignature.length != 6 ||
+      newSignature.length != 4 ||
       !signature ||
-      signature.length != 6
+      signature.length != 4
     ) {
       return response.status(400).json({ message: "Dados não informados" });
     }

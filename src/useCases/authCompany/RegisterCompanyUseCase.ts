@@ -8,7 +8,6 @@ import { CompaniesAddress } from "../../models/CompanyAddress";
 import { State } from "../../models/State";
 import { apiCorreiosResponseType } from "../../types/ApiCorreiosResponse";
 
-import { RegisterUserUseCase } from "./RegisterUserUseCase";
 import { CompanyStatus } from "../../models/CompanyStatus";
 
 interface Props {

@@ -14,7 +14,7 @@ interface Props {
 class SignInCompany {
   async signIn({ registeredNumber, user, password }: Props) {
     if (!registeredNumber || !user || !password) {
-      return new InternalError("Dados incompletos", 400);
+      throw new InternalError("Dados incompletos", 400);
     }
 
     const company = await getRepository(Companies).findOne({
@@ -22,7 +22,7 @@ class SignInCompany {
     });
 
     if (!company) {
-      return new InternalError("Empresa não localizada", 404);
+      throw new InternalError("Erro ao realizar login", 400);
     }
 
     const companyUser = await getRepository(CompanyUsers).findOne({
@@ -30,10 +30,14 @@ class SignInCompany {
       select: ["password"],
     });
 
+    if (!companyUser) {
+      throw new InternalError("Erro ao realizar login", 400);
+    }
+
     const passwordMatch = await bcrypt.compare(password, companyUser.password);
 
     if (!passwordMatch) {
-      return new InternalError("Erro ao realizar login", 400);
+      throw new InternalError("Erro ao realizar login", 400);
     }
 
     const token = generateToken(
