@@ -27,7 +27,8 @@ class SignInCompany {
 
     const companyUser = await getRepository(CompanyUsers).findOne({
       where: { company, name: user },
-      select: ["password"],
+      select: ["id", "userType", "password"],
+      relations: ["userType"],
     });
 
     if (!companyUser) {
@@ -41,12 +42,15 @@ class SignInCompany {
     }
 
     const token = generateToken(
-      { companyId: company.id, userId: companyUser.id },
+      {
+        companyId: company.id,
+        userId: companyUser.id,
+      },
       process.env.JWT_PRIVATE_KEY,
       parseInt(process.env.JWT_EXPIRES_IN)
     );
 
-    return token;
+    return { token, isManager: companyUser.userType.isManager };
   }
 }
 

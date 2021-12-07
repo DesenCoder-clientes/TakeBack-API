@@ -60,7 +60,7 @@ class RegisterUserUseCase {
     }
 
     const userType = await getRepository(CompanyUserTypes).findOne({
-      where: { description: "Administrativo" },
+      where: { description: "Administrador" },
     });
 
     const newPassword = generateRandomNumber(100000, 999999);

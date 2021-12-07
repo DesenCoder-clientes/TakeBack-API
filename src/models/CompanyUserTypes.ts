@@ -2,7 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -19,8 +19,14 @@ export class CompanyUserTypes {
   })
   description: string;
 
-  @ManyToOne(() => CompanyUsers, () => CompanyUserTypes)
-  users: CompanyUsers[];
+  @Column({
+    nullable: false,
+    default: false,
+  })
+  isManager: boolean;
+
+  @OneToMany(() => CompanyUsers, () => CompanyUserTypes)
+  users: CompanyUsers;
 
   @CreateDateColumn()
   createdAt: Date;

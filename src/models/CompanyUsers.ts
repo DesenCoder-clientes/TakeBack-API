@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -30,7 +29,7 @@ export class CompanyUsers {
   @ManyToOne(() => Companies, () => CompanyUsers)
   company: Companies;
 
-  @OneToMany(() => CompanyUserTypes, () => CompanyUsers)
+  @ManyToOne(() => CompanyUserTypes, () => CompanyUsers)
   userType: CompanyUserTypes;
 
   @CreateDateColumn()
