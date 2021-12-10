@@ -15,6 +15,7 @@ import { Industries } from "./Industry";
 import { Transactions } from "./Transaction";
 import { CompanyUsers } from "./CompanyUsers";
 import { CompanyStatus } from "./CompanyStatus";
+import { CompanyPaymentMethods } from "./CompanyPaymentMethod";
 
 @Entity()
 export class Companies {
@@ -85,6 +86,9 @@ export class Companies {
 
   @ManyToOne(() => CompanyStatus, () => Companies)
   status: CompanyStatus;
+
+  @OneToMany(() => CompanyPaymentMethods, () => Companies)
+  paymentMethod: CompanyPaymentMethods;
 
   @CreateDateColumn()
   createdAt: Date;
