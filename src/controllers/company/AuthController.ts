@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
+
 import { RegisterCompanyUseCase } from "../../useCases/authCompany/RegisterCompanyUseCase";
-import { SignInCompany } from "../../useCases/authCompany/SignInCompany";
+import { SignInCompanyUseCase } from "../../useCases/authCompany/SignInCompanyUseCase";
+import { VerifyTokenUseCase } from "../../useCases/authCompany/VerifyTokenUseCase";
 
 interface RegisterCompanyDataProps {
   corporateName: string;
@@ -48,13 +50,23 @@ class AuthController {
   async signUserCompany(request: Request, response: Response) {
     const { password, registeredNumber, user }: LoginProps = request.body;
 
-    const signInCompany = new SignInCompany();
+    const signInCompany = new SignInCompanyUseCase();
 
     const result = await signInCompany.signIn({
       password,
       registeredNumber,
       user,
     });
+
+    return response.status(200).json(result);
+  }
+
+  async verifyToken(request: Request, response: Response) {
+    const token = request.headers.authorization;
+
+    const verifyToken = new VerifyTokenUseCase();
+
+    const result = await verifyToken.verifyIfTokenIsValid({ token });
 
     return response.status(200).json(result);
   }

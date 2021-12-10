@@ -11,6 +11,7 @@ import { TransactionTypes } from "./TransactionType";
 import { TransactionStatus } from "./TransactionStatus";
 import { Consumers } from "./Consumer";
 import { Companies } from "./Company";
+import { CompanyUsers } from "./CompanyUsers";
 
 @Entity()
 export class Transactions {
@@ -62,6 +63,9 @@ export class Transactions {
 
   @ManyToOne(() => Companies, () => Transactions)
   company: Companies;
+
+  @ManyToOne(() => CompanyUsers, () => Transactions)
+  companyUser: CompanyUsers;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -3,12 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
 import { Companies } from "./Company";
 import { CompanyUserTypes } from "./CompanyUserTypes";
+import { Transactions } from "./Transaction";
 
 @Entity()
 export class CompanyUsers {
@@ -21,6 +23,11 @@ export class CompanyUsers {
   name: string;
 
   @Column({
+    nullable: true,
+  })
+  email: string;
+
+  @Column({
     nullable: false,
     select: false,
   })
@@ -31,6 +38,9 @@ export class CompanyUsers {
 
   @ManyToOne(() => CompanyUserTypes, () => CompanyUsers)
   userType: CompanyUserTypes;
+
+  @OneToMany(() => Transactions, () => CompanyUsers)
+  transactions: Transactions;
 
   @CreateDateColumn()
   createdAt: Date;

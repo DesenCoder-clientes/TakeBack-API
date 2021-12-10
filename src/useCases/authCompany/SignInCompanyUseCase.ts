@@ -11,7 +11,7 @@ interface Props {
   password: string;
 }
 
-class SignInCompany {
+class SignInCompanyUseCase {
   async signIn({ registeredNumber, user, password }: Props) {
     if (!registeredNumber || !user || !password) {
       throw new InternalError("Dados incompletos", 400);
@@ -45,6 +45,7 @@ class SignInCompany {
       {
         companyId: company.id,
         userId: companyUser.id,
+        isManager: companyUser.userType.isManager,
       },
       process.env.JWT_PRIVATE_KEY,
       parseInt(process.env.JWT_EXPIRES_IN)
@@ -54,4 +55,4 @@ class SignInCompany {
   }
 }
 
-export { SignInCompany };
+export { SignInCompanyUseCase };

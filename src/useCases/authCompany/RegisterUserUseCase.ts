@@ -71,6 +71,7 @@ class RegisterUserUseCase {
 
     const newUser = await getRepository(CompanyUsers).save({
       name: "Administrativo",
+      email: company.email,
       password: newPasswordEncrypted,
       company,
       userType,
