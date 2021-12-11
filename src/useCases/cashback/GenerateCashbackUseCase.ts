@@ -33,20 +33,28 @@ class GenerateCashbackUseCase {
     cashbackData: { costumer, method },
     code,
   }: Props) {
+    // Verificando se todos os dados foram informados
     if (!costumer.cpf || !costumer.value || method.length < 1) {
       throw new InternalError("Dados incompletos", 400);
     }
 
+    // Verificando se o cliente está cadastrado e ativo
     const consumer = await getRepository(Consumers).findOne({
       where: { cpf: costumer.cpf },
     });
 
     if (!consumer) {
-      throw new InternalError("Cliente não cadastrado", 400);
+      throw new InternalError("O cliente não possui cadastro", 400);
     }
 
+    if (consumer.deactivedAccount) {
+      throw new InternalError("O cliente não está ativo", 400);
+    }
+
+    // Removendo valores nulos informados no array de métodos de pagamento
     const methodsWithoutNullItems = method.filter((item) => item !== null);
 
+    // Verificando se foram informados métodos de pagamento duplicados
     const uniqueValue = methodsWithoutNullItems.filter(
       (elem, index, self) =>
         index === self.findIndex((item) => item.method === elem.method)
@@ -56,6 +64,7 @@ class GenerateCashbackUseCase {
       throw new InternalError("Há itens duplicados", 400);
     }
 
+    // Verificando se o método de pagamento TakeBack e seu códico de confirmação estão presentes
     const takebackMethod = methodsWithoutNullItems.filter(
       (item) => item.method === "1"
     );
@@ -66,21 +75,43 @@ class GenerateCashbackUseCase {
       }
     }
 
+    // Filtrando apenas os métodos de pagamento diferentes do método TakeBack
     const methodsWithoutTakebackMethod = methodsWithoutNullItems.filter(
       (item) => item.method !== "1"
     );
 
+    // Criando array com ID's dos métodos de pagamento diferentes do método TakeBack
     const methodsId = [];
     methodsWithoutTakebackMethod.map((method) => {
       methodsId.push(parseInt(method.method));
     });
 
-    const companyMethods = await getRepository(CompanyPaymentMethods).find({
+    // Buscando os métodos de pagamento a partir do array de ID's gerado
+    const paymentMethods = await getRepository(CompanyPaymentMethods).find({
       where: { id: In([...methodsId]) },
       relations: ["company", "paymentMethod"],
     });
 
-    console.log(companyMethods);
+    // Buscando os métodos de pagamento informados para injetar na tabela Transactions
+    const companyPaymentMethods = await getRepository(
+      CompanyPaymentMethods
+    ).find({
+      where: { id: In([...methodsId]) },
+    });
+
+    // Buscando a empresa para injetar na tabela Transactions
+    const company = await getRepository(Companies).findOne(companyId);
+
+    // const newCashback = await getRepository(Transactions).save({
+    //   consumer,
+    //   company,
+    //   paymentMethods: companyPaymentMethods,
+    //   value,
+    //   cashbackAmount,
+    //   salesFee,
+    //   transactionStatus,
+    //   transactionType,
+    // })
 
     return "ok";
   }
