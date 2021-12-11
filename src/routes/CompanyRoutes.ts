@@ -1,17 +1,18 @@
 import { Router } from "express";
 
 import * as Data from "../controllers/company/AppDataController";
-import * as Cashback from "../controllers/company/CashbackController";
 
 import { AuthMiddleware } from "../middlewares/companyMiddlewares/AuthMiddleware";
 
 import { AuthController } from "../controllers/company/AuthController";
 import { DashboardController } from "../controllers/company/DasboardController";
-import { PaymentMethodController } from "../controllers/manager/PaymentMethods";
+import { CashbackController } from "../controllers/company/CashbackController";
+import { PaymentMethodsController } from "../controllers/company/PaymentMethodsController";
 
 const auth = new AuthController();
 const dashboard = new DashboardController();
-const paymentMethod = new PaymentMethodController();
+const cashback = new CashbackController();
+const paymentMethod = new PaymentMethodsController();
 
 const routes = Router();
 
@@ -23,7 +24,7 @@ routes.use(AuthMiddleware);
 
 routes.get("/find-dashboard-data", dashboard.findDataToDashboard);
 routes.get("/find-transaction-utils", Data.findTransactionUtils);
-routes.post("/new-cashback", Cashback.newCashback);
-routes.get("/find-payment-methods", paymentMethod.findAllPaymentMethods);
+routes.post("/generate-cashback", cashback.generateCashback);
+routes.get("/find-payment-methods", paymentMethod.findAllCompanyMethods);
 
 export default routes;

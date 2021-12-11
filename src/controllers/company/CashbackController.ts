@@ -1,64 +1,38 @@
-import { getRepository } from "typeorm";
 import { Request, Response } from "express";
+import { GenerateCashbackUseCase } from "../../useCases/cashback/GenerateCashbackUseCase";
 
-import { Transactions } from "../../models/Transaction";
-import { TransactionStatus } from "../../models/TransactionStatus";
-import { TransactionTypes } from "../../models/TransactionType";
-import { Consumers } from "../../models/Consumer";
-import { Companies } from "../../models/Company";
+interface GenerateCashbackProps {
+  cashbackData: {
+    costumer: {
+      cpf: string;
+      value: string;
+    };
+    method: [
+      {
+        method: string;
+        value: string;
+      }
+    ];
+  };
+  code: string;
+}
 
-type RequestTypes = {
-  value: number;
-  consumerID: string;
-  companyID: string;
-};
+class CashbackController {
+  async generateCashback(request: Request, response: Response) {
+    const { companyId, userId } = request["tokenPayload"];
+    const { cashbackData, code }: GenerateCashbackProps = request.body;
 
-export const newCashback = async (request: Request, response: Response) => {
-  try {
-    const { consumerID, value, companyID }: RequestTypes = request.body;
+    const cashback = new GenerateCashbackUseCase();
 
-    if (!consumerID || !value) {
-      return response.status(400).json({ message: "Informações incompletas" });
-    }
-
-    const consumer = await getRepository(Consumers).findOne(consumerID, {
-      select: ["id", "blockedBalance"],
+    const result = await cashback.generate({
+      cashbackData,
+      code,
+      companyId,
+      userId,
     });
 
-    const company = await getRepository(Companies).findOne(companyID, {
-      select: ["id"],
-    });
-
-    const transactionStatus = await getRepository(TransactionStatus).findOne({
-      where: { description: "Pendente" },
-      select: ["id"],
-    });
-
-    const transactionType = await getRepository(TransactionTypes).findOne({
-      where: { description: "Ganho" },
-      select: ["id"],
-    });
-
-    if (!company || !transactionType || !consumer) {
-      return response.status(400).json({ message: "Algo está errado" });
-    }
-
-    await getRepository(Consumers).update(consumerID, {
-      blockedBalance: consumer.blockedBalance + value,
-    });
-
-    const newTransaction = await getRepository(Transactions).save({
-      consumer,
-      company,
-      transactionStatus,
-      transactionType,
-      value,
-      salesFee: 5,
-      cashbackAmount: 5,
-    });
-
-    return response.status(200).json(newTransaction);
-  } catch (error) {
-    return response.status(500).json(error);
+    return response.status(200).json(result);
   }
-};
+}
+
+export { CashbackController };

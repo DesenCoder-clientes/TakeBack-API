@@ -12,8 +12,8 @@ import { PaymentMethods } from "./PaymentMethod";
 
 @Entity()
 export class CompanyPaymentMethods {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+  @PrimaryGeneratedColumn("increment")
+  id: number;
 
   @Column()
   companyId: string;
