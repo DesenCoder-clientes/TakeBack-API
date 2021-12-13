@@ -92,6 +92,19 @@ class GenerateCashbackUseCase {
       relations: ["company", "paymentMethod"],
     });
 
+    // Calculando o valor do cashback
+    let cashbackAmount = 0;
+    paymentMethods.map((databaseMethod) => {
+      method.map((informedMethod) => {
+        if (databaseMethod.id === parseInt(informedMethod.method)) {
+          cashbackAmount =
+            cashbackAmount +
+            databaseMethod.cashbackPercentage *
+              parseFloat(informedMethod.value);
+        }
+      });
+    });
+
     // Buscando os métodos de pagamento informados para injetar na tabela Transactions
     const companyPaymentMethods = await getRepository(
       CompanyPaymentMethods
@@ -101,6 +114,17 @@ class GenerateCashbackUseCase {
 
     // Buscando a empresa para injetar na tabela Transactions
     const company = await getRepository(Companies).findOne(companyId);
+
+    // Buscando status e tipos de transações para injetar na tabela Transactions
+    const transactionStatus = await getRepository(TransactionStatus).findOne({
+      where: { description: "Pendente" },
+      select: ["id"],
+    });
+
+    const transactionType = await getRepository(TransactionTypes).findOne({
+      where: { description: "Ganho" },
+      select: ["id"],
+    });
 
     // const newCashback = await getRepository(Transactions).save({
     //   consumer,
@@ -113,7 +137,7 @@ class GenerateCashbackUseCase {
     //   transactionType,
     // })
 
-    return "ok";
+    return cashbackAmount;
   }
 }
 
