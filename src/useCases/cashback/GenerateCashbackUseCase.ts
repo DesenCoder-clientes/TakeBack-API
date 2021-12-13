@@ -126,17 +126,6 @@ class GenerateCashbackUseCase {
       select: ["id"],
     });
 
-    // const newCashback = await getRepository(Transactions).save({
-    //   consumer,
-    //   company,
-    //   paymentMethods: companyPaymentMethods,
-    //   value,
-    //   cashbackAmount,
-    //   salesFee,
-    //   transactionStatus,
-    //   transactionType,
-    // })
-
     return cashbackAmount;
   }
 }

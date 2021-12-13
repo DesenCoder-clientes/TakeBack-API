@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 
 import { CompanyPaymentMethods } from "./CompanyPaymentMethod";
+import { TransactionPaymentMethods } from "./TransactionPaymentMethod";
 
 @Entity()
 export class PaymentMethods {
@@ -19,6 +20,9 @@ export class PaymentMethods {
 
   @OneToMany(() => CompanyPaymentMethods, () => PaymentMethods)
   companyPaymentMethod: CompanyPaymentMethods;
+
+  @OneToMany(() => TransactionPaymentMethods, () => PaymentMethods)
+  transactionPaymentMethod: TransactionPaymentMethods;
 
   @CreateDateColumn()
   createdAt: Date;

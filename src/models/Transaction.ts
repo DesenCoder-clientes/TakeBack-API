@@ -5,6 +5,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -14,7 +15,7 @@ import { TransactionStatus } from "./TransactionStatus";
 import { Consumers } from "./Consumer";
 import { Companies } from "./Company";
 import { CompanyUsers } from "./CompanyUsers";
-import { CompanyPaymentMethods } from "./CompanyPaymentMethod";
+import { TransactionPaymentMethods } from "./TransactionPaymentMethod";
 
 @Entity()
 export class Transactions {
@@ -70,9 +71,8 @@ export class Transactions {
   @ManyToOne(() => CompanyUsers, () => Transactions)
   companyUser: CompanyUsers;
 
-  @ManyToMany(() => CompanyPaymentMethods)
-  @JoinTable()
-  paymentMethods: CompanyPaymentMethods;
+  @OneToMany(() => TransactionPaymentMethods, () => Transactions)
+  transactionPaymentMethod: TransactionPaymentMethods;
 
   @CreateDateColumn()
   createdAt: Date;
