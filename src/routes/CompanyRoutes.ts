@@ -25,6 +25,10 @@ routes.use(AuthMiddleware);
 routes.get("/find-dashboard-data", dashboard.findDataToDashboard);
 routes.get("/find-transaction-utils", Data.findTransactionUtils);
 routes.post("/generate-cashback", cashback.generateCashback);
+routes.post(
+  "/generate-cashback/:code",
+  cashback.generateCashbackWithTakebackPaymentMethod
+);
 routes.get("/find-payment-methods", paymentMethod.findAllCompanyMethods);
 
 export default routes;

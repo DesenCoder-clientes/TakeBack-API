@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { GenerateCashbackUseCase } from "../../useCases/cashback/GenerateCashbackUseCase";
+import { GenerateCashbackWithTakebackPaymentMethodUseCase } from "../../useCases/cashback/GenerateCashbackWithTakebackPaymentMethodUseCase";
 
 interface GenerateCashbackProps {
   cashbackData: {
@@ -14,21 +15,39 @@ interface GenerateCashbackProps {
       }
     ];
   };
-  code: string;
 }
 
 class CashbackController {
   async generateCashback(request: Request, response: Response) {
     const { companyId, userId } = request["tokenPayload"];
-    const { cashbackData, code }: GenerateCashbackProps = request.body;
+    const { cashbackData }: GenerateCashbackProps = request.body;
 
     const cashback = new GenerateCashbackUseCase();
 
     const result = await cashback.generate({
       cashbackData,
-      code,
       companyId,
       userId,
+    });
+
+    return response.status(200).json(result);
+  }
+
+  async generateCashbackWithTakebackPaymentMethod(
+    request: Request,
+    response: Response
+  ) {
+    const { companyId, userId } = request["tokenPayload"];
+    const { cashbackData }: GenerateCashbackProps = request.body;
+    const code = request.params.code;
+
+    const cashback = new GenerateCashbackWithTakebackPaymentMethodUseCase();
+
+    const result = await cashback.generate({
+      cashbackData,
+      companyId,
+      userId,
+      code,
     });
 
     return response.status(200).json(result);
