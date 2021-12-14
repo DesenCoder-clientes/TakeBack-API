@@ -13,7 +13,7 @@ class FindCompanyPaymentMethodsForCashierUseCase {
     }
 
     const methods = await getRepository(CompanyPaymentMethods).find({
-      where: { companyId },
+      where: { companyId, isActive: true },
       relations: ["paymentMethod"],
       order: { createdAt: "DESC" },
     });

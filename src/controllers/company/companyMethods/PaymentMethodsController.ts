@@ -3,8 +3,9 @@ import { Request, Response } from "express";
 import { FindCompanyPaymentMethodsUseCase } from "./FindCompanyPaymentMethodsUseCase";
 import { FindCompanyPaymentMethodsForCashierUseCase } from "./FindCompanyPaymentMethodsForCashierUseCase";
 import { UpdateCompanyPaymentMethodsUseCase } from "./UpdateCompanyPaymentMethodsUseCase";
+import { RegisterCompanyPaymentMethodsUseCase } from "./RegisterCompanyPaymentMethodsUseCase";
 
-interface UpdateProps {
+interface Props {
   paymentId: number;
   cashbackPercentage: number;
   isActive: boolean;
@@ -34,8 +35,7 @@ class PaymentMethodsController {
   async updateCompanyMethod(request: Request, response: Response) {
     const { companyId } = request["tokenPayload"];
 
-    const { cashbackPercentage, isActive, paymentId }: UpdateProps =
-      request.body;
+    const { cashbackPercentage, isActive, paymentId }: Props = request.body;
 
     const updateCompanyMethod = new UpdateCompanyPaymentMethodsUseCase();
 
@@ -43,6 +43,22 @@ class PaymentMethodsController {
       cashbackPercentage,
       companyId,
       isActive,
+      paymentId,
+    });
+
+    return response.status(200).json(result);
+  }
+
+  async registerCompanyMethod(request: Request, response: Response) {
+    const { companyId } = request["tokenPayload"];
+
+    const { cashbackPercentage, paymentId }: Props = request.body;
+
+    const registerCompanyMethod = new RegisterCompanyPaymentMethodsUseCase();
+
+    const result = await registerCompanyMethod.execute({
+      cashbackPercentage,
+      companyId,
       paymentId,
     });
 

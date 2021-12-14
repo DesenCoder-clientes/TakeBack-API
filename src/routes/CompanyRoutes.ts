@@ -41,5 +41,6 @@ routes.put("/update-company-user", companyUser.updateCompanyUser);
 routes.get("/find-company-data", companyData.findCompanyData);
 routes.put("/update-company-data", companyData.updateCompanyData);
 routes.put("/update-company-method", paymentMethod.updateCompanyMethod);
+routes.post("/register-company-method", paymentMethod.registerCompanyMethod);
 
 export default routes;
