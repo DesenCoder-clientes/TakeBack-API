@@ -27,6 +27,11 @@ export class CompanyPaymentMethods {
   })
   cashbackPercentage: number;
 
+  @Column({
+    default: false,
+  })
+  isActive: boolean;
+
   @ManyToOne(() => Companies, () => CompanyPaymentMethods)
   company: Companies;
 

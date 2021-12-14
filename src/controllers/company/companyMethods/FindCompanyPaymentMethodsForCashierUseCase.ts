@@ -1,13 +1,12 @@
 import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { CompanyPaymentMethods } from "../../../models/CompanyPaymentMethod";
-import { PaymentMethods } from "../../../models/PaymentMethod";
 
 interface Props {
   companyId: string;
 }
 
-class FindCompanyPaymentMethodsUseCase {
+class FindCompanyPaymentMethodsForCashierUseCase {
   async execute({ companyId }: Props) {
     if (!companyId) {
       throw new InternalError("Id da empresa não informado", 400);
@@ -19,10 +18,17 @@ class FindCompanyPaymentMethodsUseCase {
       order: { createdAt: "DESC" },
     });
 
-    const allMethods = await getRepository(PaymentMethods).find();
+    const result = [];
 
-    return { methods, allMethods };
+    methods.map((method) => {
+      result.push({
+        id: method.id,
+        description: method.paymentMethod.description,
+      });
+    });
+
+    return result;
   }
 }
 
-export { FindCompanyPaymentMethodsUseCase };
+export { FindCompanyPaymentMethodsForCashierUseCase };
