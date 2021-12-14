@@ -27,12 +27,16 @@ class SignInCompanyUseCase {
 
     const companyUser = await getRepository(CompanyUsers).findOne({
       where: { company, name: user },
-      select: ["id", "userType", "password"],
+      select: ["id", "userType", "password", "isActive"],
       relations: ["userType"],
     });
 
     if (!companyUser) {
       throw new InternalError("Erro ao realizar login", 400);
+    }
+
+    if (!companyUser.isActive) {
+      throw new InternalError("Usuário não autorizado", 400);
     }
 
     const passwordMatch = await bcrypt.compare(password, companyUser.password);

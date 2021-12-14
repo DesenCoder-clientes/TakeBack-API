@@ -8,11 +8,13 @@ import { AuthController } from "../controllers/company/AuthController";
 import { DashboardController } from "../controllers/company/DasboardController";
 import { CashbackController } from "../controllers/company/CashbackController";
 import { PaymentMethodsController } from "../controllers/company/PaymentMethodsController";
+import { CompanyUserController } from "../controllers/company/CompanyUserController";
 
 const auth = new AuthController();
 const dashboard = new DashboardController();
 const cashback = new CashbackController();
 const paymentMethod = new PaymentMethodsController();
+const companyUser = new CompanyUserController();
 
 const routes = Router();
 
@@ -30,5 +32,8 @@ routes.post(
   cashback.generateCashbackWithTakebackPaymentMethod
 );
 routes.get("/find-payment-methods", paymentMethod.findAllCompanyMethods);
+routes.get("/find-company-users", companyUser.findCompanyUsers);
+routes.post("/register-company-user", companyUser.registerCompanyUser);
+routes.put("/update-company-user", companyUser.updateCompanyUser);
 
 export default routes;

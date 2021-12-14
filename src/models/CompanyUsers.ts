@@ -33,6 +33,12 @@ export class CompanyUsers {
   })
   password: string;
 
+  @Column({
+    nullable: false,
+    default: true,
+  })
+  isActive: boolean;
+
   @ManyToOne(() => Companies, () => CompanyUsers)
   company: Companies;
 
