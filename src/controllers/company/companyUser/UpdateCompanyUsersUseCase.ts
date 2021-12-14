@@ -14,6 +14,10 @@ interface Props {
 
 class UpdateCompanyUsersUseCase {
   async execute({ companyId, userId, userTypeId, name, isActive }: Props) {
+    if (!companyId || !userId || !userTypeId || !name) {
+      throw new InternalError("Dados incompletos", 400);
+    }
+
     const company = await getRepository(Companies).findOne(companyId);
 
     if (!company) {

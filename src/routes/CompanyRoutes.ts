@@ -35,5 +35,6 @@ routes.get("/find-company-users", companyUser.findCompanyUsers);
 routes.post("/register-company-user", companyUser.registerCompanyUser);
 routes.put("/update-company-user", companyUser.updateCompanyUser);
 routes.get("/find-company-data", companyData.findCompanyData);
+routes.put("/update-company-data", companyData.updateCompanyData);
 
 export default routes;
