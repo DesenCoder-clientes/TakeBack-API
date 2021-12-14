@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 
-import { GenerateSeedData } from "../../useCases/support/SeedDataUseCase";
+import { GenerateSeedData } from "./SeedDataUseCase";
 
-class SeedController {
+class MagicController {
   async generateAllSeeds(request: Request, response: Response) {
     const generateSeeds = new GenerateSeedData();
 
@@ -12,4 +12,4 @@ class SeedController {
   }
 }
 
-export { SeedController };
+export { MagicController };

@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/public", PublicRoutes);
-app.use("/support", SupportRoutes);
+app.use("/magic", SupportRoutes);
 app.use("/consumer", ConsumerRoutes);
 app.use("/company", CompanyRoutes);
 app.use("/manager", ManagerRoutes);

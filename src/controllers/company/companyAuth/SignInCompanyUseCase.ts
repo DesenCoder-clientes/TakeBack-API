@@ -1,9 +1,9 @@
 import { getRepository } from "typeorm";
 import * as bcrypt from "bcrypt";
-import { InternalError } from "../../config/GenerateErros";
-import { Companies } from "../../models/Company";
-import { CompanyUsers } from "../../models/CompanyUsers";
-import { generateToken } from "../../config/JWT";
+import { InternalError } from "../../../config/GenerateErros";
+import { Companies } from "../../../models/Company";
+import { CompanyUsers } from "../../../models/CompanyUsers";
+import { generateToken } from "../../../config/JWT";
 
 interface Props {
   registeredNumber: string;
@@ -12,7 +12,7 @@ interface Props {
 }
 
 class SignInCompanyUseCase {
-  async signIn({ registeredNumber, user, password }: Props) {
+  async execute({ registeredNumber, user, password }: Props) {
     if (!registeredNumber || !user || !password) {
       throw new InternalError("Dados incompletos", 400);
     }

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 
-import { FindCompanyUsersUseCase } from "../../useCases/companyUsers/FindCompanyUsersUseCase";
-import { RegisterCompanyUsersUseCase } from "../../useCases/companyUsers/RegisterCompanyUsersUseCase";
-import { UpdateCompanyUsersUseCase } from "../../useCases/companyUsers/UpdateCompanyUsersUseCase";
+import { FindCompanyUsersUseCase } from "./FindCompanyUsersUseCase";
+import { RegisterCompanyUsersUseCase } from "./RegisterCompanyUsersUseCase";
+import { UpdateCompanyUsersUseCase } from "./UpdateCompanyUsersUseCase";
 
 interface RegisterProps {
   name: string;
@@ -23,7 +23,7 @@ class CompanyUserController {
 
     const findCompanyUsers = new FindCompanyUsersUseCase();
 
-    const result = await findCompanyUsers.find({ companyId });
+    const result = await findCompanyUsers.execute({ companyId });
 
     return response.status(200).json(result);
   }

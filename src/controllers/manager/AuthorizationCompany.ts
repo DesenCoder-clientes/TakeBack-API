@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { RegisterUserUseCase } from "../../useCases/authCompany/RegisterUserUseCase";
+import { RegisterUserUseCase } from "../company/companyAuth/RegisterUserUseCase";
 
 interface Props {
   companyId: string;

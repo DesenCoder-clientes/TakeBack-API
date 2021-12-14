@@ -1,12 +1,12 @@
 import * as jwt from "jsonwebtoken";
-import { InternalError } from "../../config/GenerateErros";
+import { InternalError } from "../../../config/GenerateErros";
 
 interface Props {
   token: string;
 }
 
 class VerifyTokenUseCase {
-  async verifyIfTokenIsValid({ token }: Props) {
+  async execute({ token }: Props) {
     if (!token) {
       throw new InternalError("Token inválido", 498);
     }

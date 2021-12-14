@@ -1,11 +1,11 @@
 import { Router } from "express";
 
-import { SeedController } from "../controllers/support/Seed";
+import { MagicController } from "../controllers/support/MagicController";
 
-const seed = new SeedController();
+const magic = new MagicController();
 
 const routes = Router();
 
-routes.get("/seed", seed.generateAllSeeds);
+routes.get("/seed", magic.generateAllSeeds);
 
 export default routes;

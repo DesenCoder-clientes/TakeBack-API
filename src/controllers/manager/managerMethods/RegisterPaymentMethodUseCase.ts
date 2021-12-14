@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
-import { InternalError } from "../../config/GenerateErros";
-import { PaymentMethods } from "../../models/PaymentMethod";
+import { InternalError } from "../../../config/GenerateErros";
+import { PaymentMethods } from "../../../models/PaymentMethod";
 
 interface Props {
   description: string;

@@ -1,16 +1,15 @@
 import { getRepository } from "typeorm";
-import { InternalError } from "../../config/GenerateErros";
-import { Companies } from "../../models/Company";
-import { CompanyUsers } from "../../models/CompanyUsers";
-import { CompanyUserTypes } from "../../models/CompanyUserTypes";
+import { Companies } from "../../../models/Company";
+import { CompanyUsers } from "../../../models/CompanyUsers";
+import { CompanyUserTypes } from "../../../models/CompanyUserTypes";
 
 interface Props {
   companyId: string;
   userId: string;
 }
 
-class FindDashboardDataToCompaniesUseCase {
-  async find({ companyId, userId }: Props) {
+class FindDashboardReportsUseCase {
+  async execute({ companyId, userId }: Props) {
     const company = await getRepository(Companies).findOne(companyId);
 
     const userType = await getRepository(CompanyUserTypes).findOne({
@@ -25,4 +24,4 @@ class FindDashboardDataToCompaniesUseCase {
   }
 }
 
-export { FindDashboardDataToCompaniesUseCase };
+export { FindDashboardReportsUseCase };

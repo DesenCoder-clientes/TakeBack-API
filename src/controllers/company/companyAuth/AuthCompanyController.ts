@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 
-import { RegisterCompanyUseCase } from "../../useCases/authCompany/RegisterCompanyUseCase";
-import { SignInCompanyUseCase } from "../../useCases/authCompany/SignInCompanyUseCase";
-import { VerifyTokenUseCase } from "../../useCases/authCompany/VerifyTokenUseCase";
+import { RegisterCompanyUseCase } from "./RegisterCompanyUseCase";
+import { SignInCompanyUseCase } from "./SignInCompanyUseCase";
+import { VerifyTokenUseCase } from "./VerifyTokenUseCase";
 
 interface RegisterCompanyDataProps {
   corporateName: string;
@@ -20,7 +20,7 @@ interface LoginProps {
   password: string;
 }
 
-class AuthController {
+class AuthCompanyController {
   async registerNewCompany(request: Request, response: Response) {
     const {
       industry,
@@ -52,7 +52,7 @@ class AuthController {
 
     const signInCompany = new SignInCompanyUseCase();
 
-    const result = await signInCompany.signIn({
+    const result = await signInCompany.execute({
       password,
       registeredNumber,
       user,
@@ -66,10 +66,10 @@ class AuthController {
 
     const verifyToken = new VerifyTokenUseCase();
 
-    const result = await verifyToken.verifyIfTokenIsValid({ token });
+    const result = await verifyToken.execute({ token });
 
     return response.status(200).json(result);
   }
 }
 
-export { AuthController };
+export { AuthCompanyController };

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { GenerateCashbackUseCase } from "../../useCases/cashback/GenerateCashbackUseCase";
-import { GenerateCashbackWithTakebackPaymentMethodUseCase } from "../../useCases/cashback/GenerateCashbackWithTakebackPaymentMethodUseCase";
+import { GenerateCashbackUseCase } from "./GenerateCashbackUseCase";
+import { GenerateCashbackWithTakebackPaymentMethodUseCase } from "./GenerateCashbackWithTakebackPaymentMethodUseCase";
 
 interface GenerateCashbackProps {
   cashbackData: {
@@ -24,7 +24,7 @@ class CashbackController {
 
     const cashback = new GenerateCashbackUseCase();
 
-    const result = await cashback.generate({
+    const result = await cashback.execute({
       cashbackData,
       companyId,
       userId,
@@ -43,7 +43,7 @@ class CashbackController {
 
     const cashback = new GenerateCashbackWithTakebackPaymentMethodUseCase();
 
-    const result = await cashback.generate({
+    const result = await cashback.execute({
       cashbackData,
       companyId,
       userId,

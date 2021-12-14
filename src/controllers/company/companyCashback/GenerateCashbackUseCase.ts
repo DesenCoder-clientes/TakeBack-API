@@ -1,14 +1,14 @@
 import { getRepository, In } from "typeorm";
-import { InternalError } from "../../config/GenerateErros";
+import { InternalError } from "../../../config/GenerateErros";
 
-import { Companies } from "../../models/Company";
-import { CompanyPaymentMethods } from "../../models/CompanyPaymentMethod";
-import { CompanyUsers } from "../../models/CompanyUsers";
-import { Consumers } from "../../models/Consumer";
-import { Transactions } from "../../models/Transaction";
-import { TransactionPaymentMethods } from "../../models/TransactionPaymentMethod";
-import { TransactionStatus } from "../../models/TransactionStatus";
-import { TransactionTypes } from "../../models/TransactionType";
+import { Companies } from "../../../models/Company";
+import { CompanyPaymentMethods } from "../../../models/CompanyPaymentMethod";
+import { CompanyUsers } from "../../../models/CompanyUsers";
+import { Consumers } from "../../../models/Consumer";
+import { Transactions } from "../../../models/Transaction";
+import { TransactionPaymentMethods } from "../../../models/TransactionPaymentMethod";
+import { TransactionStatus } from "../../../models/TransactionStatus";
+import { TransactionTypes } from "../../../models/TransactionType";
 
 interface Props {
   companyId: string;
@@ -28,7 +28,7 @@ interface Props {
 }
 
 class GenerateCashbackUseCase {
-  async generate({
+  async execute({
     companyId,
     userId,
     cashbackData: { costumer, method },

@@ -1,11 +1,11 @@
 import { Router } from "express";
 
-import { FindAllIndustriesController } from "../controllers/public/FindIndustries";
+import { PublicController } from "../controllers/public/PublicController";
 
-const findIndustries = new FindAllIndustriesController();
+const publicController = new PublicController();
 
 const routes = Router();
 
-routes.get("/find-industries", findIndustries.find);
+routes.get("/find-industries", publicController.findIndustries);
 
 export default routes;

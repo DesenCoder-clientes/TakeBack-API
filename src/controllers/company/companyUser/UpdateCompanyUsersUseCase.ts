@@ -1,8 +1,8 @@
 import { getRepository } from "typeorm";
-import { InternalError } from "../../config/GenerateErros";
-import { Companies } from "../../models/Company";
-import { CompanyUsers } from "../../models/CompanyUsers";
-import { CompanyUserTypes } from "../../models/CompanyUserTypes";
+import { InternalError } from "../../../config/GenerateErros";
+import { Companies } from "../../../models/Company";
+import { CompanyUsers } from "../../../models/CompanyUsers";
+import { CompanyUserTypes } from "../../../models/CompanyUserTypes";
 
 interface Props {
   companyId: string;
