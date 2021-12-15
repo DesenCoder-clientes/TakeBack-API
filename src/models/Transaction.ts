@@ -74,6 +74,13 @@ export class Transactions {
   @OneToMany(() => TransactionPaymentMethods, () => Transactions)
   transactionPaymentMethod: TransactionPaymentMethods;
 
+  @Column({
+    type: "date",
+    default: new Date(),
+    nullable: true,
+  })
+  dateAt: Date;
+
   @CreateDateColumn()
   createdAt: Date;
 
