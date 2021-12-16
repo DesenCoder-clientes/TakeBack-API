@@ -1,17 +1,27 @@
 import { Request, Response } from "express";
 import { FindAppDataUseCase } from "./FindAppDataUseCase";
 
-import { FindDashboardReportsUseCase } from "./FindDashboardReportsUseCase";
+import { ReportCashbackByPeriodUseCase } from "./ReportCashbackByPeriodUseCase";
+import { ReportCashbackByPaymentMethodUseCase } from "./ReportCashbackByPaymentMethodUseCase";
 
 class ReportsController {
   async dashboardReports(request: Request, response: Response) {
     const { companyId, userId } = request["tokenPayload"];
 
-    const dashboardReports = new FindDashboardReportsUseCase();
+    const cashbacksByPeriod = new ReportCashbackByPeriodUseCase();
+    const cashbacksByPaymentMethods =
+      new ReportCashbackByPaymentMethodUseCase();
 
-    const result = await dashboardReports.execute({ companyId, userId });
+    const report1 = await cashbacksByPeriod.execute({
+      companyId,
+      userId,
+    });
 
-    return response.status(200).json(result);
+    const report2 = await cashbacksByPaymentMethods.execute({
+      companyId,
+    });
+
+    return response.status(200).json({ report1, report2 });
   }
 
   async findAppData(request: Request, response: Response) {
