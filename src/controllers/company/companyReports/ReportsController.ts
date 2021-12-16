@@ -3,12 +3,14 @@ import { FindAppDataUseCase } from "./FindAppDataUseCase";
 
 import { ReportCashbackByPeriodUseCase } from "./ReportCashbackByPeriodUseCase";
 import { ReportCashbackByPaymentMethodUseCase } from "./ReportCashbackByPaymentMethodUseCase";
+import { ReportBillingByPeriodUseCase } from "./ReportBillingByPeriodUseCase";
 
 class ReportsController {
   async dashboardReports(request: Request, response: Response) {
     const { companyId, userId } = request["tokenPayload"];
 
     const cashbacksByPeriod = new ReportCashbackByPeriodUseCase();
+    const billingReport = new ReportBillingByPeriodUseCase();
     const cashbacksByPaymentMethods =
       new ReportCashbackByPaymentMethodUseCase();
 
@@ -21,7 +23,9 @@ class ReportsController {
       companyId,
     });
 
-    return response.status(200).json({ report1, report2 });
+    const report3 = await billingReport.execute({ companyId });
+
+    return response.status(200).json({ report1, report2, report3 });
   }
 
   async findAppData(request: Request, response: Response) {
