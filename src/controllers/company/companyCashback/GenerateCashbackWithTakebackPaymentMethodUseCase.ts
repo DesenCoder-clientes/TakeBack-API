@@ -133,7 +133,6 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
 
     // Buscando a empresa e o usuário para injetar na tabela Transactions
     const company = await getRepository(Companies).findOne(companyId);
-
     const companyUser = await getRepository(CompanyUsers).findOne(userId);
 
     // Buscando status e tipos de transações para injetar na tabela Transactions
@@ -153,6 +152,7 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
     });
 
     // Salvando as informações na tabela de Transactions
+    const date = new Date();
     const balanceUpdatedUp = await getRepository(Transactions).update(
       existentTransaction.id,
       {
@@ -165,6 +165,7 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
         salesFee: 0,
         transactionType: transactionTypeUp,
         transactionStatus,
+        dateAt: date.toLocaleDateString(),
       }
     );
 

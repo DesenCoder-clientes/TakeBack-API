@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Generated,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -21,6 +22,10 @@ import { TransactionPaymentMethods } from "./TransactionPaymentMethod";
 export class Transactions {
   @PrimaryGeneratedColumn("uuid")
   id: string;
+
+  @Column()
+  @Generated("increment")
+  transactionNumber: number;
 
   @Column({
     type: "float",
@@ -76,10 +81,15 @@ export class Transactions {
 
   @Column({
     type: "date",
-    default: new Date(),
     nullable: true,
   })
   dateAt: Date;
+
+  @Column({
+    type: "date",
+    nullable: true,
+  })
+  aprovedAt: Date;
 
   @CreateDateColumn()
   createdAt: Date;
