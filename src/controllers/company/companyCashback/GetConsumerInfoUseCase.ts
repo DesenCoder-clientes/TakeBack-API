@@ -6,7 +6,7 @@ interface Props {
   cpf: string;
 }
 
-class GetComsumerInfoUseCase {
+class GetConsumerInfoUseCase {
   async execute({ cpf }: Props) {
     if (!cpf) {
       throw new InternalError("CPF não informado", 400);
@@ -29,4 +29,4 @@ class GetComsumerInfoUseCase {
   }
 }
 
-export { GetComsumerInfoUseCase };
+export { GetConsumerInfoUseCase };

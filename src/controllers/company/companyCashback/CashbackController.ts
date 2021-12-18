@@ -2,7 +2,8 @@ import { Request, Response } from "express";
 
 import { GenerateCashbackUseCase } from "./GenerateCashbackUseCase";
 import { GenerateCashbackWithTakebackPaymentMethodUseCase } from "./GenerateCashbackWithTakebackPaymentMethodUseCase";
-import { GetComsumerInfoUseCase } from "./GetConsumerInfoUseCase";
+import { GetConsumerInfoUseCase } from "./GetConsumerInfoUseCase";
+import { FindCashbacksUseCase } from "./FindCashbacksUseCase";
 
 interface GenerateCashbackProps {
   cashbackData: {
@@ -58,9 +59,19 @@ class CashbackController {
   async getConsumerInfo(request: Request, response: Response) {
     const cpf = request.params.cpf;
 
-    const consumerInfo = new GetComsumerInfoUseCase();
+    const consumerInfo = new GetConsumerInfoUseCase();
 
     const result = await consumerInfo.execute({ cpf });
+
+    return response.status(200).json(result);
+  }
+
+  async findCashbacks(request: Request, response: Response) {
+    const { companyId } = request["tokenPayload"];
+
+    const cashbacks = new FindCashbacksUseCase();
+
+    const result = await cashbacks.execute({ companyId });
 
     return response.status(200).json(result);
   }

@@ -44,5 +44,6 @@ routes.get("/find-company-data", companyData.findCompanyData);
 routes.put("/update-company-data", companyData.updateCompanyData);
 routes.put("/update-company-method", paymentMethod.updateCompanyMethod);
 routes.post("/register-company-method", paymentMethod.registerCompanyMethod);
+routes.get("/find-cashbacks", cashback.findCashbacks);
 
 export default routes;
