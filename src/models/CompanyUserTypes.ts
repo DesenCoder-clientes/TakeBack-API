@@ -11,8 +11,8 @@ import { CompanyUsers } from "./CompanyUsers";
 
 @Entity()
 export class CompanyUserTypes {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+  @PrimaryGeneratedColumn("increment")
+  id: number;
 
   @Column({
     nullable: false,

@@ -13,6 +13,7 @@ import { TransactionTypesSeed } from "../../database/seeds/transactionTypes.seed
 import { TransactionStatusSeed } from "../../database/seeds/transactionStatus.seed";
 import { CompanyUserTypesSeed } from "../../database/seeds/companyUserTypes.seed";
 import { CompanyStatusSeed } from "../../database/seeds/companyStatus.seed";
+import { PaymentMethods } from "../../models/PaymentMethod";
 
 class GenerateSeedData {
   async execute() {
@@ -77,8 +78,18 @@ class GenerateSeedData {
     const generatedCompanyStatus = await getRepository(CompanyStatus).save(
       CompanyStatusSeed
     );
+
     if (generatedCompanyStatus.length === 0) {
       return new InternalError("Erro ao gerar os status das empresas", 400);
+    }
+
+    // Gerando o método de pagamneto Takeback
+    const generatedPaymentMethod = await getRepository(PaymentMethods).save({
+      description: "Takeback",
+    });
+
+    if (!generatedPaymentMethod) {
+      return new InternalError("Erro ao gerar método de pagamento", 400);
     }
 
     return "Dados semeados";

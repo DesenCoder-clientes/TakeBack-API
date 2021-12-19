@@ -20,12 +20,8 @@ import { TransactionPaymentMethods } from "./TransactionPaymentMethod";
 
 @Entity()
 export class Transactions {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("increment")
   id: string;
-
-  @Column()
-  @Generated("increment")
-  transactionNumber: number;
 
   @Column({
     type: "float",

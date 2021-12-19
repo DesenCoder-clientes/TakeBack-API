@@ -11,8 +11,8 @@ import { City } from "./City";
 
 @Entity()
 export class ConsumerAddress {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+  @PrimaryGeneratedColumn("increment")
+  id: number;
 
   @Column({
     nullable: true,

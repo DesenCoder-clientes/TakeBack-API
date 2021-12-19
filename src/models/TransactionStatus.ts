@@ -1,33 +1,33 @@
 import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn
-} from 'typeorm'
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
-import { Transactions } from './Transaction'
+import { Transactions } from "./Transaction";
 
 @Entity()
 export class TransactionStatus {
-    @PrimaryGeneratedColumn('uuid')
-    id: string
+  @PrimaryGeneratedColumn("increment")
+  id: number;
 
-    @Column()
-    description: string
+  @Column()
+  description: string;
 
-    @Column({
-        default: false
-    })
-    blocked: boolean
+  @Column({
+    default: false,
+  })
+  blocked: boolean;
 
-    @OneToMany(() => Transactions, () => TransactionStatus)
-    transactions: Transactions
+  @OneToMany(() => Transactions, () => TransactionStatus)
+  transactions: Transactions;
 
-    @CreateDateColumn()
-    createdAt: Date
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @UpdateDateColumn()
-    updatedAt: Date
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

@@ -11,8 +11,8 @@ import { Companies } from "./Company";
 
 @Entity()
 export class CompanyStatus {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+  @PrimaryGeneratedColumn("increment")
+  id: number;
 
   @Column()
   description: string;
