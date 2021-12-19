@@ -2,7 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Generated,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -11,11 +15,17 @@ import { TransactionTypes } from "./TransactionType";
 import { TransactionStatus } from "./TransactionStatus";
 import { Consumers } from "./Consumer";
 import { Companies } from "./Company";
+import { CompanyUsers } from "./CompanyUsers";
+import { TransactionPaymentMethods } from "./TransactionPaymentMethod";
 
 @Entity()
 export class Transactions {
   @PrimaryGeneratedColumn("uuid")
   id: string;
+
+  @Column()
+  @Generated("increment")
+  transactionNumber: number;
 
   @Column({
     type: "float",
@@ -62,6 +72,24 @@ export class Transactions {
 
   @ManyToOne(() => Companies, () => Transactions)
   company: Companies;
+
+  @ManyToOne(() => CompanyUsers, () => Transactions)
+  companyUser: CompanyUsers;
+
+  @OneToMany(() => TransactionPaymentMethods, () => Transactions)
+  transactionPaymentMethod: TransactionPaymentMethods;
+
+  @Column({
+    type: "date",
+    nullable: true,
+  })
+  dateAt: Date;
+
+  @Column({
+    type: "date",
+    nullable: true,
+  })
+  aprovedAt: Date;
 
   @CreateDateColumn()
   createdAt: Date;

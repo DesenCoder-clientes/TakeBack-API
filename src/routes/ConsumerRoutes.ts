@@ -1,12 +1,12 @@
 import { Router } from "express";
 
-import * as Auth from "../controllers/costumerControllers/AuthController";
-import * as Data from "../controllers/costumerControllers/AppDataController";
-import * as Update from "../controllers/costumerControllers/UpdateController";
-import * as Verify from "../controllers/costumerControllers/VerifyController";
-import * as Account from "../controllers/costumerControllers/AccountController";
-import * as Cashback from "../controllers/costumerControllers/CashbackController";
-import * as Forgot from "../controllers/costumerControllers/ForgotController";
+import * as Auth from "../controllers/costumer/AuthController";
+import * as Data from "../controllers/costumer/AppDataController";
+import * as Update from "../controllers/costumer/UpdateController";
+import * as Verify from "../controllers/costumer/VerifyController";
+import * as Account from "../controllers/costumer/AccountController";
+import * as Cashback from "../controllers/costumer/CashbackController";
+import * as Forgot from "../controllers/costumer/ForgotController";
 
 import { AuthMiddleware } from "../middlewares/costumerMiddlewares/AuthMiddleware";
 

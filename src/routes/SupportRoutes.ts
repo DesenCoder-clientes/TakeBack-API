@@ -1,12 +1,11 @@
-import { Router } from 'express'
+import { Router } from "express";
 
-import * as SupportController from '../controllers/supportControllers/GenerateSeedDataController'
-import * as TestsController from '../controllers/supportControllers/TestSendMailController'
+import { MagicController } from "../controllers/support/MagicController";
 
-const routes = Router()
+const magic = new MagicController();
 
-routes.get('/generate-initial-data', SupportController.GenerateSeedDataController)
-routes.get('/find-all-clients', SupportController.FindAllClients)
-routes.post('/test-send-mail', TestsController.TestSendMail)
+const routes = Router();
 
-export default routes
+routes.get("/seed", magic.generateAllSeeds);
+
+export default routes;

@@ -11,8 +11,11 @@ import {
 } from "typeorm";
 
 import { CompaniesAddress } from "./CompanyAddress";
-import { Categories } from "./Categories";
+import { Industries } from "./Industry";
 import { Transactions } from "./Transaction";
+import { CompanyUsers } from "./CompanyUsers";
+import { CompanyStatus } from "./CompanyStatus";
+import { CompanyPaymentMethods } from "./CompanyPaymentMethod";
 
 @Entity()
 export class Companies {
@@ -75,8 +78,17 @@ export class Companies {
   @OneToMany(() => Transactions, () => Companies)
   transactions: Transactions;
 
-  @ManyToOne(() => Categories, () => Companies)
-  category: Categories;
+  @ManyToOne(() => Industries, () => Companies)
+  industry: Industries;
+
+  @OneToMany(() => CompanyUsers, () => Companies)
+  cities: CompanyUsers;
+
+  @ManyToOne(() => CompanyStatus, () => Companies)
+  status: CompanyStatus;
+
+  @OneToMany(() => CompanyPaymentMethods, () => Companies)
+  paymentMethod: CompanyPaymentMethods;
 
   @CreateDateColumn()
   createdAt: Date;
