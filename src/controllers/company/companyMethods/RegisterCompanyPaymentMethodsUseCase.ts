@@ -12,7 +12,12 @@ interface Props {
 
 class RegisterCompanyPaymentMethodsUseCase {
   async execute({ companyId, cashbackPercentage, paymentId }: Props) {
-    if (!companyId || !cashbackPercentage || !paymentId) {
+    if (
+      !companyId ||
+      cashbackPercentage === undefined ||
+      cashbackPercentage === null ||
+      !paymentId
+    ) {
       throw new InternalError("Dados incompletos", 400);
     }
 

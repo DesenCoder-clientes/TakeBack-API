@@ -1,10 +1,10 @@
 import { Router } from "express";
 
 import * as Category from "../controllers/manager/CategoriesController";
-import { AuthorizationCompanyController } from "../controllers/manager/AuthorizationCompany";
+import { CompaniesController } from "../controllers/manager/managerCompanies/CompaniesController";
 import { PaymentMethodController } from "../controllers/manager/managerMethods/PaymentMethodsController";
 
-const authorizationCompany = new AuthorizationCompanyController();
+const authorizationCompany = new CompaniesController();
 const paymentMethod = new PaymentMethodController();
 
 const routes = Router();
