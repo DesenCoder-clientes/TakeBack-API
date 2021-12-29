@@ -8,6 +8,7 @@ import { ReportBillingByPeriodUseCase } from "./ReportBillingByPeriodUseCase";
 class ReportsController {
   async dashboardReports(request: Request, response: Response) {
     const { companyId, userId } = request["tokenPayload"];
+    const filterByPeriod = request.params.filterByPeriod;
 
     const cashbacksByPeriod = new ReportCashbackByPeriodUseCase();
     const billingReport = new ReportBillingByPeriodUseCase();
@@ -21,6 +22,7 @@ class ReportsController {
 
     const report2 = await cashbacksByPaymentMethods.execute({
       companyId,
+      filterByPeriod,
     });
 
     const report3 = await billingReport.execute({ companyId });

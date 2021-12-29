@@ -9,15 +9,23 @@ import { TransactionTypes } from "../../../models/TransactionType";
 
 interface Props {
   companyId: string;
+  filterByPeriod: string;
 }
 
 class ReportCashbackByPaymentMethodUseCase {
-  async execute({ companyId }: Props) {
+  async execute({ companyId, filterByPeriod }: Props) {
     const date = new Date();
-    const today = date.toLocaleDateString();
-    const sevenDaysAgo = new Date(
+    let today = date.toLocaleDateString();
+    let sevenDaysAgo = new Date(
       date.setDate(date.getDate() - 7)
     ).toLocaleDateString();
+
+    // switch (filterByPeriod) {
+    //   case "1":
+    //     sevenDaysAgo = new Date(
+    //       date.setDate(date.getDate() - 7)
+    //     ).toLocaleDateString();
+    // }
 
     // Buscando os status de transações válidos
     const transactionStatus = await getRepository(TransactionStatus).find({
