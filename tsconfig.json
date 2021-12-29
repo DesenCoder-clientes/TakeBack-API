@@ -1,11 +1,10 @@
 {
    "compilerOptions": {
       "lib": [
-         "es5",
-         "es6"
+         "ES6"
       ],
-      "target": "es5",
-      "module": "commonjs",
+      "target": "ES6",
+      "module": "ES2015",
       "moduleResolution": "node",
       "outDir": "./build",
       "emitDecoratorMetadata": true,

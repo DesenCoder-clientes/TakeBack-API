@@ -2,6 +2,7 @@
   "name": "take-back-api",
   "version": "0.0.1",
   "description": "Take Back API",
+  "type": "module",
   "dependencies": {
     "axios": "^0.23.0",
     "bcrypt": "^5.0.1",
@@ -31,6 +32,7 @@
     "build": "tsc",
     "start": "node build/index.js",
     "dev": "nodemon src/index.ts",
+    "inject": "chmode u+x ./executeMigrations.sh executeMigrations.sh",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
   }
 }
