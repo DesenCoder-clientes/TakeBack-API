@@ -1,15 +1,20 @@
 {
    "compilerOptions": {
-      "lib": [
-         "ES6"
-      ],
-      "target": "ES6",
-      "module": "ES2015",
+      "lib": ["es6"],
+      "target": "es2017",
+      "module": "CommonJS",
       "moduleResolution": "node",
+      // "rootDir": "./src",
       "outDir": "./build",
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
       "sourceMap": true,
-      "skipLibCheck": true
+      "skipLibCheck": true,
+      "allowJs": true,
+      "removeComments": true,
+      "typeRoots": [
+         "./node_modules/@types",
+         "./src/@types"
+      ]
    }
 }
