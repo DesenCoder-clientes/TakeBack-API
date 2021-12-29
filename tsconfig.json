@@ -2,9 +2,8 @@
    "compilerOptions": {
       "lib": ["es6"],
       "target": "es2017",
-      "module": "CommonJS",
+      "module": "es6",
       "moduleResolution": "node",
-      // "rootDir": "./src",
       "outDir": "./build",
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
