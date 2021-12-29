@@ -1,9 +1,8 @@
 {
    "compilerOptions": {
-      "lib": ["es6"],
+      "lib": ["es5", "es6", "es2017"],
       "target": "es2017",
-      "module": "es6",
-      "moduleResolution": "node",
+      "moduleResolution": "Node",
       "outDir": "./build",
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
