@@ -4,11 +4,11 @@ import { GenerateSeedData } from "./SeedDataUseCase";
 
 class MagicController {
   async generateAllSeeds(request: Request, response: Response) {
-    const generateSeeds = new GenerateSeedData();
+    // const generateSeeds = new GenerateSeedData();
 
-    const result = await generateSeeds.execute();
+    // const result = await generateSeeds.execute();
 
-    return response.status(200).json(result);
+    return response.status(200).json({ ok: "ok" });
   }
 }
 
