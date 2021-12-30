@@ -14,26 +14,16 @@ interface Props {
 
 class FindCashbacksUseCase {
   async execute({ companyId }: Props) {
-    const cashbacks = await getRepository(PaymentMethods)
-      .createQueryBuilder("pm")
-      .select("pm.description")
-      .addSelect([
+    const cashbacks = await getRepository(Transactions)
+      .createQueryBuilder("t")
+      .select([
         "t.id",
-        "t.transactionNumber",
+        "t.value",
         "t.dateAt",
         "t.cashbackPercent",
         "t.cashbackAmount",
-        "t.value",
-        "c.fullName",
-        "cu.name",
       ])
-      .leftJoin(CompanyPaymentMethods, "cpm", "cpm.paymentMethodId = pm.id")
-      .leftJoin(
-        TransactionPaymentMethods,
-        "tpm",
-        "tpm.paymentMethodId = cpm.id"
-      )
-      .leftJoin(Transactions, "t", "t.id = tpm.transactionId")
+      .addSelect(["c.fullName", "cu.name"])
       .leftJoin(Consumers, "c", "c.id = t.consumerId")
       .leftJoin(CompanyUsers, "cu", "cu.id = t.companyUserId")
       .leftJoin(TransactionStatus, "ts", "ts.id = t.transactionStatusId")
@@ -41,7 +31,7 @@ class FindCashbacksUseCase {
       .where("tt.description = :description", { description: "Ganho" })
       .andWhere("ts.description = :name", { name: "Pendente" })
       .andWhere("t.companyId = :companyId", { companyId })
-      .orderBy("t.transactionNumber")
+      .orderBy("t.id")
       .getRawMany();
 
     return cashbacks;

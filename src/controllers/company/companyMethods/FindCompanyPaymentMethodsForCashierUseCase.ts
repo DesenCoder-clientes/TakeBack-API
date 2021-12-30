@@ -24,6 +24,7 @@ class FindCompanyPaymentMethodsForCashierUseCase {
       result.push({
         id: method.id,
         description: method.paymentMethod.description,
+        paymentMethodId: method.paymentMethodId,
       });
     });
 

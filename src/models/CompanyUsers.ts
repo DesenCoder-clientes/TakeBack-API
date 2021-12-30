@@ -23,9 +23,10 @@ export class CompanyUsers {
   name: string;
 
   @Column({
-    nullable: true,
+    nullable: false,
+    default: false,
   })
-  email: string;
+  isRootUser: boolean;
 
   @Column({
     nullable: false,

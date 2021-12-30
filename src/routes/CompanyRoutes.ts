@@ -25,7 +25,7 @@ routes.get("/verify-token", auth.verifyToken);
 routes.use(AuthMiddleware);
 
 routes.get("/find-app-data", reports.findAppData);
-routes.get("/find-dashboard-data", reports.dashboardReports);
+routes.get("/find-dashboard-data/:filterByPeriod", reports.dashboardReports);
 routes.get("/find-costumer-data/:cpf", cashback.getConsumerInfo);
 routes.post("/generate-cashback", cashback.generateCashback);
 routes.post(

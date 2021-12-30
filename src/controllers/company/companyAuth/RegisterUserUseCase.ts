@@ -16,75 +16,41 @@ interface Props {
 
 class RegisterUserUseCase {
   async execute({ companyId, name, userTypeId, password }: Props) {
+    if (!userTypeId || !name || !password) {
+      return new InternalError("Dados imcompletos", 400);
+    }
+
     const company = await getRepository(Companies).findOne(companyId);
 
     if (!company) {
       return new InternalError("Empresa não localizada", 404);
     }
 
-    if (userTypeId && name && password) {
-      const companyUser = await getRepository(CompanyUsers).find({
-        where: { name, company },
-      });
-
-      if (companyUser) {
-        return new InternalError("Usuário já cadastrado", 400);
-      }
-
-      const userType = await getRepository(CompanyUserTypes).findOne(
-        userTypeId
-      );
-
-      const passwordEncrypted = bcrypt.hashSync(password, 10);
-
-      const newUser = await getRepository(CompanyUsers).save({
-        name,
-        password: passwordEncrypted,
-        company,
-        userType,
-      });
-
-      if (newUser) {
-        return "Usuário cadastrado";
-      }
-
-      return new InternalError("Houve um erro na criação do usuário", 400);
-    }
-
-    const managerUser = await getRepository(CompanyUsers).findOne({
-      where: { name: "Administrativo", company },
+    const companyUser = await getRepository(CompanyUsers).find({
+      where: { name, company },
     });
 
-    if (managerUser) {
-      return new InternalError("Usuário administrativo já cadastrado", 400);
+    if (companyUser) {
+      return new InternalError("Usuário já cadastrado", 400);
     }
 
-    const userType = await getRepository(CompanyUserTypes).findOne({
-      where: { description: "Administrador" },
-    });
+    const userType = await getRepository(CompanyUserTypes).findOne(userTypeId);
 
-    const newPassword = generateRandomNumber(100000, 999999);
-    const newPasswordEncrypted = bcrypt.hashSync(
-      JSON.stringify(newPassword),
-      10
-    );
+    const passwordEncrypted = bcrypt.hashSync(password, 10);
 
     const newUser = await getRepository(CompanyUsers).save({
-      name: "Administrativo",
-      email: company.email,
-      password: newPasswordEncrypted,
+      name,
+      password: passwordEncrypted,
       company,
       userType,
+      isRootUser: false,
     });
 
     if (newUser) {
-      const newMessage = `O cadastro da empresa ${company.fantasyName} foi aprovado! Para acessar o sistema utilize as seguintes credenciais.: CNPJ: "${company.registeredNumber}", Usuário: "Administrativo", Senha: "${newPassword}"`;
-
-      sendMail(company.email, "TakeBack - Acesso ao sistema", newMessage);
-      return "Usuário administrativo criado";
+      return "Usuário cadastrado";
     }
 
-    return new InternalError("Erro Inexperado", 400);
+    return new InternalError("Houve um erro na criação do usuário", 400);
   }
 }
 
