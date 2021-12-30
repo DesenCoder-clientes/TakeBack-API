@@ -15,7 +15,8 @@
     "nodemailer": "^6.6.5",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.10",
-    "typeorm": "0.2.37"
+    "typeorm": "0.2.37",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -24,6 +25,7 @@
     "@types/jsonwebtoken": "^8.5.5",
     "@types/node": "^8.0.29",
     "@types/nodemailer": "^6.4.4",
+    "@types/uuid": "^8.3.3",
     "nodemon": "^2.0.13",
     "ts-node": "3.3.0",
     "typescript": "3.3.3333"
