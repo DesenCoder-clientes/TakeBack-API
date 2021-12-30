@@ -4,14 +4,14 @@ import "express-async-errors";
 import * as express from "express";
 import { Request, Response, NextFunction } from "express";
 import * as cors from "cors";
-import "./database";
+import "./src/database";
 
-import PublicRoutes from "./routes/PublicRoutes";
-import SupportRoutes from "./routes/SupportRoutes";
-import ConsumerRoutes from "./routes/ConsumerRoutes";
-import CompanyRoutes from "./routes/CompanyRoutes";
-import ManagerRoutes from "./routes/ManagerRoutes";
-import { InternalError } from "./config/GenerateErros";
+import PublicRoutes from "./src/routes/PublicRoutes";
+import SupportRoutes from "./src/routes/SupportRoutes";
+import ConsumerRoutes from "./src/routes/ConsumerRoutes";
+import CompanyRoutes from "./src/routes/CompanyRoutes";
+import ManagerRoutes from "./src/routes/ManagerRoutes";
+import { InternalError } from "./src/config/GenerateErros";
 
 const app = express();
 
