@@ -8,7 +8,7 @@ class MagicController {
 
     const result = await generateSeeds.execute();
 
-    return response.status(200).json({ ok: "ok" });
+    return response.status(200).json(result);
   }
 }
 
