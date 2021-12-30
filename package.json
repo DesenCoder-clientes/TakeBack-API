@@ -31,7 +31,7 @@
   "scripts": {
     "dev": "nodemon Server.ts",
     "build": "tsc --target ES6 --experimentalDecorators --emitDecoratorMetadata",
-    "poststart": "npx run typeorm migrations:run",
+    "prestart": "npm run typeorm migrations:run",
     "start": "node --trace-warnings --es-module-specifier-resolution=node ./dist/Server.js",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
   }
