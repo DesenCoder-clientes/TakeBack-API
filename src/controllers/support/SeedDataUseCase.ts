@@ -260,8 +260,14 @@ import { PaymentMethods } from "../../models/PaymentMethod";
 
 class GenerateSeedData {
   async execute() {
-    const result = await getRepository(State).find();
-    return result;
+    try {
+      const result = await getRepository(State).find();
+      return result;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+
     // const [, count] = await getRepository(State).findAndCount();
 
     // if (count > 0) {
