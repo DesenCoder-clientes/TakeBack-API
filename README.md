@@ -31,7 +31,7 @@ _Run:_
     or
     npm install
 
-## Execute the migrations in your database connection
+## Execute the migrations in your database connection to development environment
 
     npm run typeorm migration:run
 
