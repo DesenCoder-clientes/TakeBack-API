@@ -27,10 +27,6 @@ app.use("/consumer", ConsumerRoutes);
 app.use("/company", CompanyRoutes);
 app.use("/manager", ManagerRoutes);
 
-// app.use((request: Request, response: Response, next: NextFunction) => {
-//   response.status(404).json({ message: "Endpoint inexistente" });
-//   next();
-// });
 
 app.use(
   (err: InternalError, req: Request, res: Response, next: NextFunction) => {
@@ -41,9 +37,5 @@ app.use(
     }
   }
 );
-
-// app.use((request: Request, response: Response) => {
-//   return response.status(500).json({ message: "Erro inexperado" });
-// });
 
 app.listen(process.env.PORT || 3333);
