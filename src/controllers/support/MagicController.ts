@@ -7,7 +7,6 @@ interface GenerateTakeBackUserDataProps {
   cpf: string;
   name: string;
   email: string;
-  password: string;
   isActive: true;
   isRoot: boolean;
 }
@@ -26,7 +25,6 @@ class MagicController {
       cpf,
       email,
       name,
-      password,
       isActive,
       isRoot
     }: GenerateTakeBackUserDataProps = request.body;
@@ -36,7 +34,6 @@ class MagicController {
       cpf,
       email,
       name,
-      password,
       isActive,
       isRoot
     })

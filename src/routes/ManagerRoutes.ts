@@ -7,14 +7,14 @@ import { PaymentMethodController } from "../controllers/manager/managerMethods/P
 
 const authorizationCompany = new CompaniesController();
 const paymentMethod = new PaymentMethodController();
-const registerUser = new ManagerAuthController();
+const managerAuth = new ManagerAuthController();
 
 const routes = Router();
 
 routes.post("/register-category", Category.registerCategory);
 routes.post("/generate-manager-user", authorizationCompany.generateManagerUser);
 routes.post("/register-payment-method", paymentMethod.registerPaymentMethod);
-routes.post("/user/register", registerUser.generateUser);
-routes.post("/user/login", registerUser.signInUser);
+routes.post("/takeback/user/register", managerAuth.generateUser);
+routes.post("/user/login", managerAuth.signInUser);
 
 export default routes;
