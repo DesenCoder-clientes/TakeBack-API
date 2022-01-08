@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { FindUserUseCase } from "./FindUserUseCase";
 import { RegisterUserUseCase } from "./RegisterUserUseCase";
 import { SignInUserUseCase } from "./SignInUserUseCase"; 
 import { UpdateUserUseCase } from "./UpdateUserUseCase";
@@ -20,6 +21,16 @@ interface UpdateProps{
   userTypeDesc: string
   isActive: true
   phone: string
+}
+
+interface FindProps{
+  name: string
+  cpf: string
+  email: string
+  userTypeDesc: string
+  isActive: true
+  phone: string
+  id: string
 }
 
 class ManagerAuthController {
@@ -59,6 +70,15 @@ class ManagerAuthController {
       userTypeDesc,
       id
     })
+
+    return response.status(200).json(result);
+  }
+
+  async findUser(request: Request, response: Response){
+    
+    const findUsers = new FindUserUseCase();
+
+    const result = await findUsers.execute();
 
     return response.status(200).json(result);
   }
