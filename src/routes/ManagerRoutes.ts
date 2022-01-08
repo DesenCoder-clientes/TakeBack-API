@@ -11,6 +11,7 @@ const managerAuth = new ManagerAuthController();
 
 const routes = Router();
 
+routes.get("/verify-token", managerAuth.verifyToken);
 routes.post("/register-category", Category.registerCategory);
 routes.post("/generate-manager-user", authorizationCompany.generateManagerUser);
 routes.post("/register-payment-method", paymentMethod.registerPaymentMethod);

@@ -3,6 +3,7 @@ import { FindUserUseCase } from "./FindUserUseCase";
 import { RegisterUserUseCase } from "./RegisterUserUseCase";
 import { SignInUserUseCase } from "./SignInUserUseCase"; 
 import { UpdateUserUseCase } from "./UpdateUserUseCase";
+import { VerifyTokenUseCase } from "./VerifyTokenUseCase";
 
 interface Props {
   name: string
@@ -79,6 +80,16 @@ class ManagerAuthController {
     const findUsers = new FindUserUseCase();
 
     const result = await findUsers.execute();
+
+    return response.status(200).json(result);
+  }
+
+  async verifyToken(request: Request, response: Response) {
+    const token = request.headers.authorization;
+
+    const verifyToken = new VerifyTokenUseCase();
+
+    const result = await verifyToken.execute({ token });
 
     return response.status(200).json(result);
   }
