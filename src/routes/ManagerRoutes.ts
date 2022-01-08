@@ -15,6 +15,7 @@ routes.post("/register-category", Category.registerCategory);
 routes.post("/generate-manager-user", authorizationCompany.generateManagerUser);
 routes.post("/register-payment-method", paymentMethod.registerPaymentMethod);
 routes.post("/takeback/user/register", managerAuth.generateUser);
+routes.put("/user/update/:id", managerAuth.updateUser);
 routes.post("/user/login", managerAuth.signInUser);
 
 export default routes;

@@ -4,6 +4,7 @@ import { InternalError } from "../../../config/GenerateErros";
 import { TakeBackUsers } from "../../../models/TakeBackUsers";
 import { sendMail } from "../../../utils/SendMail";
 import { generateRandomNumber } from "../../../utils/RandomValueGenerate";
+import { TakeBackUserTypes } from "../../../models/TakeBackUserTypes";
 
 interface Props
     {
@@ -11,19 +12,20 @@ interface Props
         cpf: string,
         email: string,
         isActive: true,
-        isRoot: false
+        phone: string,
+        userTypeDesc: string
     }
     
-
-
 class RegisterUserUseCase{
     async execute({
         name, 
         cpf, 
-        email
+        email,
+        userTypeDesc,
+        phone
     }: Props){
 
-        if(!name || !cpf || !email){
+        if(!name || !cpf || !email || !userTypeDesc || !phone){
             throw new InternalError("Dados incompletos!", 400);
         }
 
@@ -41,10 +43,20 @@ class RegisterUserUseCase{
             10
           );
 
+        const userType = await getRepository(TakeBackUserTypes).findOne({
+            where: {description: userTypeDesc}
+        })
+
+        if(!userType){
+            throw new InternalError("Tipo de usuário inexistente", 401)
+        }
+
         const saveTakeBackUser = await getRepository(TakeBackUsers).save({
             name, 
             cpf, 
             email,
+            userType,
+            phone,
             password: newPasswordEncrypted
         })
 

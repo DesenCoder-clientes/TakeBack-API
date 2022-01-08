@@ -8,7 +8,9 @@ interface GenerateTakeBackUserDataProps {
   name: string;
   email: string;
   isActive: true;
+  phone: string
   isRoot: boolean;
+  userTypeDesc: string;
 }
 
 class MagicController {
@@ -21,22 +23,10 @@ class MagicController {
   }
 
   async generateTakeBackUser(request: Request, response: Response){
-    const {
-      cpf,
-      email,
-      name,
-      isActive,
-      isRoot
-    }: GenerateTakeBackUserDataProps = request.body;
+    const data: GenerateTakeBackUserDataProps = request.body;
     const generateUser = new GenerateTakeBackUserUseCase();
 
-    const result = await generateUser.execute({
-      cpf,
-      email,
-      name,
-      isActive,
-      isRoot
-    })
+    const result = await generateUser.execute(data)
 
     return response.status(200).json(result);
   }

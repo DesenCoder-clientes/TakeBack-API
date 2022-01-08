@@ -2,9 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+
+import { TakeBackUserTypes } from "./TakeBackUserTypes";
 
 @Entity()
 export class TakeBackUsers {
@@ -39,10 +42,12 @@ export class TakeBackUsers {
   email: string;
 
   @Column({
-    default: false,
     nullable: false
   })
-  isRoot: boolean;
+  phone: string;
+
+  @ManyToOne(() => TakeBackUserTypes, (takeBackUserTypes) => takeBackUserTypes.users)
+  userType: TakeBackUserTypes
 
   @CreateDateColumn()
   createdAt: Date;

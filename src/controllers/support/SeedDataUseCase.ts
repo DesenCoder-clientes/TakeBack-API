@@ -8,6 +8,7 @@ import { TransactionStatus } from "../../models/TransactionStatus";
 import { CompanyUserTypes } from "../../models/CompanyUserTypes";
 import { CompanyStatus } from "../../models/CompanyStatus";
 import { PaymentMethods } from "../../models/PaymentMethod";
+import { TakeBackUserTypes } from "../../models/TakeBackUserTypes";
 
 // import { StatesSeed } from "../../database/seeds/statesSeed";
 // import { TransactionTypesSeed } from "../../database/seeds/transactionTypesSeed";
@@ -258,6 +259,27 @@ const CompanyStatusSeed = [
   },
 ];
 
+const tbUserTypes = [
+  {
+    description: "Root",
+    isRoot: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    description: "Administrativo",
+    isRoot: false,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    description: "Colaborador",
+    isRoot: false,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+] 
+
 class GenerateSeedData {
   async execute() {
     const [, count] = await getRepository(State).findAndCount();
@@ -333,6 +355,13 @@ class GenerateSeedData {
 
     if (!generatedPaymentMethod) {
       return new InternalError("Erro ao gerar método de pagamento", 400);
+    }
+
+    // Gerando tipos de usuários take back
+    const takeBackUserTypes = await getRepository(TakeBackUserTypes).save(tbUserTypes)
+
+    if(!takeBackUserTypes){
+      return new InternalError("Erro ao gerar tipo de usuário do take back", 400)
     }
 
     return "Dados semeados";

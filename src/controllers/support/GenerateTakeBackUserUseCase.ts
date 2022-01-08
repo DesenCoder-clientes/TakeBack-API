@@ -4,38 +4,47 @@ import { InternalError } from "../../config/GenerateErros";
 import { TakeBackUsers } from "../../models/TakeBackUsers";
 import { sendMail } from "../../utils/SendMail";
 import { generateRandomNumber } from "../../utils/RandomValueGenerate";
+import { TakeBackUserTypes } from "../../models/TakeBackUserTypes";
 
 interface Props
     {
-        name: string,
-        cpf: string,
-        email: string,
-        isActive: true,
-        isRoot: boolean
+        name: string
+        cpf: string
+        email: string
+        isActive: true
+        phone: string
+        userTypeDesc: string
     }
-    
-
 
 class GenerateTakeBackUserUseCase{
     async execute({
-        name, 
-        cpf, 
+        name,
+        cpf,
         email,
-        isRoot
+        phone,
+        userTypeDesc
     }: Props){
 
-        if(!name || !cpf || !email || !isRoot){
+        if(!name || !cpf || !email || !phone || !userTypeDesc){
             throw new InternalError("Dados incompletos!", 400);
         }
 
+        
         const takeBackUser = await getRepository(TakeBackUsers).findOne({
             where: { cpf },
-          });
-      
-          if (takeBackUser) {
+        });
+        
+        if (takeBackUser) {
             throw new InternalError("CPF já cadastrado", 302);
-          }
+        }
+        
+        const userType = await getRepository(TakeBackUserTypes).findOne({
+            where: {description: userTypeDesc}
+        })
 
+        if(!userType){
+            throw new InternalError("Tipo de usuário inexistente", 401)
+        }
 
         const newPassword = generateRandomNumber(100000, 999999);
         const newPasswordEncrypted = bcrypt.hashSync(
@@ -47,7 +56,8 @@ class GenerateTakeBackUserUseCase{
             name, 
             cpf, 
             email,
-            isRoot,
+            phone,
+            userType,
             password: newPasswordEncrypted
         })
 

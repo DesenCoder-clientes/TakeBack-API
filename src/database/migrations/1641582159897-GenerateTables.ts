@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class GenerateTables1640786778073 implements MigrationInterface {
-    name = 'GenerateTables1640786778073'
+export class GenerateTables1641582159897 implements MigrationInterface {
+    name = 'GenerateTables1641582159897'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "state" ("id" SERIAL NOT NULL, "name" character varying NOT NULL, "initials" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_549ffd046ebab1336c3a8030a12" PRIMARY KEY ("id"))`);
@@ -20,6 +20,8 @@ export class GenerateTables1640786778073 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "transactions" ("id" SERIAL NOT NULL, "value" double precision NOT NULL, "salesFee" double precision, "cashbackPercent" double precision, "cashbackAmount" double precision, "keyTransaction" integer, "cancellationDescription" character varying(180), "dateAt" date, "aprovedAt" date, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "transactionTypeId" integer, "transactionStatusId" integer, "consumerId" uuid, "companyId" uuid, "companyUserId" uuid, CONSTRAINT "PK_a219afd8dd77ed80f5a862f1db9" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "company_status" ("id" SERIAL NOT NULL, "description" character varying NOT NULL, "blocked" boolean NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_0004a562592abd6cb0828df61eb" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "companies" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "corporateName" character varying NOT NULL, "fantasyName" character varying NOT NULL, "registeredNumber" character varying NOT NULL, "email" character varying NOT NULL, "phone" character varying NOT NULL, "socialContract" character varying, "acceptanceTerm" character varying, "cashbackPercentDefault" double precision NOT NULL DEFAULT '0', "balance" double precision NOT NULL DEFAULT '0', "blockedBalance" double precision NOT NULL DEFAULT '0', "monthlyPayment" double precision NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "addressId" integer, "industryId" integer, "statusId" integer, CONSTRAINT "REL_2bb6583d4cf35554e19694c8a9" UNIQUE ("addressId"), CONSTRAINT "PK_d4bc3e82a314fa9e29f652c2c22" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "take_back_user_types" ("id" SERIAL NOT NULL, "description" character varying NOT NULL, "isRoot" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_0d6de4433e9fdb82f55d7d9a68a" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "take_back_users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "cpf" character varying NOT NULL, "password" character varying NOT NULL, "isActive" boolean NOT NULL DEFAULT true, "email" character varying NOT NULL, "phone" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "userTypeId" integer, CONSTRAINT "PK_764061e99182bd434106e00c341" PRIMARY KEY ("id"))`);
         await queryRunner.query(`ALTER TABLE "city" ADD CONSTRAINT "FK_e99de556ee56afe72154f3ed04a" FOREIGN KEY ("stateId") REFERENCES "state"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "companies_address" ADD CONSTRAINT "FK_f5e207e2b37aaeff6d68a11fe1d" FOREIGN KEY ("cityId") REFERENCES "city"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "consumer_address" ADD CONSTRAINT "FK_8a5879957ffa4ceab700ee332a3" FOREIGN KEY ("cityId") REFERENCES "city"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -38,9 +40,11 @@ export class GenerateTables1640786778073 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "companies" ADD CONSTRAINT "FK_2bb6583d4cf35554e19694c8a9b" FOREIGN KEY ("addressId") REFERENCES "companies_address"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "companies" ADD CONSTRAINT "FK_d10b3310c1016d05c123fdd08e1" FOREIGN KEY ("industryId") REFERENCES "industries"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "companies" ADD CONSTRAINT "FK_78f70c4376dbfc35f8ba9257295" FOREIGN KEY ("statusId") REFERENCES "company_status"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "take_back_users" ADD CONSTRAINT "FK_a5f51751e237d232f4e9f44ffda" FOREIGN KEY ("userTypeId") REFERENCES "take_back_user_types"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TABLE "take_back_users" DROP CONSTRAINT "FK_a5f51751e237d232f4e9f44ffda"`);
         await queryRunner.query(`ALTER TABLE "companies" DROP CONSTRAINT "FK_78f70c4376dbfc35f8ba9257295"`);
         await queryRunner.query(`ALTER TABLE "companies" DROP CONSTRAINT "FK_d10b3310c1016d05c123fdd08e1"`);
         await queryRunner.query(`ALTER TABLE "companies" DROP CONSTRAINT "FK_2bb6583d4cf35554e19694c8a9b"`);
@@ -59,6 +63,8 @@ export class GenerateTables1640786778073 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "consumer_address" DROP CONSTRAINT "FK_8a5879957ffa4ceab700ee332a3"`);
         await queryRunner.query(`ALTER TABLE "companies_address" DROP CONSTRAINT "FK_f5e207e2b37aaeff6d68a11fe1d"`);
         await queryRunner.query(`ALTER TABLE "city" DROP CONSTRAINT "FK_e99de556ee56afe72154f3ed04a"`);
+        await queryRunner.query(`DROP TABLE "take_back_users"`);
+        await queryRunner.query(`DROP TABLE "take_back_user_types"`);
         await queryRunner.query(`DROP TABLE "companies"`);
         await queryRunner.query(`DROP TABLE "company_status"`);
         await queryRunner.query(`DROP TABLE "transactions"`);

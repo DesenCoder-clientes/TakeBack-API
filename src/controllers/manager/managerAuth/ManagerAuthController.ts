@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { RegisterUserUseCase } from "./RegisterUserUseCase";
 import { SignInUserUseCase } from "./SignInUserUseCase"; 
+import { UpdateUserUseCase } from "./UpdateUserUseCase";
 
 interface Props {
   name: string
@@ -8,21 +9,26 @@ interface Props {
   email: string
   password: string
   isActive: true
-  isRoot: false
+  userTypeDesc: string
+  phone: string
 }
 
-interface LoginProps{
+interface UpdateProps{
+  name: string
   cpf: string
-  password: string
+  email: string
+  userTypeDesc: string
+  isActive: true
+  phone: string
 }
 
 class ManagerAuthController {
   async generateUser(request: Request, response: Response) {
-    const { name, cpf, email, isActive, isRoot }: Props = request.body;
+    const { name, cpf, email, isActive, phone, userTypeDesc }: Props = request.body;
 
     const registerUser = new RegisterUserUseCase();
 
-    const result = await registerUser.execute({ name, cpf, email, isActive, isRoot });
+    const result = await registerUser.execute({ name, cpf, email, isActive, phone, userTypeDesc });
 
     response.status(201).json(result);
   }
@@ -35,6 +41,25 @@ class ManagerAuthController {
     const result = await userLogin.execute({cpf, password});
 
     response.status(201).json(result);
+  }
+
+  async updateUser(request: Request, response: Response){
+    const id = request.params.id;
+    const {name, cpf, email, isActive, phone, userTypeDesc} : UpdateProps = request.body;
+
+    const update = new UpdateUserUseCase();
+
+    const result = await update.execute({
+      name,
+      cpf,
+      email,
+      isActive,
+      phone,
+      userTypeDesc,
+      id
+    })
+
+    return response.status(200).json(result);
   }
 }
 
