@@ -43,6 +43,7 @@ class ManagerAuthController {
     response.status(201).json(result);
   }
 
+  //FUNÇÃO PARA ATUALIZAR CADASTRO DO TAKEBACK USER
   async updateUser(request: Request, response: Response){
     const id = request.params.id;
     const {name, cpf, email, isActive, phone, userTypeDesc} : UpdateProps = request.body;
