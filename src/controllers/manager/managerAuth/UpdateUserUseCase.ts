@@ -48,7 +48,7 @@ class UpdateUserUseCase {
              throw new InternalError("Erro ao atualizar usuário", 500);
          }
 
-         return `Usuário ${name} atualizado com sucesso`
+         return `Usuário ${name} atualizado com sucesso!`
 
      }
 
