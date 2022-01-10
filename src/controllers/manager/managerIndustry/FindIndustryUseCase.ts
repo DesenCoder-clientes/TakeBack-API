@@ -6,7 +6,8 @@ class FindIndustryUseCase {
     async execute(){
 
         const users = await getRepository(Industries).find({
-            select : ["id", "description", "categoryFee", "createdAt", "updatedAt", "iconCategory"]
+            select : ["id", "description", "categoryFee", "createdAt", "updatedAt", "iconCategory"],
+            relations : ["companies"]
         })
 
         if(!users){

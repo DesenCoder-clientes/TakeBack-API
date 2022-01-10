@@ -75,14 +75,14 @@ export class Companies {
   @JoinColumn()
   address: CompaniesAddress;
 
-  @OneToMany(() => Transactions, () => Companies)
-  transactions: Transactions;
+  @OneToMany(() => Transactions, transactions => transactions.companies)
+  transaction: Transactions[];
 
-  @ManyToOne(() => Industries, () => Companies)
-  industry: Industries;
-
-  @OneToMany(() => CompanyUsers, () => Companies)
-  cities: CompanyUsers;
+  @ManyToOne(()=> Industries, industry => industry.companies)
+  industry: Industries
+ 
+  @OneToMany(() => CompanyUsers, companyUser => companyUser.company)
+  companies: CompanyUsers;
 
   @ManyToOne(() => CompanyStatus, () => Companies)
   status: CompanyStatus;

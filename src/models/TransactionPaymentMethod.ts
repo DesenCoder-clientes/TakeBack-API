@@ -33,8 +33,8 @@ export class TransactionPaymentMethods {
   })
   cashbackValue: number;
 
-  @ManyToOne(() => Transactions, () => TransactionPaymentMethods)
-  transaction: Transactions;
+  @ManyToOne(() => Transactions, transactions => transactions.transactionPaymentMethod)
+  transactions: Transactions;
 
   @ManyToOne(() => CompanyPaymentMethods, () => TransactionPaymentMethods)
   paymentMethod: CompanyPaymentMethods;

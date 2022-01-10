@@ -27,7 +27,7 @@ export class Industries {
   })
   iconCategory: number;
 
-  @OneToMany(() => Industries, () => Companies)
+  @OneToMany(()=> Companies, company => company.industry)
   companies: Companies[];
 
   @CreateDateColumn()

@@ -63,17 +63,17 @@ export class Transactions {
   @ManyToOne(() => TransactionStatus, () => Transactions)
   transactionStatus: TransactionStatus;
 
-  @ManyToOne(() => Consumers, () => Transactions)
-  consumer: Consumers;
+  @ManyToOne(() => Consumers, consumers => consumers.transaction)
+  consumers: Consumers;
 
-  @ManyToOne(() => Companies, () => Transactions)
-  company: Companies;
+  @ManyToOne(() => Companies, companies => companies.transaction)
+  companies: Companies;
 
-  @ManyToOne(() => CompanyUsers, () => Transactions)
-  companyUser: CompanyUsers;
+  @ManyToOne(() => CompanyUsers, companyUsers => companyUsers.transaction)
+  companyUsers: CompanyUsers;
 
-  @OneToMany(() => TransactionPaymentMethods, () => Transactions)
-  transactionPaymentMethod: TransactionPaymentMethods;
+  @OneToMany(() => TransactionPaymentMethods, transactionPaymentMethods => transactionPaymentMethods.transactions)
+  transactionPaymentMethod: TransactionPaymentMethods[];
 
   @Column({
     type: "date",
