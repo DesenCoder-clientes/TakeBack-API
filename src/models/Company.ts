@@ -84,7 +84,7 @@ export class Companies {
   @OneToMany(() => CompanyUsers, companyUser => companyUser.company)
   companies: CompanyUsers;
 
-  @ManyToOne(() => CompanyStatus, () => Companies)
+  @ManyToOne(() => CompanyStatus, status => status.company)
   status: CompanyStatus;
 
   @OneToMany(() => CompanyPaymentMethods, () => Companies)
