@@ -23,7 +23,7 @@ class FindCompanyPaymentMethodsForCashierUseCase {
     methods.map((method) => {
       result.push({
         id: method.id,
-        description: method.companyPaymentMethod.description,
+        description: method.paymentMethod.description,
         paymentMethodId: method.paymentMethodId,
       });
     });

@@ -71,7 +71,7 @@ class ReportCashbackByPaymentMethodUseCase {
       .leftJoin(
         PaymentMethods,
         "paymentMethods",
-        "paymentMethods.id = companyPaymentMethod.companyPaymentMethod"
+        "paymentMethods.id = companyPaymentMethod.paymentMethod"
       )
       .where("company.id = :companyId", { companyId })
       .andWhere(
