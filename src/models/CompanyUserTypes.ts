@@ -25,8 +25,8 @@ export class CompanyUserTypes {
   })
   isManager: boolean;
 
-  @OneToMany(() => CompanyUsers, () => CompanyUserTypes)
-  users: CompanyUsers;
+  @OneToMany(() => CompanyUsers, companyUsers => companyUsers.companyUserTypes)
+  users: CompanyUsers[];
 
   @CreateDateColumn()
   createdAt: Date;

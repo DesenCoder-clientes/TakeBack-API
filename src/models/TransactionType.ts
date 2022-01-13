@@ -22,8 +22,8 @@ export class TransactionTypes {
   })
   isUp: boolean;
 
-  @OneToMany(() => Transactions, () => TransactionTypes)
-  transactions: Transactions;
+  @OneToMany(() => Transactions, transactions => transactions.transactionTypes)
+  transaction: Transactions[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -163,7 +163,7 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
         cashbackAmount,
         cashbackPercent,
         salesFee: 0,
-        transactionType: transactionTypeUp,
+        transactionTypes: transactionTypeUp,
         transactionStatus,
         dateAt: date.toLocaleDateString(),
       }

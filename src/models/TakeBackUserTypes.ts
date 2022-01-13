@@ -25,7 +25,7 @@ export class TakeBackUserTypes {
   })
   isRoot: boolean;
 
- @OneToMany(() => TakeBackUsers, (takeBackUsers) => takeBackUsers.userType)
+ @OneToMany(() => TakeBackUsers, takeBackUsers => takeBackUsers.userType)
  users: TakeBackUsers[]
 
   @CreateDateColumn()

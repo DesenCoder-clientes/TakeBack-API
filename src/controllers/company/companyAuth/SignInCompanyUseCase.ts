@@ -27,8 +27,8 @@ class SignInCompanyUseCase {
 
     const companyUser = await getRepository(CompanyUsers).findOne({
       where: { company, name: user },
-      select: ["id", "userType", "password", "isActive", "name"],
-      relations: ["userType"],
+      select: ["id", "password", "companyUserTypes", "isActive", "name"],
+      relations: ["companyUserTypes"],
     });
 
     if (!companyUser) {
@@ -49,9 +49,9 @@ class SignInCompanyUseCase {
       {
         companyId: company.id,
         userId: companyUser.id,
-        isManager: companyUser.userType.isManager,
+        isManager: companyUser.companyUserTypes.isManager,
         name: companyUser.name,
-        office: companyUser.userType.description,
+        office: companyUser.companyUserTypes.description,
       },
       process.env.JWT_PRIVATE_KEY,
       parseInt(process.env.JWT_EXPIRES_IN)
@@ -59,9 +59,9 @@ class SignInCompanyUseCase {
 
     return {
       token,
-      isManager: companyUser.userType.isManager,
+      isManager: companyUser.companyUserTypes.isManager,
       name: companyUser.name,
-      office: companyUser.userType.description,
+      office: companyUser.companyUserTypes.description,
     };
   }
 }

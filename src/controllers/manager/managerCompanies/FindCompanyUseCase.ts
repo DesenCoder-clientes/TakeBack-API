@@ -7,7 +7,6 @@ interface FilterProps{
     registeredNumber, fantasyName, status: string | ParsedQs | string[] | ParsedQs[]
 }
 
-
 class FindCompanyUseCase{
     async execute({fantasyName, registeredNumber, status}: FilterProps){
 

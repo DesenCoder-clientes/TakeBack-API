@@ -57,10 +57,10 @@ export class Transactions {
   })
   cancellationDescription: string;
 
-  @ManyToOne(() => TransactionTypes, () => Transactions)
-  transactionType: TransactionTypes;
+  @ManyToOne(() => TransactionTypes, transactionTypes => transactionTypes.transaction)
+  transactionTypes: TransactionTypes;
 
-  @ManyToOne(() => TransactionStatus, () => Transactions)
+  @ManyToOne(() => TransactionStatus, transactionStatus => transactionStatus.transaction)
   transactionStatus: TransactionStatus;
 
   @ManyToOne(() => Consumers, consumers => consumers.transaction)
@@ -73,7 +73,7 @@ export class Transactions {
   companyUsers: CompanyUsers;
 
   @OneToMany(() => TransactionPaymentMethods, transactionPaymentMethods => transactionPaymentMethods.transactions)
-  transactionPaymentMethod: TransactionPaymentMethods[];
+  public transactionPaymentMethod!: TransactionPaymentMethods[];
 
   @Column({
     type: "date",

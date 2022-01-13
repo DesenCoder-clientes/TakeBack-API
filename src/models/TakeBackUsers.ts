@@ -46,7 +46,7 @@ export class TakeBackUsers {
   })
   phone: string;
 
-  @ManyToOne(() => TakeBackUserTypes, (takeBackUserTypes) => takeBackUserTypes.users)
+  @ManyToOne(() => TakeBackUserTypes, takeBackUserTypes => takeBackUserTypes.users)
   userType: TakeBackUserTypes
 
   @CreateDateColumn()

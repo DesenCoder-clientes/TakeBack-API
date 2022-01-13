@@ -87,8 +87,8 @@ export class Companies {
   @ManyToOne(() => CompanyStatus, status => status.company)
   status: CompanyStatus;
 
-  @OneToMany(() => CompanyPaymentMethods, () => Companies)
-  paymentMethod: CompanyPaymentMethods;
+  @OneToMany(() => CompanyPaymentMethods,  companyPaymentMethods => companyPaymentMethods.company)
+  public companyPaymentMethod!: CompanyPaymentMethods[];
 
   @CreateDateColumn()
   createdAt: Date;

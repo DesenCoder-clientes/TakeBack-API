@@ -34,7 +34,7 @@ export class ConsumerAddress {
   })
   complement: string;
 
-  @ManyToOne(() => City)
+  @ManyToOne(() => City, city => city.consumersAddress)
   city: City;
 
   @CreateDateColumn()
