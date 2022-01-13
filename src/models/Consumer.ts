@@ -86,8 +86,8 @@ export class Consumers {
   @JoinColumn()
   address: ConsumerAddress;
 
-  @OneToMany(() => Transactions, () => Consumers)
-  transactions: Transactions;
+  @OneToMany(() => Transactions, transactions => transactions.consumers)
+  transaction: Transactions[];
 
   @CreateDateColumn()
   createdAt: Date;

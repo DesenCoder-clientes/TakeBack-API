@@ -7,21 +7,26 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-import { Companies } from "./Company";
+import { TakeBackUsers } from "./TakeBackUsers";
 
 @Entity()
-export class CompanyStatus {
+export class TakeBackUserTypes {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column()
+  @Column({
+    nullable: false,
+  })
   description: string;
 
-  @Column()
-  blocked: boolean;
+  @Column({
+    default: false,
+    nullable: false
+  })
+  isRoot: boolean;
 
-  @OneToMany(() => Companies, companies => companies.status)
-  company: Companies[];
+ @OneToMany(() => TakeBackUsers, (takeBackUsers) => takeBackUsers.userType)
+ users: TakeBackUsers[]
 
   @CreateDateColumn()
   createdAt: Date;
