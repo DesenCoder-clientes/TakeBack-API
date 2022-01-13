@@ -33,7 +33,7 @@ class RegisterCompanyPaymentMethodsUseCase {
     }
 
     const existentMethod = await getRepository(CompanyPaymentMethods).findOne({
-      where: { paymentMethodId: paymentId },
+      where: { paymentMethod: paymentId },
     });
 
     if (existentMethod) {

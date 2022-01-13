@@ -41,18 +41,18 @@ class ReportBillingByPeriodUseCase {
     const transactions = await getRepository(Transactions)
       .createQueryBuilder("transactions")
       .select("SUM(transactions.value)", "total")
-      .where("transactions.companyId = :companyId", { companyId })
+      .where("transactions.companies = :companyId", { companyId })
       .andWhere(
         "transactions.dateAt >= :sevenDaysAgo AND transactions.dateAt < :today",
         { sevenDaysAgo, today }
       )
       .andWhere(
-        "transactions.transactionStatusId IN (:...transactionStatusId)",
+        "transactions.transactionStatus IN (:...transactionStatusId)",
         {
           transactionStatusId: [...transactionStatusIds],
         }
       )
-      .andWhere("transactions.transactionType = :transactionsTypeId", {
+      .andWhere("transactions.transactionTypes = :transactionsTypeId", {
         transactionsTypeId: transactionsTypes.id,
       })
       .getRawMany();

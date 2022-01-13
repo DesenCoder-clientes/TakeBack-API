@@ -36,7 +36,7 @@ export class TransactionPaymentMethods {
   @ManyToOne(() => Transactions, transactions => transactions.transactionPaymentMethod)
   public transactions!: Transactions;
 
-  @ManyToOne(() => CompanyPaymentMethods, companyPaymentMethods => companyPaymentMethods.companyPaymentMethod)
+  @ManyToOne(() => CompanyPaymentMethods, companyPaymentMethods => companyPaymentMethods.paymentMethod)
   public paymentMethod!: CompanyPaymentMethods;
 
   @CreateDateColumn()

@@ -28,7 +28,7 @@ class AllowCompanyFirstAccessUseCase {
       throw new InternalError("Usuário administrativo já cadastrado", 400);
     }
 
-    const userType = await getRepository(CompanyUserTypes).findOne({
+    const companyUserTypes = await getRepository(CompanyUserTypes).findOne({
       where: { description: "Administrador" },
     });
 
@@ -43,7 +43,7 @@ class AllowCompanyFirstAccessUseCase {
       email: company.email,
       password: newPasswordEncrypted,
       company,
-      userType,
+      companyUserTypes,
       isRootUser: true,
     });
 

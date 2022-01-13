@@ -36,7 +36,7 @@ export class CompanyPaymentMethods {
   public company!: Companies;
 
   @ManyToOne(() => PaymentMethods, paymentMethods => paymentMethods.companyPaymentMethod)
-  public companyPaymentMethod!: PaymentMethods;
+  public paymentMethod!: PaymentMethods;
 
   @CreateDateColumn()
   public createdAt!: Date;

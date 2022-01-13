@@ -56,22 +56,22 @@ class ReportCashbackByPaymentMethodUseCase {
       .leftJoin(
         CompanyPaymentMethods,
         "companyPaymentMethod",
-        "companyPaymentMethod.id = transactionPaymentMethod.paymentMethodId"
+        "companyPaymentMethod.id = transactionPaymentMethod.paymentMethod"
       )
       .leftJoin(
         Companies,
         "company",
-        "company.id = companyPaymentMethod.companyId"
+        "company.id = companyPaymentMethod.company"
       )
       .leftJoin(
         Transactions,
         "transaction",
-        "transaction.id = transactionPaymentMethod.transactionId"
+        "transaction.id = transactionPaymentMethod.transactions"
       )
       .leftJoin(
         PaymentMethods,
         "paymentMethods",
-        "paymentMethods.id = companyPaymentMethod.paymentMethodId"
+        "paymentMethods.id = companyPaymentMethod.companyPaymentMethod"
       )
       .where("company.id = :companyId", { companyId })
       .andWhere(
@@ -79,18 +79,18 @@ class ReportCashbackByPaymentMethodUseCase {
         { sevenDaysAgo, today }
       )
       .andWhere(
-        "transaction.transactionStatusId IN (:...transactionStatusId)",
+        "transaction.transactionStatus IN (:...transactionStatusId)",
         {
           transactionStatusId: [...transactionStatusIds],
         }
       )
-      .andWhere("transaction.transactionType = :transactionsTypeId", {
+      .andWhere("transaction.transactionTypes = :transactionsTypeId", {
         transactionsTypeId: transactionsTypes.id,
       })
-      .groupBy("transactionPaymentMethod.paymentMethodId")
+      .groupBy("transactionPaymentMethod.paymentMethod")
       .addGroupBy("companyPaymentMethod.id")
       .addGroupBy("paymentMethods.description")
-      .orderBy("transactionPaymentMethod.paymentMethodId")
+      .orderBy("transactionPaymentMethod.paymentMethod")
       .getRawMany();
 
     // Formatando os dados para reposta

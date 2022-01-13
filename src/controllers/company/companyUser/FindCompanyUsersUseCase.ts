@@ -9,11 +9,10 @@ interface Props {
 
 class FindCompanyUsersUseCase {
   async execute({ companyId }: Props) {
-    const company = await getRepository(Companies).findOne(companyId);
 
     const users = await getRepository(CompanyUsers).find({
-      where: { company },
-      relations: ["userType"],
+      where: { company: { id: companyId } },
+      relations: ["companyUserTypes"],
     });
 
     const userTypes = await getRepository(CompanyUserTypes).find();
