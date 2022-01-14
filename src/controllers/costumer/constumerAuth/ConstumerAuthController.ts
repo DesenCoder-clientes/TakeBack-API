@@ -24,6 +24,10 @@ interface ConsumerRequestToUpdatePassword {
   newPassword: string;
 }
 
+interface CostumerProps {
+  password: string;
+}
+
 class CostumerAuthController {
   async signInCostumer(request: Request, response: Response) {
     const { cpf, password }: LoginProps = request.body;
@@ -51,9 +55,14 @@ class CostumerAuthController {
   async desactiveCostumer(request: Request, response: Response) {
     const consumerID = request["tokenPayload"].id;
 
+    const { password }: CostumerProps = request.body;
+
     const desactive = new DesactiveCostumerUseCase();
 
-    const result = await desactive.execute(consumerID);
+    const result = await desactive.execute({
+      consumerID,
+      password,
+    });
 
     response.status(201).json(result);
   }

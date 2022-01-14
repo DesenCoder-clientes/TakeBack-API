@@ -4,7 +4,6 @@ import { CostumerAuthController } from "../controllers/costumer/constumerAuth/Co
 import { CostumerDataController } from "../controllers/costumer/costumerData/CostumerDataController";
 import * as Data from "../controllers/costumer/AppDataController";
 import * as Verify from "../controllers/costumer/VerifyController";
-import * as Account from "../controllers/costumer/AccountController";
 import * as Cashback from "../controllers/costumer/CashbackController";
 import * as Forgot from "../controllers/costumer/ForgotController";
 
