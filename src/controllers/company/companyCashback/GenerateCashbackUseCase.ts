@@ -119,15 +119,15 @@ class GenerateCashbackUseCase {
     // Salvando as informações na tabela de Transactions caso não tenha o método de pagamento TakeBack
     const date = new Date();
     const newCashback = await getRepository(Transactions).save({
-      company,
-      companyUser,
-      consumer,
+      companies: company,
+      consumers: consumer,
       value: parseFloat(costumer.value),
       cashbackAmount,
       cashbackPercent,
       salesFee: 0,
-      transactionType,
-      transactionStatus,
+      transactionTypes: transactionType,
+      transactionStatus: transactionStatus,
+      companyUsers: companyUser,
       dateAt: date.toLocaleDateString(),
     });
 

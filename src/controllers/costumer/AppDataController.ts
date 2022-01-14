@@ -22,11 +22,13 @@ export const findAppData = async (request: Request, response: Response) => {
 
     const transactions = await getRepository(Transactions).find({
       select: ["id", "cashbackAmount", "createdAt"],
-      relations: ["company", "transactionType", "transactionStatus"],
+      relations: ["companies", "transactionTypes", "transactionStatus"],
       take: 20,
       order: { createdAt: "DESC" },
       where: {
-        consumer: consumerID,
+        consumers: {
+          id: consumerID.id,
+        },
         transactionStatus: {
           description: Not("Aguardando"),
         },

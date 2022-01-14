@@ -15,12 +15,6 @@ export class TransactionPaymentMethods {
   @PrimaryGeneratedColumn("increment")
   public id!: number;
 
-  @Column()
-  public transactionId!: string;
-
-  @Column()
-  public paymentMethodId!: number;
-
   @Column({
     default: 0,
     type: "float",
@@ -33,10 +27,16 @@ export class TransactionPaymentMethods {
   })
   public cashbackValue!: number;
 
-  @ManyToOne(() => Transactions, transactions => transactions.transactionPaymentMethod)
+  @ManyToOne(
+    () => Transactions,
+    (transactions) => transactions.transactionPaymentMethod
+  )
   public transactions!: Transactions;
 
-  @ManyToOne(() => CompanyPaymentMethods, companyPaymentMethods => companyPaymentMethods.paymentMethod)
+  @ManyToOne(
+    () => CompanyPaymentMethods,
+    (companyPaymentMethods) => companyPaymentMethods.paymentMethod
+  )
   public paymentMethod!: CompanyPaymentMethods;
 
   @CreateDateColumn()
