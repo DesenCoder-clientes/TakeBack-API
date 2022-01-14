@@ -22,7 +22,7 @@ routes.put("/forgot-password/:id", Forgot.forgotPassword);
 
 routes.use(AuthMiddleware);
 
-routes.get("/find-app-data", Data.findAppData);
+routes.get("/data/find", costumerData.findAppData);
 
 routes.put("/update/data", costumerData.updateData);
 routes.put("/update/phone", costumerData.updatePhone);
@@ -30,11 +30,10 @@ routes.put("/update/email", costumerData.updateEmail);
 routes.put("/update/address", costumerData.updateAddress);
 routes.post("/signature/register", costumerData.registerSignature);
 routes.put("/signature/update", costumerData.updateSignature);
+routes.get("/companies/find/:offset/:limit", costumerData.findCompanies);
 
 routes.put("/update/password", costumerAuth.updateCostumerPassword);
 routes.delete("/account/deactivate", costumerAuth.desactiveCostumer);
-
-routes.get("/find-companies/:offset/:limit", Data.findCompanies);
 
 routes.get("/find-transactions/:offset/:limit", Cashback.findTransactions);
 routes.post("/authorized-purchase", Cashback.authorizePurchase);

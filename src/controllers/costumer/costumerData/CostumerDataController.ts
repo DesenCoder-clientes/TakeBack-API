@@ -1,4 +1,6 @@
 import { Response, Request } from "express";
+import { CostumerFindAppDataUseCase } from "./CostumerFindAppDataUseCase";
+import { CostumerFindCompaniesUseCase } from "./CostumerFindCompaniesUseCase";
 import { CostumerRegisterSignatureUseCase } from "./CostumerRegisterSignatureUseCase";
 import { CostumerUpdateAddressUseCase } from "./CostumerUpdateAddressUseCase";
 import { CostumerUpdateDataUseCase } from "./CostumerUpdateDataUseCase";
@@ -135,6 +137,29 @@ class CostumerDataController {
       consumerID,
       newSignature,
       signature,
+    });
+
+    response.status(201).json(result);
+  }
+
+  async findAppData(request: Request, response: Response) {
+    const consumerID = request["tokenPayload"].id;
+
+    const find = new CostumerFindAppDataUseCase();
+
+    const result = await find.execute(consumerID);
+
+    response.status(201).json(result);
+  }
+
+  async findCompanies(request: Request, response: Response) {
+    const { offset, limit } = request.params;
+
+    const find = new CostumerFindCompaniesUseCase();
+
+    const result = await find.execute({
+      limit,
+      offset,
     });
 
     response.status(201).json(result);
