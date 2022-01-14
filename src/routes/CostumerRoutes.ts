@@ -25,10 +25,10 @@ routes.use(AuthMiddleware);
 
 routes.get("/find-app-data", Data.findAppData);
 
-routes.put("/update-data", costumerData.updateData);
-routes.put("/update-phone", costumerData.updatePhone);
-routes.put("/update-email", costumerData.updateEmail);
-routes.put("/update-address", costumerData.updateAddress);
+routes.put("/update/data", costumerData.updateData);
+routes.put("/update/phone", costumerData.updatePhone);
+routes.put("/update/email", costumerData.updateEmail);
+routes.put("/update/address", costumerData.updateAddress);
 
 /* routes.put("/update-password", Auth.updatePassword);
 routes.post("/register-signature", Auth.registerSignature);
