@@ -8,7 +8,6 @@ interface LoginProps {
 }
 
 interface RegisterProps {
-  id: string;
   fullName: string;
   cpf: string;
   birthDate: Date;

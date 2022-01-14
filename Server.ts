@@ -8,7 +8,7 @@ import "./src/database";
 
 import PublicRoutes from "./src/routes/PublicRoutes";
 import SupportRoutes from "./src/routes/SupportRoutes";
-import CostumerRoutes from "./src/routes/ConsumerRoutes";
+import CostumerRoutes from "./src/routes/CostumerRoutes";
 import CompanyRoutes from "./src/routes/CompanyRoutes";
 import ManagerRoutes from "./src/routes/ManagerRoutes";
 import { InternalError } from "./src/config/GenerateErros";
@@ -26,7 +26,6 @@ app.use("/magic", SupportRoutes);
 app.use("/costumer", CostumerRoutes);
 app.use("/company", CompanyRoutes);
 app.use("/manager", ManagerRoutes);
-
 
 app.use(
   (err: InternalError, req: Request, res: Response, next: NextFunction) => {

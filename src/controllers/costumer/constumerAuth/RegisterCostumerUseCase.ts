@@ -11,7 +11,6 @@ import { CPFValidate } from "../../../utils/CPFValidate";
 import { generateToken } from "../../../config/JWT";
 
 interface userDataProps {
-  id: string;
   fullName: string;
   cpf: string;
   birthDate: Date;
@@ -23,7 +22,6 @@ interface userDataProps {
 
 class RegisterCostumerUseCase {
   async execute({
-    id,
     fullName,
     cpf,
     birthDate,
