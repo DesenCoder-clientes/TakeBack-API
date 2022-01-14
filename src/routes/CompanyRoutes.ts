@@ -24,26 +24,28 @@ routes.get("/verify-token", auth.verifyToken);
 
 routes.use(AuthMiddleware);
 
-routes.get("/find-app-data", reports.findAppData);
-routes.get("/find-dashboard-data/:filterByPeriod", reports.dashboardReports);
-routes.get("/find-costumer-data/:cpf", cashback.getConsumerInfo);
-routes.post("/generate-cashback", cashback.generateCashback);
+// routes.get("/find-app-data", reports.findAppData);
+routes.get("/data/dashboard", reports.dashboardReports);
+routes.get("/data/find", companyData.findCompanyData);
+routes.put("/data/update", companyData.updateCompanyData);
+
+routes.get("/cashback/costumer/:cpf", cashback.getConsumerInfo);
+
+routes.post("/cashback", cashback.generateCashback);
 routes.post(
-  "/generate-cashback/:code",
+  "/cashback/:code",
   cashback.generateCashbackWithTakebackPaymentMethod
 );
-routes.get("/find-payment-methods", paymentMethod.findCompanyMethods);
-routes.get(
-  "/find-payment-methods/cashier",
-  paymentMethod.findCompanyMethodsForCashier
-);
-routes.get("/find-company-users", companyUser.findCompanyUsers);
-routes.post("/register-company-user", companyUser.registerCompanyUser);
-routes.put("/update-company-user", companyUser.updateCompanyUser);
-routes.get("/find-company-data", companyData.findCompanyData);
-routes.put("/update-company-data", companyData.updateCompanyData);
-routes.put("/update-company-method", paymentMethod.updateCompanyMethod);
-routes.post("/register-company-method", paymentMethod.registerCompanyMethod);
-routes.get("/find-cashbacks", cashback.findCashbacks);
+
+routes.get("/payments", paymentMethod.findCompanyMethods);
+routes.get("/payments/cashier", paymentMethod.findCompanyMethodsForCashier);
+routes.put("/payments/update", paymentMethod.updateCompanyMethod);
+routes.post("/payments/register", paymentMethod.registerCompanyMethod);
+
+routes.get("/user/find", companyUser.findCompanyUsers);
+routes.post("/user/register", companyUser.registerCompanyUser);
+routes.put("/user/update/:id", companyUser.updateCompanyUser);
+
+routes.get("/cashbacks/find", cashback.findCashbacks);
 
 export default routes;

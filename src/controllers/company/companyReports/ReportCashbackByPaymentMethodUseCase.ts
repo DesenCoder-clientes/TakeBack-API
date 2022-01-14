@@ -9,11 +9,10 @@ import { TransactionTypes } from "../../../models/TransactionType";
 
 interface Props {
   companyId: string;
-  filterByPeriod: string;
 }
 
 class ReportCashbackByPaymentMethodUseCase {
-  async execute({ companyId, filterByPeriod }: Props) {
+  async execute({ companyId }: Props) {
     const date = new Date();
     let today = date.toLocaleDateString();
     let sevenDaysAgo = new Date(
@@ -78,12 +77,9 @@ class ReportCashbackByPaymentMethodUseCase {
         "transaction.dateAt >= :sevenDaysAgo AND transaction.dateAt < :today",
         { sevenDaysAgo, today }
       )
-      .andWhere(
-        "transaction.transactionStatus IN (:...transactionStatusId)",
-        {
-          transactionStatusId: [...transactionStatusIds],
-        }
-      )
+      .andWhere("transaction.transactionStatus IN (:...transactionStatusId)", {
+        transactionStatusId: [...transactionStatusIds],
+      })
       .andWhere("transaction.transactionTypes = :transactionsTypeId", {
         transactionsTypeId: transactionsTypes.id,
       })

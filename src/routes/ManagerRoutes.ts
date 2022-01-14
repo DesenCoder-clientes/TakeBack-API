@@ -16,23 +16,23 @@ const managerConsumers = new ConsumersController();
 const routes = Router();
 
 routes.get("/verify-token", managerAuth.verifyToken);
-routes.post("/generate-manager-user", authorizationCompany.generateManagerUser);
-routes.post("/takeback/user/register", managerAuth.generateUser);
+routes.post("/user", managerAuth.generateUser);
 routes.post("/user/login", managerAuth.signInUser);
-routes.put("/user/update/:id", managerAuth.updateUser);
-routes.get("/takeback/user/find-user", managerAuth.findUser);
+routes.put("/user/:id", managerAuth.updateUser);
+routes.get("/user", managerAuth.findUser);
 
-routes.post("/register-industry", managerIndustry.registerIndustry);
-routes.put("/industry/update/:id", managerIndustry.updateIndustry);
-routes.get("/industry/find-industry", managerIndustry.findIndustry);
+routes.post("/company/user", authorizationCompany.generateManagerUser);
 
-routes.get("/companies/list/:offset/:limit", managerCompanies.listCompany);
-routes.get("/companies/find", managerCompanies.findCompany);
+routes.post("/industry", managerIndustry.registerIndustry);
+routes.put("/industry/:id", managerIndustry.updateIndustry);
+routes.get("/industry", managerIndustry.findIndustry);
 
-routes.get("/consumers/list/:offset/:limit", managerConsumers.listConsumer); 
-routes.get("/consumers/find", managerConsumers.findConsumer);
+routes.get("/companies/:offset/:limit", managerCompanies.listCompany);
+routes.get("/companies", managerCompanies.findCompany);
 
-routes.post("/register-payment-method", paymentMethod.registerPaymentMethod);
+routes.get("/consumers/:offset/:limit", managerConsumers.listConsumer);
+routes.get("/consumers", managerConsumers.findConsumer);
 
+routes.post("/payment", paymentMethod.registerPaymentMethod);
 
 export default routes;
