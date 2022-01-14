@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import * as Auth from "../controllers/costumer/AuthController";
+import { CostumerAuthController } from "../controllers/costumer/constumerAuth/ConstumerAuthController";
 import * as Data from "../controllers/costumer/AppDataController";
 import * as Update from "../controllers/costumer/UpdateController";
 import * as Verify from "../controllers/costumer/VerifyController";
@@ -10,10 +10,12 @@ import * as Forgot from "../controllers/costumer/ForgotController";
 
 import { AuthMiddleware } from "../middlewares/costumerMiddlewares/AuthMiddleware";
 
+const costumerAuth = new CostumerAuthController();
+
 const routes = Router();
 
-routes.post("/sign-in", Auth.signIn);
-routes.post("/sign-up", Account.newAccount);
+routes.post("/sign-in", costumerAuth.signInCostumer);
+routes.post("/sign-up", costumerAuth.registerCostumer);
 
 routes.post("/confirm-data", Forgot.confirmDataToForgotPassword);
 routes.put("/forgot-password/:id", Forgot.forgotPassword);
@@ -27,9 +29,9 @@ routes.put("/update-phone", Update.updatePhone);
 routes.put("/update-email", Update.updateEmail);
 routes.put("/update-address", Update.updateAddress);
 
-routes.put("/update-password", Auth.updatePassword);
+/* routes.put("/update-password", Auth.updatePassword);
 routes.post("/register-signature", Auth.registerSignature);
-routes.put("/update-signature", Auth.updateSignature);
+routes.put("/update-signature", Auth.updateSignature); */
 
 routes.get("/find-companies/:offset/:limit", Data.findCompanies);
 
