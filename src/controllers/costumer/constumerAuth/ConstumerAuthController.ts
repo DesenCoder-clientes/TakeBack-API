@@ -1,5 +1,7 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
+import { ConfirmDataToForgotPasswordUseCase } from "./ConfirmDataToForgotPasswordUseCase";
 import { DesactiveCostumerUseCase } from "./DesactiveCostumerUseCase";
+import { forgotPasswordUseCase } from "./ForgotPasswordUseCase";
 import { RegisterCostumerUseCase } from "./RegisterCostumerUseCase";
 import { SignInCostumerUseCase } from "./SignInCostumerUseCase";
 import { UpdateCostumerPasswordUseCase } from "./UpdateCostumerPasswordUseCase";
@@ -26,6 +28,16 @@ interface ConsumerRequestToUpdatePassword {
 
 interface CostumerProps {
   password: string;
+}
+
+interface ConfirmDataProps {
+  cpf: string;
+  birthDate: Date;
+}
+
+interface ForgotPasswordProps {
+  newPassword: string;
+  code: string;
 }
 
 class CostumerAuthController {
@@ -79,6 +91,35 @@ class CostumerAuthController {
       consumerID,
       newPassword,
       password,
+    });
+
+    response.status(201).json(result);
+  }
+
+  async confirmDataToForgotPassword(request: Request, response: Response) {
+    const { birthDate, cpf }: ConfirmDataProps = request.body;
+
+    const confirm = new ConfirmDataToForgotPasswordUseCase();
+
+    const result = await confirm.execute({
+      birthDate,
+      cpf,
+    });
+
+    response.status(201).json(result);
+  }
+
+  async forgotPassword(request: Request, response: Response) {
+    const consumerID = request.params.id;
+
+    const { newPassword, code }: ForgotPasswordProps = request.body;
+
+    const forgot = new forgotPasswordUseCase();
+
+    const result = await forgot.execute({
+      code,
+      consumerID,
+      newPassword,
     });
 
     response.status(201).json(result);

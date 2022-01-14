@@ -2,23 +2,23 @@ import { Router } from "express";
 
 import { CostumerAuthController } from "../controllers/costumer/constumerAuth/ConstumerAuthController";
 import { CostumerDataController } from "../controllers/costumer/costumerData/CostumerDataController";
-import * as Data from "../controllers/costumer/AppDataController";
-import * as Verify from "../controllers/costumer/VerifyController";
-import * as Cashback from "../controllers/costumer/CashbackController";
-import * as Forgot from "../controllers/costumer/ForgotController";
+import { CostumerCashBackController } from "../controllers/costumer/costumerCashBack/CostumerCashBackController";
+import { CostumerVerifyController } from "../controllers/costumer/costumerVerify/CostumerVerifyController";
 
 import { AuthMiddleware } from "../middlewares/costumerMiddlewares/AuthMiddleware";
 
 const costumerAuth = new CostumerAuthController();
 const costumerData = new CostumerDataController();
+const costumerCashBack = new CostumerCashBackController();
+const costumerVerify = new CostumerVerifyController();
 
 const routes = Router();
 
 routes.post("/sign-in", costumerAuth.signInCostumer);
 routes.post("/sign-up", costumerAuth.registerCostumer);
 
-routes.post("/confirm-data", Forgot.confirmDataToForgotPassword);
-routes.put("/forgot-password/:id", Forgot.forgotPassword);
+routes.post("/forgot/confirm", costumerAuth.confirmDataToForgotPassword);
+routes.put("/forgot/password/:id", costumerAuth.forgotPassword);
 
 routes.use(AuthMiddleware);
 
@@ -35,11 +35,11 @@ routes.get("/companies/find/:offset/:limit", costumerData.findCompanies);
 routes.put("/update/password", costumerAuth.updateCostumerPassword);
 routes.delete("/account/deactivate", costumerAuth.desactiveCostumer);
 
-routes.get("/find-transactions/:offset/:limit", Cashback.findTransactions);
-routes.post("/authorized-purchase", Cashback.authorizePurchase);
-routes.delete("/delete-transaction/:id", Cashback.dropTransaction);
+routes.post("/cashback/authorize", costumerCashBack.authorizePurchase);
+routes.get("/cashback/find/:offset/:limit", costumerCashBack.findTransaction);
+routes.delete("/cashback/delete/:id", costumerCashBack.dropTransaction);
 
-routes.get("/send-mail-to-verify", Verify.sendMailToVerify);
-routes.post("/verify-email", Verify.verifyEmail);
+routes.get("/verify/send-mail", costumerVerify.sendMailToVerify);
+routes.post("/verify/email", costumerVerify.verifyEmail);
 
 export default routes;
