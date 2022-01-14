@@ -14,7 +14,7 @@ class CostumerUpdateDataUseCase {
     birthDate,
     consumerID,
   }: ConsumerRequestToUpdateData) {
-    if (!fullName || !birthDate || !consumerID) {
+    if (!fullName || !birthDate) {
       throw new InternalError("Dados incompletos", 400);
     }
 

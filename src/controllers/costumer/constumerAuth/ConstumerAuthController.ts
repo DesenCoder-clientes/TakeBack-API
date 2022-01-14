@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
+import { DesactiveCostumerUseCase } from "./DesactiveCostumerUseCase";
 import { RegisterCostumerUseCase } from "./RegisterCostumerUseCase";
 import { SignInCostumerUseCase } from "./SignInCostumerUseCase";
+import { UpdateCostumerPasswordUseCase } from "./UpdateCostumerPasswordUseCase";
 
 interface LoginProps {
   cpf: string;
@@ -15,6 +17,11 @@ interface RegisterProps {
   phone: string;
   zipCode: string;
   password: string;
+}
+
+interface ConsumerRequestToUpdatePassword {
+  password: string;
+  newPassword: string;
 }
 
 class CostumerAuthController {
@@ -37,6 +44,33 @@ class CostumerAuthController {
     const register = new RegisterCostumerUseCase();
 
     const result = await register.execute(data);
+
+    response.status(201).json(result);
+  }
+
+  async desactiveCostumer(request: Request, response: Response) {
+    const consumerID = request["tokenPayload"].id;
+
+    const desactive = new DesactiveCostumerUseCase();
+
+    const result = await desactive.execute(consumerID);
+
+    response.status(201).json(result);
+  }
+
+  async updateCostumerPassword(request: Request, response: Response) {
+    const consumerID = request["tokenPayload"].id;
+
+    const { newPassword, password }: ConsumerRequestToUpdatePassword =
+      request.body;
+
+    const update = new UpdateCostumerPasswordUseCase();
+
+    const result = await update.execute({
+      consumerID,
+      newPassword,
+      password,
+    });
 
     response.status(201).json(result);
   }

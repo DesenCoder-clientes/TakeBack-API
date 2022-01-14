@@ -1,8 +1,10 @@
 import { Response, Request } from "express";
+import { CostumerRegisterSignatureUseCase } from "./CostumerRegisterSignatureUseCase";
 import { CostumerUpdateAddressUseCase } from "./CostumerUpdateAddressUseCase";
 import { CostumerUpdateDataUseCase } from "./CostumerUpdateDataUseCase";
 import { CostumerUpdateEmailUseCase } from "./CostumerUpdateEmailUseCase";
 import { CostumerUpdatePhoneUseCase } from "./CostumerUpdatePhoneUseCase";
+import { CostumerUpdateSignatureUseCase } from "./CostumerUpdateSignatureUseCase";
 
 interface ConsumerRequestToUpdateData {
   fullName: string;
@@ -23,6 +25,15 @@ interface ConsumerRequestToUpdateAddress {
   number: string;
   zipCode: string;
   complement: string;
+}
+
+interface ConsumerRequestToRegisterSignature {
+  newSignature: string;
+}
+
+interface ConsumerRequestToUpdateSignature {
+  signature: string;
+  newSignature: string;
 }
 
 class CostumerDataController {
@@ -92,6 +103,38 @@ class CostumerDataController {
       number,
       street,
       zipCode,
+    });
+
+    response.status(201).json(result);
+  }
+
+  async registerSignature(request: Request, response: Response) {
+    const consumerID = request["tokenPayload"].id;
+
+    const { newSignature }: ConsumerRequestToRegisterSignature = request.body;
+
+    const register = new CostumerRegisterSignatureUseCase();
+
+    const result = await register.execute({
+      consumerID,
+      newSignature,
+    });
+
+    response.status(201).json(result);
+  }
+
+  async updateSignature(request: Request, response: Response) {
+    const consumerID = request["tokenPayload"].id;
+
+    const { newSignature, signature }: ConsumerRequestToUpdateSignature =
+      request.body;
+
+    const update = new CostumerUpdateSignatureUseCase();
+
+    const result = await update.execute({
+      consumerID,
+      newSignature,
+      signature,
     });
 
     response.status(201).json(result);

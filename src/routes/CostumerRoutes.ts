@@ -29,10 +29,11 @@ routes.put("/update/data", costumerData.updateData);
 routes.put("/update/phone", costumerData.updatePhone);
 routes.put("/update/email", costumerData.updateEmail);
 routes.put("/update/address", costumerData.updateAddress);
+routes.post("/signature/register", costumerData.registerSignature);
+routes.put("/signature/update", costumerData.updateSignature);
 
-/* routes.put("/update-password", Auth.updatePassword);
-routes.post("/register-signature", Auth.registerSignature);
-routes.put("/update-signature", Auth.updateSignature); */
+routes.put("/update/password", costumerAuth.updateCostumerPassword);
+routes.delete("/account/deactivate", costumerAuth.desactiveCostumer);
 
 routes.get("/find-companies/:offset/:limit", Data.findCompanies);
 
@@ -42,7 +43,5 @@ routes.delete("/delete-transaction/:id", Cashback.dropTransaction);
 
 routes.get("/send-mail-to-verify", Verify.sendMailToVerify);
 routes.post("/verify-email", Verify.verifyEmail);
-
-routes.delete("/deactivate-account", Account.deactivateAccount);
 
 export default routes;

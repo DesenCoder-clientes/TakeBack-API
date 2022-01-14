@@ -1,20 +1,27 @@
+import * as bcrypt from "bcrypt";
 import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Consumers } from "../../../models/Consumer";
 
-interface ConsumerRequestToUpdatePhone {
-  phone: string;
+interface ConsumerRequestToRegisterSignature {
+  newSignature: string;
   consumerID: string;
 }
 
-class CostumerUpdatePhoneUseCase {
-  async execute({ phone, consumerID }: ConsumerRequestToUpdatePhone) {
-    if (!phone) {
+class CostumerRegisterSignatureUseCase {
+  async execute({
+    newSignature,
+    consumerID,
+  }: ConsumerRequestToRegisterSignature) {
+    if (!newSignature || newSignature.length != 4) {
       throw new InternalError("Dados não informados", 400);
     }
 
+    const newSignatureEncrypted = bcrypt.hashSync(newSignature, 10);
+
     const { affected } = await getRepository(Consumers).update(consumerID, {
-      phone,
+      signature: newSignatureEncrypted,
+      signatureRegistered: true,
     });
 
     if (affected === 0) {
@@ -28,4 +35,4 @@ class CostumerUpdatePhoneUseCase {
   }
 }
 
-export { CostumerUpdatePhoneUseCase };
+export { CostumerRegisterSignatureUseCase };

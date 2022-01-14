@@ -25,7 +25,7 @@ class CostumerUpdateAddressUseCase {
     complement,
     consumerID,
   }: ConsumerRequestToUpdateAddress) {
-    if ((!street && !district && !number && !zipCode) || !consumerID) {
+    if (!street || !district || !zipCode) {
       throw new InternalError("Dados não informados", 400);
     }
 
