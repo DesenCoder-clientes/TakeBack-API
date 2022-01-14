@@ -9,7 +9,7 @@ interface ConsumerRequestToUpdatePhone {
 
 class CostumerUpdatePhoneUseCase {
   async execute({ phone, consumerID }: ConsumerRequestToUpdatePhone) {
-    if (!phone) {
+    if (!phone || !consumerID) {
       throw new InternalError("Dados não informados", 400);
     }
 

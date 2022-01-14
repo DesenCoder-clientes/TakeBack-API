@@ -14,8 +14,8 @@ class CostumerUpdateDataUseCase {
     birthDate,
     consumerID,
   }: ConsumerRequestToUpdateData) {
-    if (!fullName || !birthDate) {
-      throw new InternalError("Dados não informados", 400);
+    if (!fullName || !birthDate || !consumerID) {
+      throw new InternalError("Dados incompletos", 400);
     }
 
     const { affected } = await getRepository(Consumers).update(consumerID, {

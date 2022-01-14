@@ -9,7 +9,7 @@ interface ConsumerRequestToUpdateEmail {
 
 class CostumerUpdateEmailUseCase {
   async execute({ email, consumerID }: ConsumerRequestToUpdateEmail) {
-    if (!email) {
+    if (!email || !consumerID) {
       throw new InternalError("Dados não informados", 400);
     }
 
