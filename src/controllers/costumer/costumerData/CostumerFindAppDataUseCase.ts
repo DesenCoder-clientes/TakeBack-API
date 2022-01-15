@@ -1,6 +1,7 @@
-import { getRepository, Not } from "typeorm";
+import { getRepository, In, Not } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
+import { CompanyStatus } from "../../../models/CompanyStatus";
 import { Consumers } from "../../../models/Consumer";
 import { Transactions } from "../../../models/Transaction";
 
@@ -10,9 +11,18 @@ interface FindAppProps {
 
 class CostumerFindAppDataUseCase {
   async execute({ consumerID }: FindAppProps) {
+    const status = await getRepository(CompanyStatus).find({
+      where: { blocked: false },
+    });
+
+    const statusIds = [];
+    status.map((item) => {
+      statusIds.push(item.id);
+    });
+
     const companies = await getRepository(Companies).find({
       select: ["id", "fantasyName", "createdAt"],
-      where: { status: { blocked: false } },
+      where: { status: In([...statusIds]) },
       relations: ["industry"],
       take: 20,
       order: { createdAt: "ASC" },
