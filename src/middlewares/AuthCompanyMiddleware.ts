@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { getRepository, In } from "typeorm";
+import { getRepository } from "typeorm";
 import { InternalError } from "../config/GenerateErros";
 import { Companies } from "../models/Company";
 

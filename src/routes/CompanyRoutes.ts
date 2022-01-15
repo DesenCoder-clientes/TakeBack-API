@@ -1,6 +1,5 @@
 import { Router } from "express";
 
-import { AuthMiddleware } from "../middlewares/companyMiddlewares/AuthMiddleware";
 import { DecodeTokenMiddleware } from "../middlewares/DecodeTokenMiddleware";
 import { AuthCompanyMiddleware } from "../middlewares/AuthCompanyMiddleware";
 
