@@ -89,6 +89,8 @@ class ReportCashbackByPaymentMethodUseCase {
       .orderBy("transactionPaymentMethod.paymentMethod")
       .getRawMany();
 
+    console.log(transactionsTypes);
+
     // Formatando os dados para reposta
     const paymentMethodName = [];
     const paymentMethodValue = [];
@@ -99,6 +101,7 @@ class ReportCashbackByPaymentMethodUseCase {
 
     const data = [paymentMethodValue, paymentMethodName];
 
+    console.log(data);
     return data;
   }
 }

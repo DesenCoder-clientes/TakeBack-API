@@ -150,10 +150,8 @@ class GenerateCashbackUseCase {
       method.map((informedMethod) => {
         if (databaseMethod.id === parseInt(informedMethod.method)) {
           getRepository(TransactionPaymentMethods).save({
-            transaction: newCashback,
-            transactionId: newCashback.id,
+            transactions: newCashback,
             paymentMethod: databaseMethod,
-            paymentMethodId: databaseMethod.id,
             cashbackPercentage: databaseMethod.cashbackPercentage,
             cashbackValue:
               databaseMethod.cashbackPercentage *
@@ -168,3 +166,11 @@ class GenerateCashbackUseCase {
 }
 
 export { GenerateCashbackUseCase };
+
+/* transactionId: newCashback.id,
+  paymentMethod: databaseMethod,
+  paymentMethodId: databaseMethod.id,
+  cashbackPercentage: databaseMethod.cashbackPercentage,
+  cashbackValue:
+    databaseMethod.cashbackPercentage *
+    parseFloat(informedMethod.value), */
