@@ -17,7 +17,8 @@ class CostumerFindAppDataUseCase {
       order: { createdAt: "ASC" },
     });
 
-    const consumer = await getRepository(Consumers).findOne(consumerID, {
+    const consumer = await getRepository(Consumers).findOne({
+      where: { id: consumerID },
       relations: ["address", "address.city", "address.city.state"],
     });
 

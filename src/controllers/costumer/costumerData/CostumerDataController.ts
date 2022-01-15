@@ -147,7 +147,7 @@ class CostumerDataController {
 
     const find = new CostumerFindAppDataUseCase();
 
-    const result = await find.execute(consumerID);
+    const result = await find.execute({ consumerID });
 
     return response.status(200).json(result);
   }
