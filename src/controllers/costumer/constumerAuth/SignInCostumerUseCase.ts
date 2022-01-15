@@ -12,7 +12,7 @@ interface LoginProps {
 class SignInCostumerUseCase {
   async execute({ cpf, password }: LoginProps) {
     if (!cpf || !password) {
-      throw new InternalError("Dados incompletos", 401);
+      throw new InternalError("Dados incompletos", 400);
     }
 
     const consumer = await getRepository(Consumers).findOne({
@@ -32,6 +32,8 @@ class SignInCostumerUseCase {
     if (!consumer) {
       throw new InternalError("CPF não cadastrado", 404);
     }
+
+    console.log(consumer);
 
     if (consumer.deactivedAccount) {
       throw new InternalError("Conta inativa", 400);

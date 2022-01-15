@@ -21,7 +21,7 @@ class CostumerCashBackController {
       value,
     });
 
-    response.status(201).json(result);
+    response.status(200).json(result);
   }
 
   async findTransaction(request: Request, response: Response) {
@@ -37,7 +37,7 @@ class CostumerCashBackController {
       offset,
     });
 
-    response.status(201).json(result);
+    response.status(200).json(result);
   }
 
   async dropTransaction(request: Request, response: Response) {
@@ -49,7 +49,7 @@ class CostumerCashBackController {
       transactionID,
     });
 
-    response.status(201).json(result);
+    response.status(200).json(result);
   }
 }
 

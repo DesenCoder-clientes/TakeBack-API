@@ -21,6 +21,10 @@ class CostumerFindAppDataUseCase {
       relations: ["address", "address.city", "address.city.state"],
     });
 
+    if (!consumer) {
+      throw new InternalError("Usuário não encontrado", 404);
+    }
+
     const transactions = await getRepository(Transactions).find({
       select: ["id", "cashbackAmount", "createdAt"],
       relations: ["companies", "transactionTypes", "transactionStatus"],
@@ -33,10 +37,6 @@ class CostumerFindAppDataUseCase {
         },
       },
     });
-
-    if (!consumer) {
-      throw new InternalError("Usuário não encontrado", 404);
-    }
 
     return { consumer, companies, transactions };
   }

@@ -17,8 +17,12 @@ const routes = Router();
 routes.post("/sign-in", costumerAuth.signInCostumer);
 routes.post("/sign-up", costumerAuth.registerCostumer);
 
-routes.post("/forgot/confirm", costumerAuth.confirmDataToForgotPassword);
-routes.put("/forgot/password/:id", costumerAuth.forgotPassword);
+routes.post(
+  "/confirm-data-to-forgot-password",
+  costumerAuth.confirmDataToForgotPassword
+);
+routes.put("/forgot-password/:id", costumerAuth.forgotPassword);
+routes.get("/verify-if-exists/:cpf", costumerAuth.verifyIfUserAlreadyExists);
 
 routes.use(AuthMiddleware);
 
@@ -33,7 +37,7 @@ routes.put("/signature/update", costumerData.updateSignature);
 routes.get("/companies/find/:offset/:limit", costumerData.findCompanies);
 
 routes.put("/update/password", costumerAuth.updateCostumerPassword);
-routes.delete("/account/deactivate", costumerAuth.desactiveCostumer);
+routes.delete("/account/deactive", costumerAuth.desactiveCostumer);
 
 routes.post("/cashback/authorize", costumerCashBack.authorizePurchase);
 routes.get("/cashback/find/:offset/:limit", costumerCashBack.findTransaction);

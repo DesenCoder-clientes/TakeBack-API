@@ -5,6 +5,7 @@ import { forgotPasswordUseCase } from "./ForgotPasswordUseCase";
 import { RegisterCostumerUseCase } from "./RegisterCostumerUseCase";
 import { SignInCostumerUseCase } from "./SignInCostumerUseCase";
 import { UpdateCostumerPasswordUseCase } from "./UpdateCostumerPasswordUseCase";
+import { VerifyIfUserAlreadyExistsUseCase } from "./VerifyIfUserAlreadyExistsUseCase";
 
 interface LoginProps {
   cpf: string;
@@ -51,17 +52,18 @@ class CostumerAuthController {
       password,
     });
 
-    response.status(201).json(result);
+    return response.status(200).json(result);
   }
 
   async registerCostumer(request: Request, response: Response) {
     const data: RegisterProps = request.body;
+    console.log(request.body);
 
     const register = new RegisterCostumerUseCase();
 
     const result = await register.execute(data);
 
-    response.status(201).json(result);
+    return response.status(200).json(result);
   }
 
   async desactiveCostumer(request: Request, response: Response) {
@@ -76,7 +78,7 @@ class CostumerAuthController {
       password,
     });
 
-    response.status(201).json(result);
+    return response.status(200).json(result);
   }
 
   async updateCostumerPassword(request: Request, response: Response) {
@@ -93,7 +95,7 @@ class CostumerAuthController {
       password,
     });
 
-    response.status(201).json(result);
+    return response.status(200).json(result);
   }
 
   async confirmDataToForgotPassword(request: Request, response: Response) {
@@ -106,7 +108,7 @@ class CostumerAuthController {
       cpf,
     });
 
-    response.status(201).json(result);
+    return response.status(200).json(result);
   }
 
   async forgotPassword(request: Request, response: Response) {
@@ -122,7 +124,17 @@ class CostumerAuthController {
       newPassword,
     });
 
-    response.status(201).json(result);
+    return response.status(200).json(result);
+  }
+
+  async verifyIfUserAlreadyExists(request: Request, response: Response) {
+    const { cpf } = request.params;
+
+    const verify = new VerifyIfUserAlreadyExistsUseCase();
+
+    const result = await verify.execute({ cpf });
+
+    return response.status(200).json(result);
   }
 }
 
