@@ -1,6 +1,8 @@
 import { Router } from "express";
 
 import { AuthMiddleware } from "../middlewares/companyMiddlewares/AuthMiddleware";
+import { DecodeTokenMiddleware } from "../middlewares/DecodeTokenMiddleware";
+import { AuthCompanyMiddleware } from "../middlewares/AuthCompanyMiddleware";
 
 import { AuthCompanyController } from "../controllers/company/companyAuth/AuthCompanyController";
 import { ReportsController } from "../controllers/company/companyReports/ReportsController";
@@ -22,7 +24,8 @@ routes.post("/sign-up", auth.registerNewCompany);
 routes.post("/sign-in", auth.signUserCompany);
 routes.get("/verify-token", auth.verifyToken);
 
-routes.use(AuthMiddleware);
+routes.use(DecodeTokenMiddleware);
+routes.use(AuthCompanyMiddleware);
 
 // routes.get("/find-app-data", reports.findAppData);
 routes.get("/data/dashboard", reports.dashboardReports);

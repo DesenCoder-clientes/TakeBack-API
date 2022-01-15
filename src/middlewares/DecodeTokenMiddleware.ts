@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
 
-export const AuthMiddleware = async (
+export const DecodeTokenMiddleware = async (
   request: Request,
   response: Response,
   next: NextFunction
@@ -31,6 +31,6 @@ export const AuthMiddleware = async (
 
     next();
   } catch (error) {
-    response.status(498).json({ message: "Unautorized" });
+    response.status(498).json({ message: "Não autorizado" });
   }
 };

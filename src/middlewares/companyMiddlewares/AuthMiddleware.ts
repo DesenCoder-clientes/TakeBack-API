@@ -31,6 +31,6 @@ export const AuthMiddleware = async (
 
     next();
   } catch (error) {
-    response.status(498).json({ message: "Unautorized" });
+    response.status(498).json({ message: "Não autorizado" });
   }
 };
