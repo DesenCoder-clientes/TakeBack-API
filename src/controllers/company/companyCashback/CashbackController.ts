@@ -22,7 +22,7 @@ interface GenerateCashbackProps {
 }
 
 interface CancelProps {
-  transactionID: string;
+  transactionIDs: number[];
   cancellationDescription: string;
 }
 
@@ -83,20 +83,25 @@ class CashbackController {
   }
 
   async cancelCashBack(request: Request, response: Response) {
-    const { companyID } = request["tokenPayload"];
+    const { companyId } = request["tokenPayload"];
 
-    const { cancellationDescription, transactionID }: CancelProps =
+    const { cancellationDescription, transactionIDs }: CancelProps =
       request.body;
 
     const cancel = new CancelCashBackUseCase();
 
-    const result = await cancel.execute({
+    const sucess = await cancel.execute({
       cancellationDescription,
-      companyID,
-      transactionID,
+      transactionIDs,
     });
 
-    return response.status(200).json(result);
+    if (sucess) {
+      const cashbacks = new FindCashbacksUseCase();
+
+      const result = await cashbacks.execute({ companyId });
+
+      return response.status(200).json(result);
+    }
   }
 }
 

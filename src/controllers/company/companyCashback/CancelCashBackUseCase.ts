@@ -1,41 +1,39 @@
 import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
-import { Companies } from "../../../models/Company";
 import { Transactions } from "../../../models/Transaction";
+import { TransactionStatus } from "../../../models/TransactionStatus";
 
 interface CancelProps {
-  companyID: string;
-  transactionIDs: string;
+  transactionIDs: number[];
   cancellationDescription: string;
 }
 
 class CancelCashBackUseCase {
-  async execute({
-    companyID,
-    cancellationDescription,
-    transactionIDs,
-  }: CancelProps) {
-    if (!cancellationDescription || !transactionIDs) {
-      throw new InternalError("Campos incompletos", 401);
+  async execute({ cancellationDescription, transactionIDs }: CancelProps) {
+    if (!cancellationDescription || transactionIDs.length === 0) {
+      throw new InternalError("Campos incompletos", 400);
     }
 
-    const company = await getRepository(Companies).findOne(companyID);
-
-    const transaction = await getRepository(Transactions).find({
-      select: ["id"],
-      where: { companies: company },
+    const status = await getRepository(TransactionStatus).findOne({
+      where: { description: "Cancelada pelo parceiro" },
     });
 
-    if (!transaction) {
-      throw new InternalError("Erro ao procurar transação", 401);
+    if (!status) {
+      throw new InternalError("Erro ao cancelar transação", 400);
     }
 
-    const transactionsIDs = [];
-    transaction.map((item) => {
-      transactionsIDs.push(item.id);
+    transactionIDs.map(async (id) => {
+      const { affected } = await getRepository(Transactions).update(id, {
+        transactionStatus: status,
+        cancellationDescription,
+      });
+
+      if (!affected) {
+        throw new InternalError(`Erro ao cancelar a transação: ${id}`, 400);
+      }
     });
 
-    await getRepository(Transactions).delete(transactionsIDs);
+    return true;
   }
 }
 
