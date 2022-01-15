@@ -17,9 +17,14 @@ class CostumerFindAppDataUseCase {
       order: { createdAt: "ASC" },
     });
 
-    const consumer = await getRepository(Consumers).findOne(consumerID, {
+    const consumer = await getRepository(Consumers).findOne({
+      where: { id: consumerID },
       relations: ["address", "address.city", "address.city.state"],
     });
+
+    if (!consumer) {
+      throw new InternalError("Usuário não encontrado", 404);
+    }
 
     const transactions = await getRepository(Transactions).find({
       select: ["id", "cashbackAmount", "createdAt"],
@@ -33,10 +38,6 @@ class CostumerFindAppDataUseCase {
         },
       },
     });
-
-    if (!consumer) {
-      throw new InternalError("Usuário não encontrado", 404);
-    }
 
     return { consumer, companies, transactions };
   }

@@ -12,8 +12,9 @@ interface LoginProps {
 class SignInCostumerUseCase {
   async execute({ cpf, password }: LoginProps) {
     if (!cpf || !password) {
-      throw new InternalError("Dados incompletos", 401);
+      throw new InternalError("Dados incompletos", 400);
     }
+    console.log(cpf);
 
     const consumer = await getRepository(Consumers).findOne({
       where: {

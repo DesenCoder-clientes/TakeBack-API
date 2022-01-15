@@ -83,7 +83,11 @@ class CostumerUpdateAddressUseCase {
       throw new InternalError("Houve um erro", 400);
     }
 
-    return consumer;
+    const costumer = await getRepository(Consumers).findOne(consumerID, {
+      relations: ["address", "address.city", "address.city.state"],
+    });
+
+    return costumer;
   }
 }
 

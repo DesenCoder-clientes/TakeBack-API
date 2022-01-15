@@ -12,7 +12,7 @@ interface ConfirmDataProps {
 class ConfirmDataToForgotPasswordUseCase {
   async execute({ cpf, birthDate }: ConfirmDataProps) {
     if (!cpf || !birthDate) {
-      throw new InternalError("Dados incompletos", 401);
+      throw new InternalError("Dados incompletos", 400);
     }
 
     const consumer = await getRepository(Consumers).findOne({
@@ -33,6 +33,7 @@ class ConfirmDataToForgotPasswordUseCase {
     const aux1 = `${new Date(birthDate).getDate()}${new Date(
       birthDate
     ).getMonth()}${new Date(birthDate).getFullYear()}`;
+
     const aux2 = `${consumer.birthDate.getDate()}${consumer.birthDate.getMonth()}${consumer.birthDate.getFullYear()}`;
 
     console.log(aux1, aux2);
@@ -49,6 +50,7 @@ class ConfirmDataToForgotPasswordUseCase {
     if (affected === 0) {
       throw new InternalError("Houve um erro, tente novamente", 400);
     }
+
     const newMessage = `Seu código de verificação é ${newCode}`;
 
     sendMail(consumer.email, "TakeBack - Recuperação de senha", newMessage);

@@ -52,7 +52,7 @@ class CostumerDataController {
       consumerID,
     });
 
-    response.status(201).json(result);
+    return response.status(200).json(result);
   }
 
   async updatePhone(request: Request, response: Response) {
@@ -67,7 +67,7 @@ class CostumerDataController {
       consumerID,
     });
 
-    response.status(201).json(result);
+    return response.status(200).json(result);
   }
 
   async updateEmail(request: Request, response: Response) {
@@ -82,7 +82,7 @@ class CostumerDataController {
       email,
     });
 
-    response.status(201).json(result);
+    return response.status(200).json(result);
   }
 
   async updateAddress(request: Request, response: Response) {
@@ -107,7 +107,7 @@ class CostumerDataController {
       zipCode,
     });
 
-    response.status(201).json(result);
+    return response.status(200).json(result);
   }
 
   async registerSignature(request: Request, response: Response) {
@@ -122,7 +122,7 @@ class CostumerDataController {
       newSignature,
     });
 
-    response.status(201).json(result);
+    return response.status(200).json(result);
   }
 
   async updateSignature(request: Request, response: Response) {
@@ -139,7 +139,7 @@ class CostumerDataController {
       signature,
     });
 
-    response.status(201).json(result);
+    return response.status(200).json(result);
   }
 
   async findAppData(request: Request, response: Response) {
@@ -147,9 +147,9 @@ class CostumerDataController {
 
     const find = new CostumerFindAppDataUseCase();
 
-    const result = await find.execute(consumerID);
+    const result = await find.execute({ consumerID });
 
-    response.status(201).json(result);
+    return response.status(200).json(result);
   }
 
   async findCompanies(request: Request, response: Response) {
@@ -162,7 +162,7 @@ class CostumerDataController {
       offset,
     });
 
-    response.status(201).json(result);
+    return response.status(200).json(result);
   }
 }
 

@@ -14,7 +14,7 @@ class CostumerVerifyController {
 
     const result = await send.execute({ consumerID });
 
-    response.status(201).json(result);
+    response.status(200).json(result);
   }
 
   async verifyEmail(request: Request, response: Response) {
@@ -29,7 +29,7 @@ class CostumerVerifyController {
       consumerID,
     });
 
-    response.status(201).json(result);
+    response.status(200).json(result);
   }
 }
 
