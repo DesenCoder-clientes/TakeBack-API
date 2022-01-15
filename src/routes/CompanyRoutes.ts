@@ -36,6 +36,7 @@ routes.post(
   "/cashback/:code",
   cashback.generateCashbackWithTakebackPaymentMethod
 );
+routes.delete("/cashback/cancel", cashback.cancelCashBack);
 
 routes.get("/payments", paymentMethod.findCompanyMethods);
 routes.get("/payments/cashier", paymentMethod.findCompanyMethodsForCashier);

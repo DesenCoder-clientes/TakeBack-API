@@ -1,5 +1,6 @@
-import { getRepository } from "typeorm";
+import { getRepository, In } from "typeorm";
 import { Companies } from "../../../models/Company";
+import { CompanyStatus } from "../../../models/CompanyStatus";
 
 interface FindCompaniesProps {
   limit: string;
@@ -8,9 +9,18 @@ interface FindCompaniesProps {
 
 class CostumerFindCompaniesUseCase {
   async execute({ limit, offset }: FindCompaniesProps) {
+    const status = await getRepository(CompanyStatus).find({
+      where: { blocked: false },
+    });
+
+    const statusIDs = [];
+    status.map((item) => {
+      statusIDs.push(item.id);
+    });
+
     const companies = await getRepository(Companies).find({
       select: ["id", "fantasyName", "createdAt"],
-      where: { status: { blocked: false } },
+      where: { status: In([...statusIDs]) },
       relations: ["industry"],
       take: parseInt(limit),
       skip: parseInt(offset) * parseInt(limit),

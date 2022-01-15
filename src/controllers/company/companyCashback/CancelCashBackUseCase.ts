@@ -5,7 +5,7 @@ import { Transactions } from "../../../models/Transaction";
 
 interface CancelProps {
   companyID: string;
-  transactionID: string;
+  transactionIDs: string;
   cancellationDescription: string;
 }
 
@@ -13,25 +13,29 @@ class CancelCashBackUseCase {
   async execute({
     companyID,
     cancellationDescription,
-    transactionID,
+    transactionIDs,
   }: CancelProps) {
-    if (!cancellationDescription) {
+    if (!cancellationDescription || !transactionIDs) {
       throw new InternalError("Campos incompletos", 401);
     }
 
     const company = await getRepository(Companies).findOne(companyID);
 
-    const transaction = await getRepository(Transactions).findOne(
-      transactionID,
-      {
-        select: ["id"],
-        where: { companies: company },
-      }
-    );
+    const transaction = await getRepository(Transactions).find({
+      select: ["id"],
+      where: { companies: company },
+    });
 
-    if (transaction) {
-      await getRepository(Transactions).delete(transactionID);
+    if (!transaction) {
+      throw new InternalError("Erro ao procurar transação", 401);
     }
+
+    const transactionsIDs = [];
+    transaction.map((item) => {
+      transactionsIDs.push(item.id);
+    });
+
+    await getRepository(Transactions).delete(transactionsIDs);
   }
 }
 
