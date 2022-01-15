@@ -12,6 +12,7 @@ class CostumerFindAppDataUseCase {
   async execute({ consumerID }: FindAppProps) {
     const companies = await getRepository(Companies).find({
       select: ["id", "fantasyName", "createdAt"],
+      where: { status: { blocked: false } },
       relations: ["industry"],
       take: 20,
       order: { createdAt: "ASC" },

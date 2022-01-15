@@ -10,6 +10,7 @@ class CostumerFindCompaniesUseCase {
   async execute({ limit, offset }: FindCompaniesProps) {
     const companies = await getRepository(Companies).find({
       select: ["id", "fantasyName", "createdAt"],
+      where: { status: { blocked: false } },
       relations: ["industry"],
       take: parseInt(limit),
       skip: parseInt(offset) * parseInt(limit),
