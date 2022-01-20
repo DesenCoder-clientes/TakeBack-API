@@ -23,8 +23,7 @@ routes.post("/sign-up", auth.registerNewCompany);
 routes.post("/sign-in", auth.signUserCompany);
 routes.get("/verify-token", auth.verifyToken);
 
-routes.use(DecodeTokenMiddleware);
-routes.use(AuthCompanyMiddleware);
+routes.use(DecodeTokenMiddleware, AuthCompanyMiddleware);
 
 // routes.get("/find-app-data", reports.findAppData);
 routes.get("/data/dashboard", reports.dashboardReports);

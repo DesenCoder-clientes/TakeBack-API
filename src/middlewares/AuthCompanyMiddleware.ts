@@ -24,6 +24,8 @@ export const AuthCompanyMiddleware = async (
     throw new InternalError("Não autorizado", 401);
   }
 
+  console.log(company);
+
   if (company.status.blocked) {
     throw new InternalError("Não autorizado", 401);
   }
