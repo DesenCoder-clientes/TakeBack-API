@@ -2,41 +2,40 @@ import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Industries } from "../../../models/Industry";
 
-interface Props{
-    description: string
-    categoryFee: number
+interface Props {
+  description: string;
+  categoryFee: number;
 }
 
-class RegisterIndustryUseCase{
-    async execute({description, categoryFee}: Props){
-        if(!description || !categoryFee){
-            throw new InternalError("Dados incompletos", 400);
-        }
+class RegisterIndustryUseCase {
+  async execute({ description, categoryFee }: Props) {
+    if (!description || !categoryFee) {
+      throw new InternalError("Dados incompletos", 400);
+    }
 
-        const findIndustry = await getRepository(Industries).findOne({
-            where: {description : description}
-        })
+    const findIndustry = await getRepository(Industries).findOne({
+      where: { description: description },
+    });
 
-        if(findIndustry){
-            throw new InternalError("Ramo já cadastrado", 302);
-        }
+    if (findIndustry) {
+      throw new InternalError("Ramo já cadastrado", 302);
+    }
 
-        const registerIndustry = await getRepository(Industries).save({
-            description,
-            categoryFee
-        })
+    const registerIndustry = await getRepository(Industries).save({
+      description,
+      categoryFee,
+    });
 
-        if(!registerIndustry){
-            throw new InternalError("Erro ao cadastrar ramo", 400);
-        }
+    if (!registerIndustry) {
+      throw new InternalError("Erro ao cadastrar ramo", 400);
+    }
 
-        const industries = await getRepository(Industries).find({
-            select : ["id", "categoryFee", "companies", "createdAt", "updatedAt", "description", "iconCategory"]
-        })
+    const industries = await getRepository(Industries).find({
+      order: { description: "ASC" },
+    });
 
-        return `Ramo ${description} cadastrado com sucesso!` 
-         
-        }
+    return { message: "Ramo cadastrado!", industries };
+  }
 }
 
-export {RegisterIndustryUseCase}
+export { RegisterIndustryUseCase };

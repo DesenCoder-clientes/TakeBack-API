@@ -16,7 +16,7 @@ const managerConsumers = new ConsumersController();
 const routes = Router();
 
 routes.get("/verify-token", managerAuth.verifyToken);
-routes.post("/user", managerAuth.generateUser);
+routes.post("/user", managerAuth.registerUser);
 routes.post("/user/login", managerAuth.signInUser);
 routes.put("/user/:id", managerAuth.updateUser);
 routes.get("/user", managerAuth.findUser);
@@ -25,7 +25,7 @@ routes.post("/company/user", authorizationCompany.generateManagerUser);
 
 routes.post("/industry", managerIndustry.registerIndustry);
 routes.put("/industry/:id", managerIndustry.updateIndustry);
-routes.get("/industry", managerIndustry.findIndustry);
+routes.get("/industry/:offset/:limit", managerIndustry.findIndustry);
 
 routes.get("/companies/:offset/:limit", managerCompanies.listCompany);
 routes.get("/companies", managerCompanies.findCompany);

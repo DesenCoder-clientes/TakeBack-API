@@ -3,45 +3,48 @@ import { FindIndustryUseCase } from "./FindIndustryUseCase";
 import { RegisterIndustryUseCase } from "./RegisterIndustryUseCase";
 import { UpdateIndustryUseCase } from "./UpdateIndustryUseCase";
 
-interface Props{
-    description: string
-    categoryFee: number
+interface Props {
+  description: string;
+  categoryFee: number;
 }
 
-class ManagerIndustryController{
-    async registerIndustry(request: Request, response: Response){
-        const {description, categoryFee}: Props = request.body;
+class ManagerIndustryController {
+  async registerIndustry(request: Request, response: Response) {
+    const { description, categoryFee }: Props = request.body;
 
-        const registerIndustry = new RegisterIndustryUseCase();
+    const registerIndustry = new RegisterIndustryUseCase();
 
-        const result = await registerIndustry.execute({categoryFee, description});
+    const result = await registerIndustry.execute({ categoryFee, description });
 
-        response.status(201).json(result)
-    }
+    response.status(201).json(result);
+  }
 
-    async updateIndustry(request: Request, response: Response){
-        const id = request.params.id;
-        const {description, categoryFee} : Props = request.body;
+  async updateIndustry(request: Request, response: Response) {
+    const id = request.params.id;
+    const { description, categoryFee }: Props = request.body;
 
-        const update = new UpdateIndustryUseCase();
+    const update = new UpdateIndustryUseCase();
 
-        const result = await update.execute({
-            description,
-            categoryFee,
-            id
-        })
-
-        return response.status(200).json(result);
-    }
-
-    async findIndustry(request: Request, response: Response){
-    const findIndustries = new FindIndustryUseCase();
-
-    const result = await findIndustries.execute();
+    const result = await update.execute({
+      description,
+      categoryFee,
+      id,
+    });
 
     return response.status(200).json(result);
+  }
+
+  async findIndustry(request: Request, response: Response) {
+    const findIndustries = new FindIndustryUseCase();
+    const { offset, limit } = request.params;
+
+    const result = await findIndustries.execute({
+      offset,
+      limit,
+    });
+
+    return response.status(200).json(result);
+  }
 }
 
-}
-
-export {ManagerIndustryController};
+export { ManagerIndustryController };
