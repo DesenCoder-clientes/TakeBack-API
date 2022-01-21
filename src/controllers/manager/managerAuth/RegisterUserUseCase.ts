@@ -12,12 +12,12 @@ interface Props {
   email: string;
   isActive: true;
   phone: string;
-  userTypeDesc: string;
+  userTypeId: string;
 }
 
 class RegisterUserUseCase {
-  async execute({ name, cpf, email, userTypeDesc, phone }: Props) {
-    if (!name || !cpf || !email || !phone || !userTypeDesc) {
+  async execute({ name, cpf, email, userTypeId, phone }: Props) {
+    if (!name || !cpf || !email || !phone || !userTypeId) {
       throw new InternalError("Dados incompletos!", 400);
     }
 
@@ -35,9 +35,9 @@ class RegisterUserUseCase {
       10
     );
 
-    const userType = await getRepository(TakeBackUserTypes).findOne({
-      where: { description: userTypeDesc },
-    });
+    const userType = await getRepository(TakeBackUserTypes).findOne(
+      parseInt(userTypeId)
+    );
 
     if (!userType) {
       throw new InternalError("Tipo de usuário inexistente", 401);
@@ -56,7 +56,7 @@ class RegisterUserUseCase {
       const newMessage = `Usuário ${name} foi cadastrado! Para acessar o sistema utilize as seguintes credenciais.: CPF: "${cpf}", Usuário: "${name}", Senha: "${newPassword}"`;
 
       sendMail(email, "TakeBack - Acesso ao sistema", newMessage);
-      return `Usuário ${name} cadastrado com sucesso!`;
+      return "Usuário cadastrado com sucesso!";
     }
   }
 }

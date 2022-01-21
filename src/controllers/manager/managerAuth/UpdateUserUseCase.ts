@@ -3,55 +3,52 @@ import { InternalError } from "../../../config/GenerateErros";
 import { TakeBackUsers } from "../../../models/TakeBackUsers";
 import { TakeBackUserTypes } from "../../../models/TakeBackUserTypes";
 
-interface Props{
-    name: string
-    cpf: string
-    email: string
-    id: string
-    userTypeDesc: string
-    isActive: boolean
-    phone: string
+interface Props {
+  name: string;
+  cpf: string;
+  email: string;
+  id: string;
+  userTypeId: string;
+  isActive: boolean;
+  phone: string;
 }
 
 class UpdateUserUseCase {
-     async execute({name, cpf, email, isActive, phone, userTypeDesc, id}: Props){
-         if(!cpf || !name || !email || !phone || !userTypeDesc){
-             throw new InternalError("Dados incompletos", 400);
-         } 
-        
-         const user = await getRepository(TakeBackUsers).findOne({
-             where: {id}
-         })
+  async execute({ name, cpf, email, isActive, phone, userTypeId, id }: Props) {
+    console.log(name, cpf, email, isActive, phone, userTypeId, id);
+    if (!cpf || !name || !email || !phone || !userTypeId) {
+      throw new InternalError("Dados incompletos", 400);
+    }
 
-         if(!user){
-             throw new InternalError("Usuário não encontrado", 400);
-         }
+    const user = await getRepository(TakeBackUsers).findOne(id);
 
-         const userType = await getRepository(TakeBackUserTypes).findOne({
-            where: {description: userTypeDesc}
-        })
+    if (!user) {
+      throw new InternalError("Usuário não encontrado", 400);
+    }
 
-        if(!userType){
-            throw new InternalError("Tipo de usuário inexistente", 401)
-        }
+    const userType = await getRepository(TakeBackUserTypes).findOne(
+      parseInt(userTypeId)
+    );
 
-         const updateUser = await getRepository(TakeBackUsers).update(id, { 
-            name, 
-            cpf,
-            email,
-            phone,
-            userType,
-            isActive
-         })
+    if (!userType) {
+      throw new InternalError("Tipo de usuário inexistente", 401);
+    }
 
-         if (updateUser.affected !== 1){
-             throw new InternalError("Erro ao atualizar usuário", 500);
-         }
+    const updateUser = await getRepository(TakeBackUsers).update(id, {
+      name,
+      cpf,
+      email,
+      phone,
+      userType,
+      isActive,
+    });
 
-         return `Usuário ${name} atualizado com sucesso!`
+    if (updateUser.affected === 0) {
+      throw new InternalError("Erro ao atualizar usuário", 500);
+    }
 
-     }
-
+    return "Usuário atualizado";
+  }
 }
 
-export {UpdateUserUseCase};
+export { UpdateUserUseCase };

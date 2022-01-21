@@ -19,7 +19,8 @@ routes.get("/verify-token", managerAuth.verifyToken);
 routes.post("/user", managerAuth.registerUser);
 routes.post("/user/login", managerAuth.signInUser);
 routes.put("/user/:id", managerAuth.updateUser);
-routes.get("/user", managerAuth.findUser);
+routes.get("/user/:offset/:limit", managerAuth.findUser);
+routes.get("/find-user-type", managerAuth.findUserType);
 
 routes.post("/company/user", authorizationCompany.generateManagerUser);
 

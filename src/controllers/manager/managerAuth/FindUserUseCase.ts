@@ -2,21 +2,24 @@ import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { TakeBackUsers } from "../../../models/TakeBackUsers";
 
-class FindUserUseCase {
-    async execute(){
-
-        const users = await getRepository(TakeBackUsers).find({
-            select: ["name", "cpf", "email", "isActive", "phone", "id"],
-            relations: ["userType"]
-        })
-
-        if(!users){
-            throw new InternalError("Não há usuários cadastrados", 400)
-        }
-
-        return users
-
-    }
+interface Props {
+  offset: string;
+  limit: string;
 }
 
-export {FindUserUseCase}
+class FindUserUseCase {
+  async execute({ offset, limit }: Props) {
+    const users = await getRepository(TakeBackUsers).find({
+      select: ["name", "cpf", "email", "isActive", "phone", "id", "userType"],
+      where: { userType: { isRoot: false } },
+      relations: ["userType"],
+      take: parseInt(limit),
+      skip: parseInt(offset) * parseInt(limit),
+      order: { name: "ASC" },
+    });
+
+    return users;
+  }
+}
+
+export { FindUserUseCase };
