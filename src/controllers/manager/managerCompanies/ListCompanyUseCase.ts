@@ -8,7 +8,7 @@ interface Props {
 
 class ListCompanyUseCase {
   async execute({ limit, offset }: Props) {
-    const findCompany = await getRepository(Companies).find({
+    const companies = await getRepository(Companies).find({
       select: [
         "id",
         "fantasyName",
@@ -21,11 +21,11 @@ class ListCompanyUseCase {
       skip: parseInt(offset) * parseInt(limit),
     });
 
-    if (findCompany.length === 0) {
+    if (companies.length === 0) {
       return false;
     }
 
-    return findCompany;
+    return companies;
   }
 }
 
