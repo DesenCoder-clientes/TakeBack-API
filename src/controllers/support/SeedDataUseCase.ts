@@ -264,21 +264,21 @@ const tbUserTypes = [
     description: "Root",
     isRoot: true,
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   },
   {
     description: "Administrativo",
     isRoot: false,
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   },
   {
     description: "Colaborador",
     isRoot: false,
     createdAt: new Date(),
-    updatedAt: new Date()
-  }
-] 
+    updatedAt: new Date(),
+  },
+];
 
 class GenerateSeedData {
   async execute() {
@@ -358,10 +358,15 @@ class GenerateSeedData {
     }
 
     // Gerando tipos de usuários take back
-    const takeBackUserTypes = await getRepository(TakeBackUserTypes).save(tbUserTypes)
+    const takeBackUserTypes = await getRepository(TakeBackUserTypes).save(
+      tbUserTypes
+    );
 
-    if(!takeBackUserTypes){
-      return new InternalError("Erro ao gerar tipo de usuário do take back", 400)
+    if (!takeBackUserTypes) {
+      return new InternalError(
+        "Erro ao gerar tipo de usuário do take back",
+        400
+      );
     }
 
     return "Dados semeados";
