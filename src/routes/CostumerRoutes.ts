@@ -1,11 +1,12 @@
 import { Router } from "express";
 
+import { DecodeTokenMiddleware } from "../middlewares/DecodeTokenMiddleware";
+import { AuthCostumerMiddleware } from "../middlewares/AuthCostumerMiddleware";
+
 import { CostumerAuthController } from "../controllers/costumer/constumerAuth/ConstumerAuthController";
 import { CostumerDataController } from "../controllers/costumer/costumerData/CostumerDataController";
 import { CostumerCashBackController } from "../controllers/costumer/costumerCashBack/CostumerCashBackController";
 import { CostumerVerifyController } from "../controllers/costumer/costumerVerify/CostumerVerifyController";
-
-import { AuthMiddleware } from "../middlewares/costumerMiddlewares/AuthMiddleware";
 
 const costumerAuth = new CostumerAuthController();
 const costumerData = new CostumerDataController();
@@ -24,7 +25,7 @@ routes.post(
 routes.put("/forgot-password/:id", costumerAuth.forgotPassword);
 routes.get("/verify-if-exists/:cpf", costumerAuth.verifyIfUserAlreadyExists);
 
-routes.use(AuthMiddleware);
+routes.use(DecodeTokenMiddleware, AuthCostumerMiddleware);
 
 routes.get("/data/find", costumerData.findAppData);
 

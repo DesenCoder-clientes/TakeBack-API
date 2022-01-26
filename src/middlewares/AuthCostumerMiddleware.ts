@@ -1,30 +1,26 @@
 import { NextFunction, Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { InternalError } from "../config/GenerateErros";
-import { Companies } from "../models/Company";
+import { Consumers } from "../models/Consumer";
 
-export const AuthCompanyMiddleware = async (
+export const AuthCostumerMiddleware = async (
   request: Request,
   response: Response,
   next: NextFunction
 ) => {
-  const { companyId } = request["tokenPayload"];
+  const { id } = request["tokenPayload"];
 
-  if (!companyId) {
+  if (!id) {
     throw new InternalError("Não autorizado", 401);
   }
 
-  const company = await getRepository(Companies).findOne({
-    select: ["id", "status"],
-    relations: ["status"],
-    cache: true,
-  });
+  const consumer = await getRepository(Consumers).findOne(id);
 
-  if (!company) {
+  if (!consumer) {
     throw new InternalError("Não autorizado", 401);
   }
 
-  if (company.status.blocked) {
+  if (consumer.deactivedAccount) {
     throw new InternalError("Não autorizado", 401);
   }
 
