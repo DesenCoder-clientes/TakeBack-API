@@ -11,12 +11,14 @@ class ListCompanyUseCase {
     const companies = await getRepository(Companies).find({
       select: [
         "id",
+        "createdAt",
         "fantasyName",
-        "email",
         "registeredNumber",
-        "cashbackPercentDefault",
+        "monthlyPayment",
+        "industry",
+        "status",
       ],
-      relations: ["status"],
+      relations: ["status", "industry"],
       take: parseInt(limit),
       skip: parseInt(offset) * parseInt(limit),
     });
