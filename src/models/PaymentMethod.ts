@@ -18,11 +18,11 @@ export class PaymentMethods {
   @Column()
   description: string;
 
-  @OneToMany(() => CompanyPaymentMethods, () => PaymentMethods)
-  companyPaymentMethod: CompanyPaymentMethods;
+  @OneToMany(() => CompanyPaymentMethods, companyPaymentMethods => companyPaymentMethods.paymentMethod)
+  public companyPaymentMethod!: CompanyPaymentMethods[];
 
-  @OneToMany(() => TransactionPaymentMethods, () => PaymentMethods)
-  transactionPaymentMethod: TransactionPaymentMethods;
+  @OneToMany(() => TransactionPaymentMethods, transactionPaymentMethods => transactionPaymentMethods.paymentMethod)
+  public transactionPaymentMethod!: TransactionPaymentMethods[];
 
   @CreateDateColumn()
   createdAt: Date;

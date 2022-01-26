@@ -13,35 +13,35 @@ import { Transactions } from "./Transaction";
 @Entity()
 export class TransactionPaymentMethods {
   @PrimaryGeneratedColumn("increment")
-  id: number;
-
-  @Column()
-  transactionId: string;
-
-  @Column()
-  paymentMethodId: number;
+  public id!: number;
 
   @Column({
     default: 0,
     type: "float",
   })
-  cashbackPercentage: number;
+  public cashbackPercentage!: number;
 
   @Column({
     default: 0,
     type: "float",
   })
-  cashbackValue: number;
+  public cashbackValue!: number;
 
-  @ManyToOne(() => Transactions, () => TransactionPaymentMethods)
-  transaction: Transactions;
+  @ManyToOne(
+    () => Transactions,
+    (transactions) => transactions.transactionPaymentMethod
+  )
+  public transactions!: Transactions;
 
-  @ManyToOne(() => CompanyPaymentMethods, () => TransactionPaymentMethods)
-  paymentMethod: CompanyPaymentMethods;
+  @ManyToOne(
+    () => CompanyPaymentMethods,
+    (companyPaymentMethods) => companyPaymentMethods.paymentMethod
+  )
+  public paymentMethod!: CompanyPaymentMethods;
 
   @CreateDateColumn()
-  createdAt: Date;
+  public createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  public updatedAt!: Date;
 }

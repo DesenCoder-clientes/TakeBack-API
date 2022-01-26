@@ -20,8 +20,8 @@ export class CompanyStatus {
   @Column()
   blocked: boolean;
 
-  @OneToMany(() => CompanyStatus, () => Companies)
-  companies: Companies[];
+  @OneToMany(() => Companies, companies => companies.status)
+  company: Companies[];
 
   @CreateDateColumn()
   createdAt: Date;

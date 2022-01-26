@@ -6,6 +6,7 @@ import { CompanyUsers } from "../../../models/CompanyUsers";
 import { generateRandomNumber } from "../../../utils/RandomValueGenerate";
 import { sendMail } from "../../../utils/SendMail";
 import { CompanyUserTypes } from "../../../models/CompanyUserTypes";
+import { CompanyStatus } from "../../../models/CompanyStatus";
 
 interface Props {
   name?: string;
@@ -28,7 +29,7 @@ class AllowCompanyFirstAccessUseCase {
       throw new InternalError("Usuário administrativo já cadastrado", 400);
     }
 
-    const userType = await getRepository(CompanyUserTypes).findOne({
+    const companyUserTypes = await getRepository(CompanyUserTypes).findOne({
       where: { description: "Administrador" },
     });
 
@@ -43,22 +44,30 @@ class AllowCompanyFirstAccessUseCase {
       email: company.email,
       password: newPasswordEncrypted,
       company,
-      userType,
+      companyUserTypes,
       isRootUser: true,
     });
 
-    if (newUser) {
-      const newMessage = `O cadastro da empresa ${
-        company.fantasyName
-      } foi aprovado! Para acessar o sistema utilize as seguintes credenciais.: CNPJ: "${
-        company.registeredNumber
-      }", Usuário: "${name || "Administrativo"}", Senha: "${newPassword}"`;
-
-      sendMail(company.email, "TakeBack - Acesso ao sistema", newMessage);
-      return "Usuário administrativo criado";
+    if (!newUser) {
+      return new InternalError("Erro Inexperado", 400);
     }
 
-    return new InternalError("Erro Inexperado", 400);
+    const status = await getRepository(CompanyStatus).findOne({
+      where: { description: "Ativo" },
+    });
+
+    await getRepository(Companies).update(company.id, {
+      status,
+    });
+
+    const newMessage = `O cadastro da empresa ${
+      company.fantasyName
+    } foi aprovado! Para acessar o sistema utilize as seguintes credenciais.: CNPJ: "${
+      company.registeredNumber
+    }", Usuário: "${name || "Administrativo"}", Senha: "${newPassword}"`;
+
+    sendMail(company.email, "TakeBack - Acesso ao sistema", newMessage);
+    return "Usuário administrativo criado";
   }
 }
 

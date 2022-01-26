@@ -46,7 +46,8 @@ class CompanyUserController {
 
   async updateCompanyUser(request: Request, response: Response) {
     const { companyId } = request["tokenPayload"];
-    const { isActive, name, userId, userTypeId }: UpdateProps = request.body;
+    const { isActive, name, userTypeId }: UpdateProps = request.body;
+    const { id } = request.params;
 
     const updateCompanyUser = new UpdateCompanyUsersUseCase();
 
@@ -54,7 +55,7 @@ class CompanyUserController {
       companyId,
       isActive,
       name,
-      userId,
+      userId: id,
       userTypeId,
     });
 

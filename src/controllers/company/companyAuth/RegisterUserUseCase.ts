@@ -34,7 +34,7 @@ class RegisterUserUseCase {
       return new InternalError("Usuário já cadastrado", 400);
     }
 
-    const userType = await getRepository(CompanyUserTypes).findOne(userTypeId);
+    const companyUserTypes = await getRepository(CompanyUserTypes).findOne(userTypeId);
 
     const passwordEncrypted = bcrypt.hashSync(password, 10);
 
@@ -42,7 +42,7 @@ class RegisterUserUseCase {
       name,
       password: passwordEncrypted,
       company,
-      userType,
+      companyUserTypes,
       isRootUser: false,
     });
 

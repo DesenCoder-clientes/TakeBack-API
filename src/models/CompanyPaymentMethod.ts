@@ -13,34 +13,34 @@ import { PaymentMethods } from "./PaymentMethod";
 @Entity()
 export class CompanyPaymentMethods {
   @PrimaryGeneratedColumn("increment")
-  id: number;
+  public id!: number;
 
   @Column()
-  companyId: string;
+  public companyId!: string;
 
   @Column()
-  paymentMethodId: number;
+  public paymentMethodId!: number;
 
   @Column({
     default: 0,
     type: "float",
   })
-  cashbackPercentage: number;
+  public cashbackPercentage!: number;
 
   @Column({
     default: false,
   })
-  isActive: boolean;
+  public isActive!: boolean;
 
-  @ManyToOne(() => Companies, () => CompanyPaymentMethods)
-  company: Companies;
+  @ManyToOne(() => Companies, companies => companies.companyPaymentMethod)
+  public company!: Companies;
 
-  @ManyToOne(() => PaymentMethods, () => CompanyPaymentMethods)
-  paymentMethod: PaymentMethods;
+  @ManyToOne(() => PaymentMethods, paymentMethods => paymentMethods.companyPaymentMethod)
+  public paymentMethod!: PaymentMethods;
 
   @CreateDateColumn()
-  createdAt: Date;
+  public createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  public updatedAt!: Date;
 }

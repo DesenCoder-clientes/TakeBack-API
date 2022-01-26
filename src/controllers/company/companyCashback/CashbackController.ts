@@ -4,6 +4,7 @@ import { GenerateCashbackUseCase } from "./GenerateCashbackUseCase";
 import { GenerateCashbackWithTakebackPaymentMethodUseCase } from "./GenerateCashbackWithTakebackPaymentMethodUseCase";
 import { GetConsumerInfoUseCase } from "./GetConsumerInfoUseCase";
 import { FindCashbacksUseCase } from "./FindCashbacksUseCase";
+import { CancelCashBackUseCase } from "./CancelCashBackUseCase";
 
 interface GenerateCashbackProps {
   cashbackData: {
@@ -18,6 +19,11 @@ interface GenerateCashbackProps {
       }
     ];
   };
+}
+
+interface CancelProps {
+  transactionIDs: number[];
+  cancellationDescription: string;
 }
 
 class CashbackController {
@@ -74,6 +80,28 @@ class CashbackController {
     const result = await cashbacks.execute({ companyId });
 
     return response.status(200).json(result);
+  }
+
+  async cancelCashBack(request: Request, response: Response) {
+    const { companyId } = request["tokenPayload"];
+
+    const { cancellationDescription, transactionIDs }: CancelProps =
+      request.body;
+
+    const cancel = new CancelCashBackUseCase();
+
+    const sucess = await cancel.execute({
+      cancellationDescription,
+      transactionIDs,
+    });
+
+    if (sucess) {
+      const cashbacks = new FindCashbacksUseCase();
+
+      const result = await cashbacks.execute({ companyId });
+
+      return response.status(200).json(result);
+    }
   }
 }
 

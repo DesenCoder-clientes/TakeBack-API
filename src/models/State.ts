@@ -20,8 +20,8 @@ export class State {
   @Column()
   initials: string;
 
-  @OneToMany(() => City, () => State)
-  cities: City;
+  @OneToMany(() => City, city => city.state)
+  cities: City[];
 
   @CreateDateColumn()
   createdAt: Date;

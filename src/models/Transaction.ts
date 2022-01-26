@@ -21,7 +21,7 @@ import { TransactionPaymentMethods } from "./TransactionPaymentMethod";
 @Entity()
 export class Transactions {
   @PrimaryGeneratedColumn("increment")
-  id: string;
+  id: number;
 
   @Column({
     type: "float",
@@ -57,23 +57,32 @@ export class Transactions {
   })
   cancellationDescription: string;
 
-  @ManyToOne(() => TransactionTypes, () => Transactions)
-  transactionType: TransactionTypes;
+  @ManyToOne(
+    () => TransactionTypes,
+    (transactionTypes) => transactionTypes.transaction
+  )
+  transactionTypes: TransactionTypes;
 
-  @ManyToOne(() => TransactionStatus, () => Transactions)
+  @ManyToOne(
+    () => TransactionStatus,
+    (transactionStatus) => transactionStatus.transaction
+  )
   transactionStatus: TransactionStatus;
 
-  @ManyToOne(() => Consumers, () => Transactions)
-  consumer: Consumers;
+  @ManyToOne(() => Consumers, (consumers) => consumers.transaction)
+  consumers: Consumers;
 
-  @ManyToOne(() => Companies, () => Transactions)
-  company: Companies;
+  @ManyToOne(() => Companies, (companies) => companies.transaction)
+  companies: Companies;
 
-  @ManyToOne(() => CompanyUsers, () => Transactions)
-  companyUser: CompanyUsers;
+  @ManyToOne(() => CompanyUsers, (companyUsers) => companyUsers.transaction)
+  companyUsers: CompanyUsers;
 
-  @OneToMany(() => TransactionPaymentMethods, () => Transactions)
-  transactionPaymentMethod: TransactionPaymentMethods;
+  @OneToMany(
+    () => TransactionPaymentMethods,
+    (transactionPaymentMethods) => transactionPaymentMethods.transactions
+  )
+  public transactionPaymentMethod!: TransactionPaymentMethods[];
 
   @Column({
     type: "date",

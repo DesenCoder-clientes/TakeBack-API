@@ -30,11 +30,11 @@ class UpdateCompanyUsersUseCase {
       throw new InternalError("Usuário não encontrado", 400);
     }
 
-    const userType = await getRepository(CompanyUserTypes).findOne(userTypeId);
+    const companyUserTypes = await getRepository(CompanyUserTypes).findOne(userTypeId);
 
     const user = await getRepository(CompanyUsers).update(userId, {
       name,
-      userType,
+      companyUserTypes,
       isActive,
     });
 

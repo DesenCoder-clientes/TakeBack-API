@@ -119,15 +119,15 @@ class GenerateCashbackUseCase {
     // Salvando as informações na tabela de Transactions caso não tenha o método de pagamento TakeBack
     const date = new Date();
     const newCashback = await getRepository(Transactions).save({
-      company,
-      companyUser,
-      consumer,
+      companies: company,
+      consumers: consumer,
       value: parseFloat(costumer.value),
       cashbackAmount,
       cashbackPercent,
       salesFee: 0,
-      transactionType,
-      transactionStatus,
+      transactionTypes: transactionType,
+      transactionStatus: transactionStatus,
+      companyUsers: companyUser,
       dateAt: date.toLocaleDateString(),
     });
 
@@ -150,10 +150,8 @@ class GenerateCashbackUseCase {
       method.map((informedMethod) => {
         if (databaseMethod.id === parseInt(informedMethod.method)) {
           getRepository(TransactionPaymentMethods).save({
-            transaction: newCashback,
-            transactionId: newCashback.id,
+            transactions: newCashback,
             paymentMethod: databaseMethod,
-            paymentMethodId: databaseMethod.id,
             cashbackPercentage: databaseMethod.cashbackPercentage,
             cashbackValue:
               databaseMethod.cashbackPercentage *
@@ -168,3 +166,11 @@ class GenerateCashbackUseCase {
 }
 
 export { GenerateCashbackUseCase };
+
+/* transactionId: newCashback.id,
+  paymentMethod: databaseMethod,
+  paymentMethodId: databaseMethod.id,
+  cashbackPercentage: databaseMethod.cashbackPercentage,
+  cashbackValue:
+    databaseMethod.cashbackPercentage *
+    parseFloat(informedMethod.value), */

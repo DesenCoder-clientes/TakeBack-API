@@ -41,15 +41,15 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
     }
 
     // Verificando se o cliente está cadastrado e ativo
-    const consumer = await getRepository(Consumers).findOne({
+    const consumers = await getRepository(Consumers).findOne({
       where: { cpf: costumer.cpf },
     });
 
-    if (!consumer) {
+    if (!consumers) {
       throw new InternalError("O cliente não possui cadastro", 400);
     }
 
-    if (consumer.deactivedAccount) {
+    if (consumers.deactivedAccount) {
       throw new InternalError("O cliente não está ativo", 400);
     }
 
@@ -85,7 +85,7 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
 
     const existentTransaction = await getRepository(Transactions).findOne({
       where: {
-        consumer,
+        consumers,
         keyTransaction: code,
         transactionStatus: transactionAwait,
       },
@@ -132,8 +132,8 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
     });
 
     // Buscando a empresa e o usuário para injetar na tabela Transactions
-    const company = await getRepository(Companies).findOne(companyId);
-    const companyUser = await getRepository(CompanyUsers).findOne(userId);
+    const companies = await getRepository(Companies).findOne(companyId);
+    const companyUsers = await getRepository(CompanyUsers).findOne(userId);
 
     // Buscando status e tipos de transações para injetar na tabela Transactions
     const transactionStatus = await getRepository(TransactionStatus).findOne({
@@ -156,14 +156,14 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
     const balanceUpdatedUp = await getRepository(Transactions).update(
       existentTransaction.id,
       {
-        company,
-        companyUser,
-        consumer,
+        companies,
+        companyUsers,
+        consumers,
         value: parseFloat(costumer.value),
         cashbackAmount,
         cashbackPercent,
         salesFee: 0,
-        transactionType: transactionTypeUp,
+        transactionTypes: transactionTypeUp,
         transactionStatus,
         dateAt: date.toLocaleDateString(),
       }
@@ -171,9 +171,9 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
 
     // Salvando as informações na tabela de Transactions caso não tenha o método de pagamento TakeBack
     const balanceUpdatedDown = await getRepository(Transactions).save({
-      company,
-      companyUser,
-      consumer,
+      companies,
+      companyUsers,
+      consumers,
       value: parseFloat(costumer.value),
       cashbackAmount: existentTransaction.value,
       cashbackPercent,
@@ -189,9 +189,9 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
     }
 
     // Atualizando saldo do consumidor
-    const result = await getRepository(Consumers).update(consumer.id, {
-      balance: consumer.balance - existentTransaction.value,
-      blockedBalance: consumer.blockedBalance + cashbackAmount,
+    const result = await getRepository(Consumers).update(consumers.id, {
+      balance: consumers.balance - existentTransaction.value,
+      blockedBalance: consumers.blockedBalance + cashbackAmount,
     });
 
     if (result.affected !== 1) {

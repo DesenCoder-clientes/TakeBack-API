@@ -14,7 +14,7 @@ class FindCompanyPaymentMethodsUseCase {
     }
 
     const methods = await getRepository(CompanyPaymentMethods).find({
-      where: { companyId },
+      where: { company: { id: companyId } },
       relations: ["paymentMethod"],
       order: { createdAt: "DESC" },
     });

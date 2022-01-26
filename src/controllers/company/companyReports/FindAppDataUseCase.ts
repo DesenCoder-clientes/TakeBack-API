@@ -8,11 +8,11 @@ interface Props {
 class FindAppDataUseCase {
   async execute({ userId }: Props) {
     const user = await getRepository(CompanyUsers).findOne(userId, {
-      select: ["name", "userType"],
-      relations: ["userType"],
+      select: ["name", "companyUserTypes"],
+      relations: ["companyUserTypes"],
     });
 
-    return { name: user.name, office: user.userType.description };
+    return { name: user.name, office: user.companyUserTypes.description };
   }
 }
 

@@ -1,19 +1,16 @@
-import { getRepository } from "typeorm";
-import { Request, Response } from "express";
-import axios from "axios";
 import * as bcrypt from "bcrypt";
+import axios from "axios";
+import { getRepository } from "typeorm";
+import { InternalError } from "../../../config/GenerateErros";
+import { City } from "../../../models/City";
+import { Consumers } from "../../../models/Consumer";
+import { ConsumerAddress } from "../../../models/ConsumerAddress";
+import { State } from "../../../models/State";
+import { apiCorreiosResponseType } from "../../../types/ApiCorreiosResponse";
+import { CPFValidate } from "../../../utils/CPFValidate";
+import { generateToken } from "../../../config/JWT";
 
-import { Consumers } from "../../models/Consumer";
-import { ConsumerAddress } from "../../models/ConsumerAddress";
-import { City } from "../../models/City";
-import { State } from "../../models/State";
-
-import { generateToken } from "../../config/JWT";
-import { CPFValidate } from "../../utils/CPFValidate";
-import { apiCorreiosResponseType } from "../../types/ApiCorreiosResponse";
-
-type userDataTypes = {
-  id: string;
+interface userDataProps {
   fullName: string;
   cpf: string;
   birthDate: Date;
@@ -21,31 +18,30 @@ type userDataTypes = {
   phone: string;
   zipCode: string;
   password: string;
-};
+}
 
-export const newAccount = async (request: Request, response: Response) => {
-  try {
-    const {
-      fullName,
-      cpf,
-      birthDate,
-      email,
-      zipCode,
-      password,
-    }: userDataTypes = request.body.userData;
-
+class RegisterCostumerUseCase {
+  async execute({
+    fullName,
+    cpf,
+    birthDate,
+    email,
+    phone,
+    zipCode,
+    password,
+  }: userDataProps) {
     if (!fullName || !cpf || !birthDate || !zipCode || !email || !password) {
-      return response.status(401).json({ message: "Dados incompletos" });
+      throw new InternalError("Dados incompletos", 401);
     }
 
     if (!CPFValidate(cpf)) {
-      return response.status(400).json({ message: "CPF inválido" });
+      throw new InternalError("CPF inválido", 400);
     }
 
     const client = await getRepository(Consumers).findOne({ where: { cpf } });
 
     if (client) {
-      return response.status(302).json({ message: "CPF já cadastrado" });
+      throw new InternalError("CPF já cadastrado", 302);
     }
 
     const city = await getRepository(City).findOne({
@@ -68,7 +64,7 @@ export const newAccount = async (request: Request, response: Response) => {
       );
 
       if (!uf) {
-        return response.status(404).json({ message: "Cep não localizado" });
+        throw new InternalError("Cep não localizado", 404);
       }
 
       const state = await getRepository(State).findOne({
@@ -114,32 +110,11 @@ export const newAccount = async (request: Request, response: Response) => {
         process.env.JWT_EXPIRES_IN
       );
 
-      return response.status(200).json({ ACCESS_TOKEN: token });
+      return { token, fullName };
     }
 
-    return response.status(400).json({ message: "Houve um erro" });
-  } catch (error) {
-    return response.status(500).json({ message: "Erro inesperado" });
+    throw new InternalError("Houve um erro", 400);
   }
-};
+}
 
-export const deactivateAccount = async (
-  request: Request,
-  response: Response
-) => {
-  try {
-    const consumerID = request["tokenPayload"].id;
-
-    const { affected } = await getRepository(Consumers).update(consumerID, {
-      deactivedAccount: true,
-    });
-
-    if (affected === 1) {
-      return response.status(200).json({ message: "Conta desativada" });
-    }
-
-    return response.status(404).json({ message: "Erro ao desativar conta" });
-  } catch (error) {
-    return response.status(500).json({ message: "Erro inesperado" });
-  }
-};
+export { RegisterCostumerUseCase };

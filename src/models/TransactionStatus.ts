@@ -22,8 +22,8 @@ export class TransactionStatus {
   })
   blocked: boolean;
 
-  @OneToMany(() => Transactions, () => TransactionStatus)
-  transactions: Transactions;
+  @OneToMany(() => Transactions, transactions => transactions.transactionStatus)
+  transaction: Transactions[];
 
   @CreateDateColumn()
   createdAt: Date;

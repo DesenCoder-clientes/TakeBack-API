@@ -9,11 +9,10 @@ import { TransactionTypes } from "../../../models/TransactionType";
 
 interface Props {
   companyId: string;
-  filterByPeriod: string;
 }
 
 class ReportCashbackByPaymentMethodUseCase {
-  async execute({ companyId, filterByPeriod }: Props) {
+  async execute({ companyId }: Props) {
     const date = new Date();
     let today = date.toLocaleDateString();
     let sevenDaysAgo = new Date(
@@ -56,42 +55,41 @@ class ReportCashbackByPaymentMethodUseCase {
       .leftJoin(
         CompanyPaymentMethods,
         "companyPaymentMethod",
-        "companyPaymentMethod.id = transactionPaymentMethod.paymentMethodId"
+        "companyPaymentMethod.id = transactionPaymentMethod.paymentMethod"
       )
       .leftJoin(
         Companies,
         "company",
-        "company.id = companyPaymentMethod.companyId"
+        "company.id = companyPaymentMethod.company"
       )
       .leftJoin(
         Transactions,
         "transaction",
-        "transaction.id = transactionPaymentMethod.transactionId"
+        "transaction.id = transactionPaymentMethod.transactions"
       )
       .leftJoin(
         PaymentMethods,
         "paymentMethods",
-        "paymentMethods.id = companyPaymentMethod.paymentMethodId"
+        "paymentMethods.id = companyPaymentMethod.paymentMethod"
       )
       .where("company.id = :companyId", { companyId })
       .andWhere(
         "transaction.dateAt >= :sevenDaysAgo AND transaction.dateAt < :today",
         { sevenDaysAgo, today }
       )
-      .andWhere(
-        "transaction.transactionStatusId IN (:...transactionStatusId)",
-        {
-          transactionStatusId: [...transactionStatusIds],
-        }
-      )
-      .andWhere("transaction.transactionType = :transactionsTypeId", {
+      .andWhere("transaction.transactionStatus IN (:...transactionStatusId)", {
+        transactionStatusId: [...transactionStatusIds],
+      })
+      .andWhere("transaction.transactionTypes = :transactionsTypeId", {
         transactionsTypeId: transactionsTypes.id,
       })
-      .groupBy("transactionPaymentMethod.paymentMethodId")
+      .groupBy("transactionPaymentMethod.paymentMethod")
       .addGroupBy("companyPaymentMethod.id")
       .addGroupBy("paymentMethods.description")
-      .orderBy("transactionPaymentMethod.paymentMethodId")
+      .orderBy("transactionPaymentMethod.paymentMethod")
       .getRawMany();
+
+    console.log(transactionsTypes);
 
     // Formatando os dados para reposta
     const paymentMethodName = [];
@@ -103,6 +101,7 @@ class ReportCashbackByPaymentMethodUseCase {
 
     const data = [paymentMethodValue, paymentMethodName];
 
+    console.log(data);
     return data;
   }
 }
