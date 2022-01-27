@@ -6,6 +6,7 @@ import { SignInUserUseCase } from "./SignInUserUseCase";
 import { UpdateUserUseCase } from "./UpdateUserUseCase";
 import { VerifyTokenUseCase } from "./VerifyTokenUseCase";
 import { UpdateUserPasswordUseCase } from "./UpdateUserPasswordUseCase";
+import { ForgotPasswordUseCase } from "./ForgotPasswordUseCase";
 
 interface RegisterProps {
   name: string;
@@ -30,6 +31,11 @@ interface UpdateProps {
 interface UpdatePasswordProps {
   password: string;
   newPassword: string;
+}
+
+interface ForgotPasswordProps {
+  newPassword: string;
+  generatePassword?: boolean;
 }
 
 class ManagerAuthController {
@@ -131,6 +137,18 @@ class ManagerAuthController {
     const update = new UpdateUserPasswordUseCase();
 
     const result = await update.execute({ newPassword, password, userId: id });
+
+    return response.status(200).json(result);
+  }
+
+  async forgotPassword(request: Request, response: Response) {
+    const { id } = request["tokenPayload"];
+    const userId = request.params.id;
+    const data: ForgotPasswordProps = request.body;
+
+    const update = new ForgotPasswordUseCase();
+
+    const result = await update.execute({ data, rootUserId: id, userId });
 
     return response.status(200).json(result);
   }

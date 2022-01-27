@@ -27,6 +27,7 @@ routes.post("/user/register", managerAuth.registerUser);
 routes.put("/user/update/:id", managerAuth.updateUser);
 routes.get("/user/find/:offset/:limit", managerAuth.findUser);
 routes.put("/user/password/update", managerAuth.updateUserPassword);
+routes.put("/user/password/forgot/:id", managerAuth.forgotPassword);
 routes.get("/user/types/find", managerAuth.findUserType);
 
 routes.post("/company/user", authorizationCompany.generateManagerUser);

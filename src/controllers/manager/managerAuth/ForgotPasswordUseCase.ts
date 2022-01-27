@@ -6,18 +6,18 @@ import { generateRandomNumber } from "../../../utils/RandomValueGenerate";
 import { sendMail } from "../../../utils/SendMail";
 
 interface DataProps {
-  userId: string;
   newPassword?: string;
   generatePassword?: boolean;
 }
 
 interface Props {
   data: DataProps;
+  userId: string;
   rootUserId: string;
 }
 
 class ForgotPasswordUseCase {
-  async execute({ data, rootUserId }: Props) {
+  async execute({ data, rootUserId, userId }: Props) {
     const rootUser = await getRepository(TakeBackUsers).findOne({
       where: { id: rootUserId },
       select: ["name"],
@@ -33,7 +33,7 @@ class ForgotPasswordUseCase {
     }
 
     const userExist = await getRepository(TakeBackUsers).findOne({
-      where: { id: data.userId },
+      where: { id: userId },
       select: ["id", "email", "name"],
     });
 
@@ -67,7 +67,7 @@ class ForgotPasswordUseCase {
       data.generatePassword ? newPassword : data.newPassword
     }"`;
 
-    sendMail(userExist.email, "TakeBack - Acesso ao sistema", newMessage);
+    sendMail(userExist.email, "TakeBack - Alteração de senha", newMessage);
 
     return "Senha atualizada";
   }
