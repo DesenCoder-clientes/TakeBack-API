@@ -7,14 +7,15 @@ import { UpdateUserUseCase } from "./UpdateUserUseCase";
 import { VerifyTokenUseCase } from "./VerifyTokenUseCase";
 import { UpdateUserPasswordUseCase } from "./UpdateUserPasswordUseCase";
 
-interface Props {
+interface RegisterProps {
   name: string;
   cpf: string;
   email: string;
-  password: string;
+  password?: string;
   isActive: true;
   userTypeId: string;
   phone: string;
+  generatePassword?: boolean;
 }
 
 interface UpdateProps {
@@ -34,21 +35,12 @@ interface UpdatePasswordProps {
 class ManagerAuthController {
   async registerUser(request: Request, response: Response) {
     const { id } = request["tokenPayload"];
-    const { name, cpf, email, isActive, phone, userTypeId }: Props =
-      request.body;
+    const data: RegisterProps = request.body;
 
     const registerUser = new RegisterUserUseCase();
     const find = new FindUserUseCase();
 
-    const message = await registerUser.execute({
-      name,
-      cpf,
-      email,
-      isActive,
-      phone,
-      userTypeId,
-      userId: id,
-    });
+    const message = await registerUser.execute({ data, userId: id });
 
     const users = await find.execute({
       limit: "12",
@@ -60,16 +52,15 @@ class ManagerAuthController {
   }
 
   async signInUser(request: Request, response: Response) {
-    const { cpf, password }: Props = request.body;
+    const { cpf, password }: RegisterProps = request.body;
 
     const userLogin = new SignInUserUseCase();
 
     const result = await userLogin.execute({ cpf, password });
 
-    response.status(201).json(result);
+    response.status(200).json(result);
   }
 
-  //FUNÇÃO PARA ATUALIZAR CADASTRO DO TAKEBACK USER
   async updateUser(request: Request, response: Response) {
     const { id } = request["tokenPayload"];
     const userId = request.params.id;
