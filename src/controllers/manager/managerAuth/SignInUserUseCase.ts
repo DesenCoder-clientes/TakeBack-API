@@ -17,17 +17,21 @@ class SignInUserUseCase {
 
     const user = await getRepository(TakeBackUsers).findOne({
       where: { cpf },
-      select: ["id", "password", "name"],
+      select: ["id", "password", "name", "isActive"],
     });
 
     if (!user) {
-      throw new InternalError("Erro ao realizar login", 404);
+      throw new InternalError("Erro ao realizar login", 401);
+    }
+
+    if (!user.isActive) {
+      throw new InternalError("Não autorizado", 401);
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      throw new InternalError("Erro ao realizar login", 404);
+      throw new InternalError("Erro ao realizar login", 401);
     }
 
     const token = generateToken(

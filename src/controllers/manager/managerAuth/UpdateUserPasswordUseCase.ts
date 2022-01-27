@@ -1,5 +1,5 @@
-import { getRepository } from "typeorm";
 import * as bcrypt from "bcrypt";
+import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { TakeBackUsers } from "../../../models/TakeBackUsers";
 
@@ -25,10 +25,7 @@ class UpdateUserPasswordUseCase {
       throw new InternalError("Senha incorreta", 400);
     }
 
-    const newPasswordEncrypted = bcrypt.hashSync(
-      JSON.stringify(newPassword),
-      10
-    );
+    const newPasswordEncrypted = bcrypt.hashSync(newPassword, 10);
 
     const updated = await getRepository(TakeBackUsers).update(userId, {
       password: newPasswordEncrypted,
