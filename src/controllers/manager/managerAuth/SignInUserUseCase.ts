@@ -17,7 +17,8 @@ class SignInUserUseCase {
 
     const user = await getRepository(TakeBackUsers).findOne({
       where: { cpf },
-      select: ["id", "password", "name", "isActive"],
+      select: ["id", "password", "name", "email", "isActive"],
+      relations: ["userType"],
     });
 
     if (!user) {
@@ -38,12 +39,21 @@ class SignInUserUseCase {
       {
         id: user.id,
         name: user.name,
+        email: user.email,
+        userType: user.userType.id,
+        isRoot: user.userType.isRoot,
       },
       process.env.JWT_PRIVATE_KEY,
       parseInt(process.env.JWT_EXPIRES_IN)
     );
 
-    return { token, name: user.name };
+    return {
+      token,
+      name: user.name,
+      email: user.email,
+      userType: user.userType.id,
+      isRoot: user.userType.isRoot,
+    };
   }
 }
 
