@@ -19,15 +19,15 @@ const managerConsumers = new ConsumersController();
 const routes = Router();
 
 routes.post("/user/login", managerAuth.signInUser);
-routes.post("/user", managerAuth.registerUser);
 routes.get("/verify-token", managerAuth.verifyToken);
 
 routes.use(DecodeTokenMiddleware, AuthManagerMiddleware);
 
-routes.put("/user/:id", managerAuth.updateUser);
-routes.get("/user/:offset/:limit", managerAuth.findUser);
+routes.post("/user/register", managerAuth.registerUser);
+routes.put("/user/update/:id", managerAuth.updateUser);
+routes.get("/user/find/:offset/:limit", managerAuth.findUser);
 routes.put("/user/password/update", managerAuth.updateUserPassword);
-routes.get("/find-user-type", managerAuth.findUserType);
+routes.get("/user/types/find", managerAuth.findUserType);
 
 routes.post("/company/user", authorizationCompany.generateManagerUser);
 

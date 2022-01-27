@@ -25,7 +25,6 @@ class UpdateUserUseCase {
     id,
     userId,
   }: Props) {
-    console.log(name, cpf, email, isActive, phone, userTypeId, id);
     if (!cpf || !name || !email || !phone || !userTypeId) {
       throw new InternalError("Dados incompletos", 400);
     }
@@ -39,10 +38,17 @@ class UpdateUserUseCase {
       throw new InternalError("Não autorizado", 401);
     }
 
-    const user = await getRepository(TakeBackUsers).findOne(id);
+    const user = await getRepository(TakeBackUsers).findOne({
+      where: { id },
+      relations: ["userType"],
+    });
 
     if (!user) {
       throw new InternalError("Usuário não encontrado", 400);
+    }
+
+    if (user.userType.isRoot && !userAccess.userType.isRoot) {
+      throw new InternalError("Não autorizado", 401);
     }
 
     const userType = await getRepository(TakeBackUserTypes).findOne(
