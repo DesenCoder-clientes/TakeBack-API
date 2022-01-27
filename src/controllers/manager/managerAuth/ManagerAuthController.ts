@@ -5,6 +5,7 @@ import { RegisterUserUseCase } from "./RegisterUserUseCase";
 import { SignInUserUseCase } from "./SignInUserUseCase";
 import { UpdateUserUseCase } from "./UpdateUserUseCase";
 import { VerifyTokenUseCase } from "./VerifyTokenUseCase";
+import { UpdateUserPasswordUseCase } from "./UpdateUserPasswordUseCase";
 
 interface Props {
   name: string;
@@ -25,14 +26,9 @@ interface UpdateProps {
   phone: string;
 }
 
-interface FindProps {
-  name: string;
-  cpf: string;
-  email: string;
-  userTypeId: string;
-  isActive: boolean;
-  phone: string;
-  id: string;
+interface UpdatePasswordProps {
+  password: string;
+  newPassword: string;
 }
 
 class ManagerAuthController {
@@ -124,6 +120,17 @@ class ManagerAuthController {
     const findUserTypes = new FindUserTypeUseCase();
 
     const result = await findUserTypes.execute();
+
+    return response.status(200).json(result);
+  }
+
+  async updateUserPassword(request: Request, response: Response) {
+    const { id } = request["tokenPayload"];
+    const { newPassword, password }: UpdatePasswordProps = request.body;
+
+    const update = new UpdateUserPasswordUseCase();
+
+    const result = await update.execute({ newPassword, password, userId: id });
 
     return response.status(200).json(result);
   }

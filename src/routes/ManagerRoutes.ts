@@ -1,5 +1,8 @@
 import { Router } from "express";
 
+import { DecodeTokenMiddleware } from "../middlewares/DecodeTokenMiddleware";
+import { AuthManagerMiddleware } from "../middlewares/AuthManagerMiddleware";
+
 import { ManagerAuthController } from "../controllers/manager/managerAuth/ManagerAuthController";
 import { CompaniesController } from "../controllers/manager/managerCompanies/CompaniesController";
 import { ConsumersController } from "../controllers/manager/managerConsumers/ConsumersController";
@@ -15,9 +18,12 @@ const managerConsumers = new ConsumersController();
 
 const routes = Router();
 
-routes.get("/verify-token", managerAuth.verifyToken);
-routes.post("/user", managerAuth.registerUser);
 routes.post("/user/login", managerAuth.signInUser);
+routes.post("/user", managerAuth.registerUser);
+routes.get("/verify-token", managerAuth.verifyToken);
+
+routes.use(DecodeTokenMiddleware, AuthManagerMiddleware);
+
 routes.put("/user/:id", managerAuth.updateUser);
 routes.get("/user/:offset/:limit", managerAuth.findUser);
 routes.get("/find-user-type", managerAuth.findUserType);
