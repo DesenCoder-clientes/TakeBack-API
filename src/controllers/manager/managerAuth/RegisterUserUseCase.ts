@@ -13,12 +13,22 @@ interface Props {
   isActive: true;
   phone: string;
   userTypeId: string;
+  userId: string;
 }
 
 class RegisterUserUseCase {
-  async execute({ name, cpf, email, userTypeId, phone }: Props) {
+  async execute({ name, cpf, email, userTypeId, phone, userId }: Props) {
     if (!name || !cpf || !email || !phone || !userTypeId) {
-      throw new InternalError("Dados incompletos!", 400);
+      throw new InternalError("Dados incompletos", 400);
+    }
+
+    const user = await getRepository(TakeBackUsers).findOne({
+      where: { id: userId },
+      relations: ["userType"],
+    });
+
+    if (user.userType.id !== 1 && user.userType.id !== 2) {
+      throw new InternalError("Não autorizado", 401);
     }
 
     const takeBackUser = await getRepository(TakeBackUsers).findOne({

@@ -11,13 +11,32 @@ interface Props {
   userTypeId: string;
   isActive: boolean;
   phone: string;
+  userId: string;
 }
 
 class UpdateUserUseCase {
-  async execute({ name, cpf, email, isActive, phone, userTypeId, id }: Props) {
+  async execute({
+    name,
+    cpf,
+    email,
+    isActive,
+    phone,
+    userTypeId,
+    id,
+    userId,
+  }: Props) {
     console.log(name, cpf, email, isActive, phone, userTypeId, id);
     if (!cpf || !name || !email || !phone || !userTypeId) {
       throw new InternalError("Dados incompletos", 400);
+    }
+
+    const userAccess = await getRepository(TakeBackUsers).findOne({
+      where: { id: userId },
+      relations: ["userType"],
+    });
+
+    if (userAccess.userType.id !== 1 && userAccess.userType.id !== 2) {
+      throw new InternalError("Não autorizado", 401);
     }
 
     const user = await getRepository(TakeBackUsers).findOne(id);

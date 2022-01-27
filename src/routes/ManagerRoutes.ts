@@ -26,6 +26,7 @@ routes.use(DecodeTokenMiddleware, AuthManagerMiddleware);
 
 routes.put("/user/:id", managerAuth.updateUser);
 routes.get("/user/:offset/:limit", managerAuth.findUser);
+routes.put("/user/password/update", managerAuth.updateUserPassword);
 routes.get("/find-user-type", managerAuth.findUserType);
 
 routes.post("/company/user", authorizationCompany.generateManagerUser);

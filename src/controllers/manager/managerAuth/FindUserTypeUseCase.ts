@@ -1,13 +1,25 @@
 import { getRepository } from "typeorm";
+import { TakeBackUsers } from "../../../models/TakeBackUsers";
 import { TakeBackUserTypes } from "../../../models/TakeBackUserTypes";
 
 class FindUserTypeUseCase {
-  async execute() {
-    const userTypes = await getRepository(TakeBackUserTypes).find({
-      where: { isRoot: false },
+  async execute(userId: string) {
+    const user = await getRepository(TakeBackUsers).findOne({
+      where: { id: userId },
+      relations: ["userType"],
     });
 
-    return userTypes;
+    if (user.userType.isRoot) {
+      const userTypes = await getRepository(TakeBackUserTypes).find();
+
+      return userTypes;
+    } else {
+      const userTypes = await getRepository(TakeBackUserTypes).find({
+        where: { isRoot: false },
+      });
+
+      return userTypes;
+    }
   }
 }
 

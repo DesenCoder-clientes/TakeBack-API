@@ -33,6 +33,7 @@ interface UpdatePasswordProps {
 
 class ManagerAuthController {
   async registerUser(request: Request, response: Response) {
+    const { id } = request["tokenPayload"];
     const { name, cpf, email, isActive, phone, userTypeId }: Props =
       request.body;
 
@@ -46,11 +47,13 @@ class ManagerAuthController {
       isActive,
       phone,
       userTypeId,
+      userId: id,
     });
 
     const users = await find.execute({
       limit: "12",
       offset: "0",
+      userId: id,
     });
 
     response.status(201).json({ message, users });
@@ -68,7 +71,8 @@ class ManagerAuthController {
 
   //FUNÇÃO PARA ATUALIZAR CADASTRO DO TAKEBACK USER
   async updateUser(request: Request, response: Response) {
-    const id = request.params.id;
+    const { id } = request["tokenPayload"];
+    const userId = request.params.id;
     const { name, cpf, email, isActive, phone, userTypeId }: UpdateProps =
       request.body;
 
@@ -82,23 +86,27 @@ class ManagerAuthController {
       isActive,
       phone,
       userTypeId,
-      id,
+      id: userId,
+      userId: id,
     });
 
     const users = await find.execute({
       limit: "12",
       offset: "0",
+      userId: id,
     });
 
     return response.status(200).json({ message, users });
   }
 
   async findUser(request: Request, response: Response) {
+    const { id } = request["tokenPayload"];
     const { offset, limit } = request.params;
 
     const findUsers = new FindUserUseCase();
 
     const result = await findUsers.execute({
+      userId: id,
       offset,
       limit,
     });
@@ -117,9 +125,10 @@ class ManagerAuthController {
   }
 
   async findUserType(request: Request, response: Response) {
+    const { id } = request["tokenPayload"];
     const findUserTypes = new FindUserTypeUseCase();
 
-    const result = await findUserTypes.execute();
+    const result = await findUserTypes.execute(id);
 
     return response.status(200).json(result);
   }
