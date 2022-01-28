@@ -87,7 +87,6 @@ class GenerateCashbackUseCase {
 
     // Calculando o valor do cashback
     let cashbackAmount = 0;
-    let cashbackPercent = 0;
     paymentMethods.map((databaseMethod) => {
       method.map((informedMethod) => {
         if (databaseMethod.id === parseInt(informedMethod.method)) {
@@ -95,8 +94,6 @@ class GenerateCashbackUseCase {
             cashbackAmount +
             databaseMethod.cashbackPercentage *
               parseFloat(informedMethod.value);
-
-          cashbackPercent = cashbackPercent + databaseMethod.cashbackPercentage;
         }
       });
     });
@@ -123,7 +120,8 @@ class GenerateCashbackUseCase {
       consumers: consumer,
       value: parseFloat(costumer.value),
       cashbackAmount,
-      cashbackPercent,
+      cashbackPercent:
+        (cashbackAmount * 100) / parseFloat(costumer.value) / 100,
       salesFee: 0,
       transactionTypes: transactionType,
       transactionStatus: transactionStatus,

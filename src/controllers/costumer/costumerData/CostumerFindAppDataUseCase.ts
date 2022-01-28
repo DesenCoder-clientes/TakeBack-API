@@ -42,7 +42,13 @@ class CostumerFindAppDataUseCase {
     const transactions = await getRepository(Transactions)
       .createQueryBuilder("t")
       .select(["t.id", "t.cashbackAmount", "t.createdAt"])
-      .addSelect(["c.fantasyName", "ts.description", "ts.id", "tt.isUp"])
+      .addSelect([
+        "c.fantasyName",
+        "ts.description",
+        "ts.id",
+        "ts.blocked",
+        "tt.isUp",
+      ])
       .leftJoin(Companies, "c", "c.id = t.companies")
       .leftJoin(TransactionStatus, "ts", "ts.id = t.transactionStatus")
       .leftJoin(TransactionTypes, "tt", "tt.id = t.transactionTypes")
