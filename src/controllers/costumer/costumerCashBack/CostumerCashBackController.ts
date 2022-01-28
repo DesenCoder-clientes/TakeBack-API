@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { CostumerAuthorizePurchaseUseCase } from "./CostumerAuthorizePurchaseUseCase";
 import { CostumerDropTransactionUseCase } from "./CostumerDropTransactionUseCase";
 import { CostumerFindTransactionUseCase } from "./CostumerFindTransactionUseCase";
+import { CostumerFindCashbackDetailsUseCase } from "./CostumerFindCashbackDetailsUseCase";
 
 interface AuthorizePurchaseProps {
   value: number;
@@ -38,6 +39,18 @@ class CostumerCashBackController {
     });
 
     response.status(200).json(result);
+  }
+
+  async findCashbackDetails(request: Request, response: Response) {
+    const transactionID = request.params.id;
+
+    const findDetails = new CostumerFindCashbackDetailsUseCase();
+
+    const result = await findDetails.execute({
+      transactionID: parseInt(transactionID),
+    });
+
+    return response.status(200).json(result);
   }
 
   async dropTransaction(request: Request, response: Response) {

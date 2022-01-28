@@ -42,6 +42,7 @@ routes.delete("/account/deactive", costumerAuth.desactiveCostumer);
 
 routes.post("/cashback/authorize", costumerCashBack.authorizePurchase);
 routes.get("/cashback/find/:offset/:limit", costumerCashBack.findTransaction);
+routes.get("/cashback/details/:id", costumerCashBack.findCashbackDetails);
 routes.delete("/cashback/delete/:id", costumerCashBack.dropTransaction);
 
 routes.get("/verify/send-mail", costumerVerify.sendMailToVerify);
