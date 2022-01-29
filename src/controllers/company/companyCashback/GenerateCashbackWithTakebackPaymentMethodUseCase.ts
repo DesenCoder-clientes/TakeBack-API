@@ -117,7 +117,6 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
 
     // Calculando o valor do cashback
     let cashbackAmount = 0;
-    let cashbackPercent = 0;
     paymentMethods.map((databaseMethod) => {
       method.map((informedMethod) => {
         if (databaseMethod.id === parseInt(informedMethod.method)) {
@@ -125,8 +124,6 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
             cashbackAmount +
             databaseMethod.cashbackPercentage *
               parseFloat(informedMethod.value);
-
-          cashbackPercent = cashbackPercent + databaseMethod.cashbackPercentage;
         }
       });
     });
@@ -151,6 +148,10 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
       select: ["id"],
     });
 
+    // Calculando percentual total do cashback
+    const cashbackPercent =
+      (cashbackAmount * 100) / parseFloat(costumer.value) / 100;
+
     // Salvando as informações na tabela de Transactions
     const date = new Date();
     const balanceUpdatedUp = await getRepository(Transactions).update(
@@ -161,7 +162,7 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
         consumers,
         value: parseFloat(costumer.value),
         cashbackAmount,
-        cashbackPercent,
+        cashbackPercent: parseFloat(cashbackPercent.toFixed(3)),
         salesFee: 0,
         transactionTypes: transactionTypeUp,
         transactionStatus,

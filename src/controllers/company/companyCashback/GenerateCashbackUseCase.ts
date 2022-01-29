@@ -113,6 +113,10 @@ class GenerateCashbackUseCase {
       select: ["id"],
     });
 
+    // Calculando percentual total do cashback
+    const cashbackPercent =
+      (cashbackAmount * 100) / parseFloat(costumer.value) / 100;
+
     // Salvando as informações na tabela de Transactions caso não tenha o método de pagamento TakeBack
     const date = new Date();
     const newCashback = await getRepository(Transactions).save({
@@ -120,8 +124,7 @@ class GenerateCashbackUseCase {
       consumers: consumer,
       value: parseFloat(costumer.value),
       cashbackAmount,
-      cashbackPercent:
-        (cashbackAmount * 100) / parseFloat(costumer.value) / 100,
+      cashbackPercent: parseFloat(cashbackPercent.toFixed(3)),
       salesFee: 0,
       transactionTypes: transactionType,
       transactionStatus: transactionStatus,
@@ -164,11 +167,3 @@ class GenerateCashbackUseCase {
 }
 
 export { GenerateCashbackUseCase };
-
-/* transactionId: newCashback.id,
-  paymentMethod: databaseMethod,
-  paymentMethodId: databaseMethod.id,
-  cashbackPercentage: databaseMethod.cashbackPercentage,
-  cashbackValue:
-    databaseMethod.cashbackPercentage *
-    parseFloat(informedMethod.value), */
