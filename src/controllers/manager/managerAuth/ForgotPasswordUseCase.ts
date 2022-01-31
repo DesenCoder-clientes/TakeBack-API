@@ -20,7 +20,6 @@ class ForgotPasswordUseCase {
   async execute({ data, rootUserId, userId }: Props) {
     const rootUser = await getRepository(TakeBackUsers).findOne({
       where: { id: rootUserId },
-      select: ["name"],
       relations: ["userType"],
     });
 
@@ -58,6 +57,8 @@ class ForgotPasswordUseCase {
     if (updated.affected === 0) {
       throw new InternalError("Erro ao atualizar senha", 400);
     }
+
+    console.log(data);
 
     const newMessage = `Olá ${
       userExist.name
