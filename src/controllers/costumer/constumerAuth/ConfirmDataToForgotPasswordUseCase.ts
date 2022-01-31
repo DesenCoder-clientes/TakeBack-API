@@ -36,7 +36,6 @@ class ConfirmDataToForgotPasswordUseCase {
 
     const aux2 = `${consumer.birthDate.getDate()}${consumer.birthDate.getMonth()}${consumer.birthDate.getFullYear()}`;
 
-    console.log(aux1, aux2);
     if (aux1 !== aux2) {
       throw new InternalError("Não foi possível concluir a solicitação", 400);
     }

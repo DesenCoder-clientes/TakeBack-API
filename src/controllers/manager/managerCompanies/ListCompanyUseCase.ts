@@ -23,10 +23,6 @@ class ListCompanyUseCase {
       skip: parseInt(offset) * parseInt(limit),
     });
 
-    if (companies.length === 0) {
-      return false;
-    }
-
     return companies;
   }
 }

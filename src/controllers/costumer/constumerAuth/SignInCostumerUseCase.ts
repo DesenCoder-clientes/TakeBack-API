@@ -14,7 +14,6 @@ class SignInCostumerUseCase {
     if (!cpf || !password) {
       throw new InternalError("Dados incompletos", 400);
     }
-    console.log(cpf);
 
     const consumer = await getRepository(Consumers).findOne({
       where: {

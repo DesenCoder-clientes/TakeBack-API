@@ -27,10 +27,6 @@ class FindIndustryUseCase {
       throw new InternalError("Não há ramos cadastrados", 400);
     }
 
-    if (industries.length === 0) {
-      return false;
-    }
-
     return industries;
   }
 }
