@@ -8,6 +8,7 @@ import { CompaniesController } from "../controllers/manager/managerCompanies/Com
 import { ConsumersController } from "../controllers/manager/managerConsumers/ConsumersController";
 import { ManagerIndustryController } from "../controllers/manager/managerIndustry/ManagerIndustryController";
 import { PaymentMethodController } from "../controllers/manager/managerMethods/PaymentMethodsController";
+import { ManagerCompanyStatusController } from "../controllers/manager/managerCompanyStatus/ManagerCompanyStatusController";
 
 const authorizationCompany = new CompaniesController();
 const paymentMethod = new PaymentMethodController();
@@ -15,6 +16,7 @@ const managerAuth = new ManagerAuthController();
 const managerIndustry = new ManagerIndustryController();
 const managerCompanies = new CompaniesController();
 const managerConsumers = new ConsumersController();
+const managerCompanyStatus = new ManagerCompanyStatusController();
 
 const routes = Router();
 
@@ -35,9 +37,12 @@ routes.post("/company/user", authorizationCompany.generateManagerUser);
 routes.post("/industry", managerIndustry.registerIndustry);
 routes.put("/industry/:id", managerIndustry.updateIndustry);
 routes.get("/industry/:offset/:limit", managerIndustry.findIndustry);
+routes.get("/industry", managerIndustry.findIndustryNotPaginated);
 
 routes.get("/companies/:offset/:limit", managerCompanies.listCompany);
 routes.get("/companies", managerCompanies.findCompany);
+
+routes.get("/companies/status", managerCompanyStatus.findCompanyStatus);
 
 routes.get("/consumers/:offset/:limit", managerConsumers.listConsumer);
 routes.get("/consumers", managerConsumers.findConsumer);

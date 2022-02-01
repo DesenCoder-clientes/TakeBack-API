@@ -14,6 +14,7 @@ class ListCompanyUseCase {
         "createdAt",
         "fantasyName",
         "registeredNumber",
+        "email",
         "monthlyPayment",
         "industry",
         "status",

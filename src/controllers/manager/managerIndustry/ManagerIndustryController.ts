@@ -1,5 +1,6 @@
 import { Request, response, Response } from "express";
 import { FindIndustryUseCase } from "./FindIndustryUseCase";
+import { FindIndustryUseCaseNotPaginated } from "./FindIndustryUseCaseNotPaginated";
 import { RegisterIndustryUseCase } from "./RegisterIndustryUseCase";
 import { UpdateIndustryUseCase } from "./UpdateIndustryUseCase";
 
@@ -42,6 +43,14 @@ class ManagerIndustryController {
       offset,
       limit,
     });
+
+    return response.status(200).json(result);
+  }
+
+  async findIndustryNotPaginated(request: Request, response: Response) {
+    const findIndustries = new FindIndustryUseCaseNotPaginated();
+
+    const result = await findIndustries.execute();
 
     return response.status(200).json(result);
   }

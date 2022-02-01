@@ -257,6 +257,42 @@ const CompanyStatusSeed = [
     createdAt: new Date(),
     updatedAt: new Date(),
   },
+  {
+    description: "Cadastro solicitado",
+    blocked: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Em análise",
+    blocked: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Documentação pendente",
+    blocked: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Inadiplente",
+    blocked: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Cadastro não aprovado",
+    blocked: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Pendente à aprovação",
+    blocked: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
 ];
 
 const tbUserTypes = [
