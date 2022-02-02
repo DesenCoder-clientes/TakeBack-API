@@ -19,11 +19,11 @@ class UpdateCompanyUseCase {
     }
 
     const company = await getRepository(Companies).findOne({
-      where: { id },
+      where: { id: companyId },
     });
 
     if (!company) {
-      throw new InternalError("Usuário não encontrado", 400);
+      throw new InternalError("Empresa não encontrada", 400);
     }
 
     const status = await getRepository(CompanyStatus).findOne(statusId);
@@ -37,8 +37,9 @@ class UpdateCompanyUseCase {
     if (!industry) {
       throw new InternalError("Ramo de Atividade inexistente", 401);
     }
+    console.log(companyId);
 
-    const updateCompany = await getRepository(Companies).update(id, {
+    const updateCompany = await getRepository(Companies).update(companyId, {
       email,
       industry,
       status,

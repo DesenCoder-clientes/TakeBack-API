@@ -2,10 +2,10 @@ import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { CompanyStatus } from "../../../models/CompanyStatus";
 
-class FindaCompanyStatusUseCase {
+class FindCompanyStatusUseCase {
   async execute() {
     const status = await getRepository(CompanyStatus).find({
-      select: ["id", "description", "blocked"],
+      select: ["id", "description", "blocked", "company"],
       relations: ["company"],
       order: { description: "ASC" },
     });
@@ -18,4 +18,4 @@ class FindaCompanyStatusUseCase {
   }
 }
 
-export { FindaCompanyStatusUseCase };
+export { FindCompanyStatusUseCase };

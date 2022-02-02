@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { FindaCompanyStatusUseCase } from "./FindCompanyStatusUseCase";
+import { FindCompanyStatusUseCase } from "./FindCompanyStatusUseCase";
 
 class ManagerCompanyStatusController {
   async findCompanyStatus(request: Request, response: Response) {
-    const findIndustries = new FindaCompanyStatusUseCase();
+    const findStatus = new FindCompanyStatusUseCase();
 
-    const result = await findIndustries.execute();
+    const result = await findStatus.execute();
 
     return response.status(200).json(result);
   }

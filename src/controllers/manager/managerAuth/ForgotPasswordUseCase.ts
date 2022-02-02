@@ -58,8 +58,6 @@ class ForgotPasswordUseCase {
       throw new InternalError("Erro ao atualizar senha", 400);
     }
 
-    console.log(data);
-
     const newMessage = `Olá ${
       userExist.name
     }, sua senha foi atualizada pelo usuário: ${

@@ -37,10 +37,11 @@ routes.post("/company/user", authorizationCompany.generateManagerUser);
 routes.post("/industry", managerIndustry.registerIndustry);
 routes.put("/industry/:id", managerIndustry.updateIndustry);
 routes.get("/industry/:offset/:limit", managerIndustry.findIndustry);
-routes.get("/industry", managerIndustry.findIndustryNotPaginated);
+routes.get("/industry/find", managerIndustry.findIndustryNotPaginated);
 
-routes.get("/companies/:offset/:limit", managerCompanies.listCompany);
-routes.get("/companies", managerCompanies.findCompany);
+routes.get("/companies/find/:offset/:limit", managerCompanies.listCompany);
+routes.get("/companies/find", managerCompanies.findCompany);
+routes.put("/companies/update/:id", managerCompanies.updateCompany);
 
 routes.get("/companies/status", managerCompanyStatus.findCompanyStatus);
 
