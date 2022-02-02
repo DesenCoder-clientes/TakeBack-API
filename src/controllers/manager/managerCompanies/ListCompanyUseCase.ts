@@ -20,6 +20,7 @@ class ListCompanyUseCase {
         "status",
       ],
       relations: ["status", "industry"],
+      order: { fantasyName: "ASC" },
       take: parseInt(limit),
       skip: parseInt(offset) * parseInt(limit),
     });

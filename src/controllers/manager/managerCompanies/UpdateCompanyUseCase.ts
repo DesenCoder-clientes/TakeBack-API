@@ -49,7 +49,7 @@ class UpdateCompanyUseCase {
       throw new InternalError("Erro ao atualizar empresa", 500);
     }
 
-    return "Usuário atualizado";
+    return "Empresa atualizada";
   }
 }
 
