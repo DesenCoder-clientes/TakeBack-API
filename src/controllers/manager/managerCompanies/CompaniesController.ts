@@ -4,6 +4,7 @@ import { RegisterCompanyPaymentMethodsUseCase } from "../../company/companyMetho
 import { ListCompanyUseCase } from "./ListCompanyUseCase";
 import { FindCompanyUseCase } from "./FindCompanyUseCase";
 import { UpdateCompanyUseCase } from "./UpdateCompanyUseCase";
+import { ListCompanyWithFilterUseCase } from "./ListCompanyWithFilterUseCase";
 
 interface Props {
   companyId: string;
@@ -18,10 +19,16 @@ interface UpdateProps {
   offset: string;
 }
 
-interface CompanyReportProps {
-  fantasyName?: string;
-  registeredNumber?: string;
+interface FindCompanyProps {
   status?: string;
+  industry?: string;
+  city?: string;
+}
+
+interface ListCompanyQueryProps {
+  status?: string;
+  industry?: string;
+  city?: string;
 }
 
 class CompaniesController {
@@ -43,19 +50,20 @@ class CompaniesController {
 
   async listCompany(request: Request, response: Response) {
     const { offset, limit } = request.params;
+    const query: ListCompanyQueryProps = request.query;
 
-    const find = new ListCompanyUseCase();
+    const find = new ListCompanyWithFilterUseCase();
 
     const result = await find.execute({
-      limit,
-      offset,
+      pagination: { limit, offset },
+      query,
     });
 
     response.status(201).json(result);
   }
 
   async findCompany(request: Request, response: Response) {
-    const query: CompanyReportProps = request.query;
+    const query: FindCompanyProps = request.query;
 
     const find = new FindCompanyUseCase();
 

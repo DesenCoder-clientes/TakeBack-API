@@ -40,7 +40,7 @@ routes.get("/industry/:offset/:limit", managerIndustry.findIndustry);
 routes.get("/industry/find", managerIndustry.findIndustryNotPaginated);
 
 routes.get("/companies/find/:offset/:limit", managerCompanies.listCompany);
-routes.get("/companies/find", managerCompanies.findCompany);
+
 routes.put("/companies/update/:id", managerCompanies.updateCompany);
 
 routes.get("/companies/status", managerCompanyStatus.findCompanyStatus);

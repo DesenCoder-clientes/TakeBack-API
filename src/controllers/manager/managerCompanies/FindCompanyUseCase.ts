@@ -1,45 +1,40 @@
 import { getRepository } from "typeorm";
-import { Companies } from "../../../models/Company";
 import { InternalError } from "../../../config/GenerateErros";
+import { Companies } from "../../../models/Company";
+import { CompanyStatus } from "../../../models/CompanyStatus";
+import { Industries } from "../../../models/Industry";
 
-interface CompanyReportProps {
-  fantasyName?: string;
-  registeredNumber?: string;
+interface FindCompanyProps {
   status?: string;
+  industry?: string;
+  city?: string;
 }
 
 class FindCompanyUseCase {
-  async execute({ fantasyName, registeredNumber, status }: CompanyReportProps) {
-    const nameIds = [];
-    const registeredNumberIds = [];
-    const statusIds = [];
-    /* 
-    const fantasyNames = await getRepository(Companies).findOne({
-      select: ["fantasyName"],
-    });
-    fantasyNames.map((item) => {
-      nameIds.push(item.id);
+  async execute({ status, industry, city }: FindCompanyProps) {
+    const industries = await getRepository(Industries).find();
+
+    const industryIds = [];
+    industries.map((item) => {
+      industryIds.push(item.id);
     });
 
-    if (fantasyName && !nameIds.includes(parseInt(fantasyName))) {
-      throw new InternalError("Nome não localizado", 404);
+    if (industry && !industryIds.includes(parseInt(industry))) {
+      throw new InternalError("Ramo de atividade não localizado", 404);
     }
 
-    const registeredNumbers = await getRepository();
- */
-    const findCompany = await getRepository(Companies).find({
-      select: ["id", "fantasyName", "corporateName", "email"],
-      relations: ["status"],
-      where: {
-        registeredNumber: registeredNumber,
-        fantasyName: fantasyName,
-        status: status,
-      },
-    });
-    if (!findCompany) {
-      throw new InternalError("Empresa não encontrada", 404);
-    }
-    return findCompany;
+    const companies = await getRepository(Companies)
+      .createQueryBuilder("co")
+      .select([
+        "co.registeredNumber",
+        "co.fantasyName",
+        "co.email",
+        "co.phone",
+        "co.createdAt",
+      ])
+      .getRawMany();
+
+    return companies;
   }
 }
 
