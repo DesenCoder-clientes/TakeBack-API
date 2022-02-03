@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 
 import { FindCompanyUsersUseCase } from "./FindCompanyUsersUseCase";
 import { RegisterCompanyUsersUseCase } from "./RegisterCompanyUsersUseCase";
+import { UpdateCompanyPasswordUseCase } from "./UpdateCompanyUserPasswordUseCase";
 import { UpdateCompanyUsersUseCase } from "./UpdateCompanyUsersUseCase";
 
 interface RegisterProps {
@@ -15,6 +16,11 @@ interface UpdateProps {
   userTypeId: string;
   name: string;
   isActive: boolean;
+}
+
+interface UpdatePasswordProps {
+  password: string;
+  newPassword: string;
 }
 
 class CompanyUserController {
@@ -57,6 +63,22 @@ class CompanyUserController {
       name,
       userId: id,
       userTypeId,
+    });
+
+    return response.status(200).json(result);
+  }
+
+  async updatePassword(request: Request, response: Response) {
+    const { id } = request["tokenPayload"];
+
+    const { newPassword, password }: UpdatePasswordProps = request.body;
+
+    const update = new UpdateCompanyPasswordUseCase();
+
+    const result = await update.execute({
+      newPassword,
+      password,
+      companyId: id,
     });
 
     return response.status(200).json(result);

@@ -47,6 +47,7 @@ routes.post("/payments/register", paymentMethod.registerCompanyMethod);
 routes.get("/user/find", companyUser.findCompanyUsers);
 routes.post("/user/register", companyUser.registerCompanyUser);
 routes.put("/user/update/:id", companyUser.updateCompanyUser);
+routes.put("/user/password/update", companyUser.updatePassword);
 
 routes.get("/cashbacks/find", cashback.findCashbacks);
 
