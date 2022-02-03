@@ -44,6 +44,15 @@ class ListCompanyWithFilterUseCase {
       industryIds.push(item.id);
     });
 
+    const cities = await getRepository(City).find({
+      select: ["id"],
+    });
+
+    const cityIds = [];
+    cities.map((item) => {
+      cityIds.push(item.id);
+    });
+
     const companies = await getRepository(Companies)
       .createQueryBuilder("co")
       .select([
@@ -64,6 +73,7 @@ class ListCompanyWithFilterUseCase {
         "ca.district",
         "ca.number",
         "ca.complement",
+        "ci.id",
         "ci.name",
       ])
       .leftJoin(Industries, "i", "i.id = co.industry")
@@ -76,24 +86,10 @@ class ListCompanyWithFilterUseCase {
       .andWhere("i.id IN (:...industryId)", {
         industryId: industry ? [industry] : [...industryIds],
       })
+      .andWhere("ci.id IN (:...cityId)", {
+        cityId: city ? [city] : [...cityIds],
+      })
       .getRawMany();
-
-    /* const companies = await getRepository(Companies).find({
-      select: [
-        "id",
-        "createdAt",
-        "fantasyName",
-        "registeredNumber",
-        "email",
-        "monthlyPayment",
-        "industry",
-        "status",
-      ],
-      relations: ["status", "industry"],
-      order: { fantasyName: "ASC" },
-      take: parseInt(limit),
-      skip: parseInt(offset) * parseInt(limit),
-    }); */
 
     return companies;
   }
