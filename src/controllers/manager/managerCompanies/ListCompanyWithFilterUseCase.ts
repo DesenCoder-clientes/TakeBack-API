@@ -60,6 +60,7 @@ class ListCompanyWithFilterUseCase {
         "co.createdAt",
         "co.fantasyName",
         "co.registeredNumber",
+        "co.corporateName",
         "co.email",
         "co.monthlyPayment",
       ])
@@ -76,6 +77,8 @@ class ListCompanyWithFilterUseCase {
         "ci.id",
         "ci.name",
       ])
+      .limit(parseInt(limit))
+      .offset(parseInt(offset) * parseInt(limit))
       .leftJoin(Industries, "i", "i.id = co.industry")
       .leftJoin(CompanyStatus, "cs", "cs.id = co.status")
       .leftJoin(CompaniesAddress, "ca", "ca.id = co.address")

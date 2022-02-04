@@ -5,6 +5,7 @@ import { ListCompanyUseCase } from "./ListCompanyUseCase";
 import { FindCompanyUseCase } from "./FindCompanyUseCase";
 import { UpdateCompanyUseCase } from "./UpdateCompanyUseCase";
 import { ListCompanyWithFilterUseCase } from "./ListCompanyWithFilterUseCase";
+import { ListCompanyWithSearchUseCase } from "./ListCompanyWithSearchUseCase";
 
 interface Props {
   companyId: string;
@@ -31,6 +32,10 @@ interface ListCompanyQueryProps {
   city?: string;
 }
 
+interface ListCompanyWithSearchQueryProps {
+  searchTerm?: string;
+}
+
 class CompaniesController {
   async generateManagerUser(request: Request, response: Response) {
     const { companyId, name }: Props = request.body;
@@ -53,6 +58,20 @@ class CompaniesController {
     const query: ListCompanyQueryProps = request.query;
 
     const find = new ListCompanyWithFilterUseCase();
+
+    const result = await find.execute({
+      pagination: { limit, offset },
+      query,
+    });
+
+    response.status(201).json(result);
+  }
+
+  async listCompanyWithSearch(request: Request, response: Response) {
+    const { offset, limit } = request.params;
+    const query: ListCompanyWithSearchQueryProps = request.query;
+
+    const find = new ListCompanyWithSearchUseCase();
 
     const result = await find.execute({
       pagination: { limit, offset },

@@ -41,6 +41,11 @@ routes.get("/industry/find", managerIndustry.findIndustryNotPaginated);
 
 routes.get("/companies/find/:offset/:limit", managerCompanies.listCompany);
 
+routes.get(
+  "/companies/search/:offset/:limit",
+  managerCompanies.listCompanyWithSearch
+);
+
 routes.put("/companies/update/:id", managerCompanies.updateCompany);
 
 routes.get("/companies/status", managerCompanyStatus.findCompanyStatus);
