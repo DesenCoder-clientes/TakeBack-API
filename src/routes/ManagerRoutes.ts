@@ -51,6 +51,7 @@ routes.put("/companies/update/:id", managerCompanies.updateCompany);
 routes.get("/companies/status", managerCompanyStatus.findCompanyStatus);
 
 routes.get("/consumers/find/:offset/:limit", managerConsumers.listConsumer);
+routes.get("/consumers/search/:offset/:limit", managerConsumers.searchConsumer);
 routes.get("/consumers", managerConsumers.findConsumer);
 
 routes.get("/cities/findAll", managerConsumers.listCities);

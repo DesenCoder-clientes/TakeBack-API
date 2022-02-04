@@ -2,10 +2,15 @@ import { Request, Response } from "express";
 import { FindConsumerUseCase } from "./FindConsumerUseCase";
 import { ListCitiesUseCase } from "./ListCitiesUseCase";
 import { ListConsumersUseCase } from "./ListConsumersUseCase";
+import { ListConsumersWithSearchUseCase } from "./ListConsumersWithSearchUseCase";
 
 interface QueryProps {
   status?: string;
   city?: string;
+}
+
+interface QuerySearchProps {
+  searchTerm?: string;
 }
 
 class ConsumersController {
@@ -16,6 +21,20 @@ class ConsumersController {
     const find = new ListConsumersUseCase();
 
     const result = await find.execute({
+      pagination: { limit, offset },
+      query,
+    });
+
+    return response.status(200).json(result);
+  }
+
+  async searchConsumer(request: Request, response: Response) {
+    const { offset, limit } = request.params;
+    const query: QuerySearchProps = request.query;
+
+    const search = new ListConsumersWithSearchUseCase();
+
+    const result = await search.execute({
       pagination: { limit, offset },
       query,
     });
