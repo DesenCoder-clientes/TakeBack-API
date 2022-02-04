@@ -6,6 +6,7 @@ import { FindCompanyUseCase } from "./FindCompanyUseCase";
 import { UpdateCompanyUseCase } from "./UpdateCompanyUseCase";
 import { ListCompanyWithFilterUseCase } from "./ListCompanyWithFilterUseCase";
 import { ListCompanyWithSearchUseCase } from "./ListCompanyWithSearchUseCase";
+import { FindCompanyDataUseCase } from "./FindCompanyDataUseCase";
 
 interface Props {
   companyId: string;
@@ -114,6 +115,18 @@ class CompaniesController {
     });
 
     response.status(200).json({ message, companies });
+  }
+
+  async findData(request: Request, response: Response) {
+    const companyId = request.params.id;
+
+    const find = new FindCompanyDataUseCase();
+
+    const result = await find.execute({
+      companyId,
+    });
+
+    return response.status(200).json(result);
   }
 }
 

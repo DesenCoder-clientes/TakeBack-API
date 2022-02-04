@@ -75,19 +75,22 @@ export class Companies {
   @JoinColumn()
   address: CompaniesAddress;
 
-  @OneToMany(() => Transactions, transactions => transactions.companies)
+  @OneToMany(() => Transactions, (transactions) => transactions.companies)
   transaction: Transactions[];
 
-  @ManyToOne(()=> Industries, industry => industry.companies)
-  industry: Industries
- 
-  @OneToMany(() => CompanyUsers, companyUser => companyUser.company)
+  @ManyToOne(() => Industries, (industry) => industry.companies)
+  industry: Industries;
+
+  @OneToMany(() => CompanyUsers, (companyUser) => companyUser.company)
   companies: CompanyUsers;
 
-  @ManyToOne(() => CompanyStatus, status => status.company)
+  @ManyToOne(() => CompanyStatus, (status) => status.company)
   status: CompanyStatus;
 
-  @OneToMany(() => CompanyPaymentMethods,  companyPaymentMethods => companyPaymentMethods.company)
+  @OneToMany(
+    () => CompanyPaymentMethods,
+    (companyPaymentMethods) => companyPaymentMethods.company
+  )
   public companyPaymentMethod!: CompanyPaymentMethods[];
 
   @CreateDateColumn()
