@@ -2,10 +2,13 @@ import { getRepository } from "typeorm";
 import { City } from "../../../models/City";
 import { Consumers } from "../../../models/Consumer";
 import { ConsumerAddress } from "../../../models/ConsumerAddress";
-import { Transactions } from "../../../models/Transaction";
+
+interface Props {
+  consumerId: string;
+}
 
 class FindConsumersDataUseCase {
-  async execute() {
+  async execute({ consumerId }: Props) {
     const consumersData = await getRepository(Consumers)
       .createQueryBuilder("c")
       .select([
@@ -33,8 +36,9 @@ class FindConsumersDataUseCase {
       ])
       .leftJoin(ConsumerAddress, "ca", "ca.id = c.address")
       .leftJoin(City, "ci", "ci.id = ca.city")
-      .leftJoin(Transactions, "t")
-
+      .where("c.id = :consumerId", {
+        consumerId,
+      })
       .getRawMany();
 
     return consumersData;

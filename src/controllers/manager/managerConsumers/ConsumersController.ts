@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { FindConsumersDataUseCase } from "./FindConsumersDataUseCase";
 import { FindConsumerUseCase } from "./FindConsumerUseCase";
 import { ListCitiesUseCase } from "./ListCitiesUseCase";
 import { ListConsumersUseCase } from "./ListConsumersUseCase";
@@ -62,6 +63,18 @@ class ConsumersController {
     });
 
     response.status(200).json(result);
+  }
+
+  async findConsumerData(request: Request, response: Response) {
+    const consumerId = request.params.id;
+
+    const find = new FindConsumersDataUseCase();
+
+    const result = await find.execute({
+      consumerId,
+    });
+
+    return response.status(200).json(result);
   }
 }
 
