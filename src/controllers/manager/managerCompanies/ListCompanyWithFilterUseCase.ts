@@ -26,6 +26,8 @@ class ListCompanyWithFilterUseCase {
     pagination: { limit, offset },
     query: { city, industry, status },
   }: Props) {
+    console.log("AQUI =>>>>>>>>>>>>>>>>");
+    console.log(city, industry, status);
     const allStatus = await getRepository(CompanyStatus).find({
       select: ["id"],
     });
@@ -84,7 +86,7 @@ class ListCompanyWithFilterUseCase {
       .leftJoin(CompaniesAddress, "ca", "ca.id = co.address")
       .leftJoin(City, "ci", "ci.id = ca.city")
       .where("cs.id IN (:...statusId)", {
-        statusId: status ? [status] : [...statusIds],
+        statusId: status ? [parseInt(status)] : [...statusIds],
       })
       .andWhere("i.id IN (:...industryId)", {
         industryId: industry ? [industry] : [...industryIds],
