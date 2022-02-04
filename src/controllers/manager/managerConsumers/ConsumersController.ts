@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { FindConsumersDataUseCase } from "./FindConsumersDataUseCase";
-import { FindConsumerUseCase } from "./FindConsumerUseCase";
 import { ListCitiesUseCase } from "./ListCitiesUseCase";
 import { ListConsumersUseCase } from "./ListConsumersUseCase";
 import { ListConsumersWithSearchUseCase } from "./ListConsumersWithSearchUseCase";
+import { UpdateStatusConsumerUseCase } from "./UpdateStatusConsumerUseCase";
 
 interface QueryProps {
   status?: string;
@@ -12,6 +12,10 @@ interface QueryProps {
 
 interface QuerySearchProps {
   searchTerm?: string;
+}
+
+interface UpdateStatusProps {
+  deactivedAccount: boolean;
 }
 
 class ConsumersController {
@@ -51,20 +55,6 @@ class ConsumersController {
     return response.status(200).json(result);
   }
 
-  async findConsumer(request: Request, response: Response) {
-    const { cpf, fullName, deactivedAccount } = request.query;
-
-    const find = new FindConsumerUseCase();
-
-    const result = await find.execute({
-      cpf,
-      fullName,
-      deactivedAccount,
-    });
-
-    response.status(200).json(result);
-  }
-
   async findConsumerData(request: Request, response: Response) {
     const consumerId = request.params.id;
 
@@ -72,6 +62,20 @@ class ConsumersController {
 
     const result = await find.execute({
       consumerId,
+    });
+
+    return response.status(200).json(result);
+  }
+
+  async updateConsumerStatus(request: Request, response: Response) {
+    const id = request.params.id;
+    const { deactivedAccount }: UpdateStatusProps = request.body;
+
+    const update = new UpdateStatusConsumerUseCase();
+
+    const result = await update.execute({
+      id,
+      deactivedAccount,
     });
 
     return response.status(200).json(result);
