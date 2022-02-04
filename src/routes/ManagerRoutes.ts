@@ -50,8 +50,10 @@ routes.put("/companies/update/:id", managerCompanies.updateCompany);
 
 routes.get("/companies/status", managerCompanyStatus.findCompanyStatus);
 
-routes.get("/consumers/:offset/:limit", managerConsumers.listConsumer);
+routes.get("/consumers/find/:offset/:limit", managerConsumers.listConsumer);
 routes.get("/consumers", managerConsumers.findConsumer);
+
+routes.get("/cities/findAll", managerConsumers.listCities);
 
 routes.post("/payment", paymentMethod.registerPaymentMethod);
 
