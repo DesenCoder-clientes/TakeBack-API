@@ -9,6 +9,7 @@ import { State } from "../../../models/State";
 import { apiCorreiosResponseType } from "../../../types/ApiCorreiosResponse";
 
 import { CompanyStatus } from "../../../models/CompanyStatus";
+import { sendMail } from "../../../utils/SendMail";
 
 interface Props {
   corporateName: string;
@@ -115,11 +116,21 @@ class RegisterCompanyUseCase {
       status: companyStatus,
     });
 
-    if (newCompany) {
-      return "Solicitação recebida";
+    if (!newCompany) {
+      throw new InternalError("Houve um erro", 500);
     }
 
-    throw new InternalError("Houve um erro", 500);
+    const newMessage = `Recebemos sua solicitação de cadastro da empresa ${newCompany.fantasyName}.
+    Assim que houver alguma alteração em seu status 
+    você receberá um novo email! `;
+
+    sendMail(
+      newCompany.email,
+      "TakeBack - Solicitação de cadastro",
+      newMessage
+    );
+
+    return "Solicitação recebida";
   }
 }
 
