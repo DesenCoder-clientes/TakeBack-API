@@ -51,7 +51,12 @@ export class Companies {
     default: 0,
     type: "float",
   })
-  cashbackPercentDefault: number;
+  customIndustryFee: number;
+
+  @Column({
+    default: false,
+  })
+  customIndustryFeeActive: boolean;
 
   @Column({
     default: 0,

@@ -19,7 +19,7 @@ class FindCompanyDataUseCase {
         "co.email",
         "co.phone",
         "co.balance",
-        "co.cashbackPercentDefault",
+        "co.customIndustryFee",
         "co.monthlyPayment",
       ])
       .addSelect(["i.description", "i.categoryFee", "cs.description"])

@@ -102,7 +102,7 @@ class RegisterCompanyUseCase {
     }
 
     const companyStatus = await getRepository(CompanyStatus).findOne({
-      where: { description: "Bloqueado" },
+      where: { description: "Cadastro solicitado" },
     });
 
     const newCompany = await getRepository(Companies).save({
