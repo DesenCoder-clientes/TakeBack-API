@@ -22,7 +22,7 @@ class UpdateCostumerPasswordUseCase {
     const passwordMatch = await bcrypt.compare(password, consumerData.password);
 
     if (!passwordMatch) {
-      throw new InternalError("Senha incorreta", 401);
+      throw new InternalError("Senha incorreta", 400);
     }
 
     const newPasswordEncrypted = bcrypt.hashSync(newPassword, 10);

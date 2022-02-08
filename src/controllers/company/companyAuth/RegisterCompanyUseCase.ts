@@ -40,7 +40,7 @@ class RegisterCompanyUseCase {
       !registeredNumber ||
       !zipCode
     ) {
-      throw new InternalError("Dados incompletos", 401);
+      throw new InternalError("Dados incompletos", 400);
     }
 
     const company = await getRepository(Companies).findOne({

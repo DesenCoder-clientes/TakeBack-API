@@ -11,6 +11,7 @@ interface Props {
 
 class SignInUserUseCase {
   async execute({ cpf, password }: Props) {
+    console.log("OI");
     if (!cpf || !password) {
       throw new InternalError("Dados incompletos", 400);
     }

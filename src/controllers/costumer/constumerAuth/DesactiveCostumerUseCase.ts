@@ -11,7 +11,7 @@ interface CostumerProps {
 class DesactiveCostumerUseCase {
   async execute({ consumerID, password }: CostumerProps) {
     if (!password) {
-      throw new InternalError("Dados incompletos", 401);
+      throw new InternalError("Dados incompletos", 400);
     }
 
     const costumer = await getRepository(Consumers).findOne({

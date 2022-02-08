@@ -40,7 +40,7 @@ class SignInCostumerUseCase {
     const passwordMatch = await bcrypt.compare(password, consumer.password);
 
     if (!passwordMatch) {
-      throw new InternalError("Erro ao efetuar login", 401);
+      throw new InternalError("Erro ao efetuar login", 400);
     }
 
     const token = generateToken(

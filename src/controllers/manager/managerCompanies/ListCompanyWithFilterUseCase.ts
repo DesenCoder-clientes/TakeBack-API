@@ -26,7 +26,6 @@ class ListCompanyWithFilterUseCase {
     pagination: { limit, offset },
     query: { city, industry, status },
   }: Props) {
-    console.log("AQUI =>>>>>>>>>>>>>>>>");
     console.log(city, industry, status);
     const allStatus = await getRepository(CompanyStatus).find({
       select: ["id"],

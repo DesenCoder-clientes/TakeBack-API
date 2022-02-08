@@ -16,7 +16,7 @@ interface AuthorizePurchaseProps {
 class CostumerAuthorizePurchaseUseCase {
   async execute({ consumerID, value, signature }: AuthorizePurchaseProps) {
     if (!signature) {
-      throw new InternalError("Dados incompletos", 401);
+      throw new InternalError("Dados incompletos", 400);
     }
 
     const consumer = await getRepository(Consumers).findOne(consumerID, {
