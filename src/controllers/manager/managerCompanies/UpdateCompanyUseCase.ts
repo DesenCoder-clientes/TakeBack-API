@@ -37,7 +37,6 @@ class UpdateCompanyUseCase {
     if (!industry) {
       throw new InternalError("Ramo de Atividade inexistente", 401);
     }
-    console.log(companyId);
 
     const updateCompany = await getRepository(Companies).update(companyId, {
       email,
