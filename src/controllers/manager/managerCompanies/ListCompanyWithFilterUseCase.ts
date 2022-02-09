@@ -3,6 +3,7 @@ import { City } from "../../../models/City";
 import { Companies } from "../../../models/Company";
 import { CompaniesAddress } from "../../../models/CompanyAddress";
 import { CompanyStatus } from "../../../models/CompanyStatus";
+import { CompanyUsers } from "../../../models/CompanyUsers";
 import { Industries } from "../../../models/Industry";
 
 interface PaginationProps {
@@ -77,6 +78,8 @@ class ListCompanyWithFilterUseCase {
         "ca.complement",
         "ci.id",
         "ci.name",
+        "users.name",
+        "users.isRootUser",
       ])
       .limit(parseInt(limit))
       .offset(parseInt(offset) * parseInt(limit))
@@ -84,6 +87,7 @@ class ListCompanyWithFilterUseCase {
       .leftJoin(CompanyStatus, "cs", "cs.id = co.status")
       .leftJoin(CompaniesAddress, "ca", "ca.id = co.address")
       .leftJoin(City, "ci", "ci.id = ca.city")
+      .leftJoin(CompanyUsers, "users", "users.company = co.id")
       .where("cs.id IN (:...statusId)", {
         statusId: status ? [parseInt(status)] : [...statusIds],
       })
