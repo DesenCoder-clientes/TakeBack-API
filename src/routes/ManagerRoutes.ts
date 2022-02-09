@@ -9,6 +9,7 @@ import { ConsumersController } from "../controllers/manager/managerConsumers/Con
 import { ManagerIndustryController } from "../controllers/manager/managerIndustry/ManagerIndustryController";
 import { PaymentMethodController } from "../controllers/manager/managerMethods/PaymentMethodsController";
 import { ManagerCompanyStatusController } from "../controllers/manager/managerCompanyStatus/ManagerCompanyStatusController";
+import { DataController } from "../controllers/manager/managerData/DataController";
 
 const authorizationCompany = new CompaniesController();
 const paymentMethod = new PaymentMethodController();
@@ -17,6 +18,7 @@ const managerIndustry = new ManagerIndustryController();
 const managerCompanies = new CompaniesController();
 const managerConsumers = new ConsumersController();
 const managerCompanyStatus = new ManagerCompanyStatusController();
+const managerData = new DataController();
 
 const routes = Router();
 
@@ -24,6 +26,8 @@ routes.post("/user/login", managerAuth.signInUser);
 routes.get("/verify-token", managerAuth.verifyToken);
 
 routes.use(DecodeTokenMiddleware, AuthManagerMiddleware);
+
+routes.get("/data/find", managerData.findDataToUseInApp);
 
 routes.post("/user/register", managerAuth.registerUser);
 routes.put("/user/update/:id", managerAuth.updateUser);
@@ -43,11 +47,11 @@ routes.get(
   "/company/find/all/:offset/:limit",
   managerCompanies.findAllCompanies
 );
+routes.get("/company/find/one/:id", managerCompanies.findOneCompany);
 routes.get(
   "/companies/search/:offset/:limit",
   managerCompanies.listCompanyWithSearch
 );
-routes.get("/companies/find/:id", managerCompanies.findData);
 routes.put("/companies/update/:id", managerCompanies.updateCompany);
 
 routes.get("/companies/status/find", managerCompanyStatus.findCompanyStatus);

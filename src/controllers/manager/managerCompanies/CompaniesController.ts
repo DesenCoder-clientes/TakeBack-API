@@ -2,11 +2,10 @@ import { Request, Response } from "express";
 import { AllowCompanyFirstAccessUseCase } from "./AllowCompanyFirstAccessUseCase";
 import { RegisterCompanyPaymentMethodsUseCase } from "../../company/companyMethods/RegisterCompanyPaymentMethodsUseCase";
 import { ListCompanyUseCase } from "./ListCompanyUseCase";
-import { FindCompanyUseCase } from "./FindCompanyUseCase";
 import { UpdateCompanyUseCase } from "./UpdateCompanyUseCase";
 import { FindAllCompaniesUseCase } from "./FindAllCompaniesUseCase";
 import { ListCompanyWithSearchUseCase } from "./ListCompanyWithSearchUseCase";
-import { FindCompanyDataUseCase } from "./FindCompanyDataUseCase";
+import { FindOneCompanyUseCase } from "./FindOneCompanyUseCase";
 
 interface Props {
   companyId: string;
@@ -59,7 +58,19 @@ class CompaniesController {
       filters,
     });
 
-    response.status(201).json(companies);
+    response.status(200).json(companies);
+  }
+
+  async findOneCompany(request: Request, response: Response) {
+    const companyId = request.params.id;
+
+    const findUseCase = new FindOneCompanyUseCase();
+
+    const company = await findUseCase.execute({
+      companyId,
+    });
+
+    return response.status(200).json(company);
   }
 
   async listCompanyWithSearch(request: Request, response: Response) {
@@ -73,18 +84,8 @@ class CompaniesController {
       query,
     });
 
-    response.status(201).json(result);
+    response.status(200).json(result);
   }
-
-  // async findCompany(request: Request, response: Response) {
-  //   const query: FindCompaniesQueryProps = request.query;
-
-  //   const find = new FindCompanyUseCase();
-
-  //   const result = await find.execute(query);
-
-  //   response.status(201).json(result);
-  // }
 
   async updateCompany(request: Request, response: Response) {
     const { email, industryId, statusId, limit, offset }: UpdateProps =
@@ -109,18 +110,6 @@ class CompaniesController {
     });
 
     response.status(200).json({ message, companies });
-  }
-
-  async findData(request: Request, response: Response) {
-    const companyId = request.params.id;
-
-    const find = new FindCompanyDataUseCase();
-
-    const result = await find.execute({
-      companyId,
-    });
-
-    return response.status(200).json(result);
   }
 }
 
