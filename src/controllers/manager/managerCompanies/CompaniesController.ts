@@ -4,7 +4,7 @@ import { RegisterCompanyPaymentMethodsUseCase } from "../../company/companyMetho
 import { ListCompanyUseCase } from "./ListCompanyUseCase";
 import { FindCompanyUseCase } from "./FindCompanyUseCase";
 import { UpdateCompanyUseCase } from "./UpdateCompanyUseCase";
-import { ListCompanyWithFilterUseCase } from "./ListCompanyWithFilterUseCase";
+import { FindAllCompaniesUseCase } from "./FindAllCompaniesUseCase";
 import { ListCompanyWithSearchUseCase } from "./ListCompanyWithSearchUseCase";
 import { FindCompanyDataUseCase } from "./FindCompanyDataUseCase";
 
@@ -21,16 +21,10 @@ interface UpdateProps {
   offset: string;
 }
 
-interface FindCompanyProps {
-  status?: string;
-  industry?: string;
-  city?: string;
-}
-
-interface ListCompanyQueryProps {
-  status?: string;
-  industry?: string;
-  city?: string;
+interface FindCompaniesQueryProps {
+  statusId?: string;
+  industryId?: string;
+  cityId?: string;
 }
 
 interface ListCompanyWithSearchQueryProps {
@@ -54,18 +48,18 @@ class CompaniesController {
     response.status(201).json(result);
   }
 
-  async listCompany(request: Request, response: Response) {
+  async findAllCompanies(request: Request, response: Response) {
     const { offset, limit } = request.params;
-    const query: ListCompanyQueryProps = request.query;
+    const filters: FindCompaniesQueryProps = request.query;
 
-    const find = new ListCompanyWithFilterUseCase();
+    const findUseCase = new FindAllCompaniesUseCase();
 
-    const result = await find.execute({
+    const companies = await findUseCase.execute({
       pagination: { limit, offset },
-      query,
+      filters,
     });
 
-    response.status(201).json(result);
+    response.status(201).json(companies);
   }
 
   async listCompanyWithSearch(request: Request, response: Response) {
@@ -82,15 +76,15 @@ class CompaniesController {
     response.status(201).json(result);
   }
 
-  async findCompany(request: Request, response: Response) {
-    const query: FindCompanyProps = request.query;
+  // async findCompany(request: Request, response: Response) {
+  //   const query: FindCompaniesQueryProps = request.query;
 
-    const find = new FindCompanyUseCase();
+  //   const find = new FindCompanyUseCase();
 
-    const result = await find.execute(query);
+  //   const result = await find.execute(query);
 
-    response.status(201).json(result);
-  }
+  //   response.status(201).json(result);
+  // }
 
   async updateCompany(request: Request, response: Response) {
     const { email, industryId, statusId, limit, offset }: UpdateProps =

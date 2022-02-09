@@ -28,7 +28,7 @@ class FindCompanyDataUseCase {
       .where("co.id = :companyId", {
         companyId,
       })
-      .getRawMany();
+      .getOne();
 
     return findData;
   }

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { FindCompanyStatusUseCase } from "./FindCompanyStatusUseCase";
 import { UpdadeCompanyStatusUseCase } from "./UpdateCompanyStatusUseCase";
+import { FindCompanyDataUseCase } from "../managerCompanies/FindCompanyDataUseCase";
 
 interface UpdateProps {
   statusId: number;
@@ -19,13 +20,16 @@ class ManagerCompanyStatusController {
     const companyId = request.params.id;
     const { statusId }: UpdateProps = request.body;
     const udpate = new UpdadeCompanyStatusUseCase();
+    const findCompanyData = new FindCompanyDataUseCase();
 
-    const result = await udpate.execute({
+    const message = await udpate.execute({
       companyId,
       statusId,
     });
 
-    return response.status(200).json(result);
+    const company = await findCompanyData.execute({ companyId });
+
+    return response.status(200).json({ message, company });
   }
 }
 

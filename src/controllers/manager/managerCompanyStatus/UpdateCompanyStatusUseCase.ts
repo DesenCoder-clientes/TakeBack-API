@@ -13,7 +13,7 @@ class UpdadeCompanyStatusUseCase {
     const status = await getRepository(CompanyStatus).findOne(statusId);
 
     if (!status) {
-      throw new InternalError("Status  inexistente", 401);
+      throw new InternalError("Status inexistente", 401);
     }
 
     const updateStatus = await getRepository(Companies).update(companyId, {
