@@ -6,7 +6,7 @@ import { Industries } from "../../../models/Industry";
 class FindDataToUseInAplicationUseCase {
   async execute() {
     const industries = await getRepository(Industries).find({
-      select: ["id", "description", "categoryFee"],
+      select: ["id", "description", "industryFee"],
       order: { id: "ASC" },
     });
 

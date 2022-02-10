@@ -1,11 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 import { Companies } from "./Company";
 
@@ -20,12 +13,6 @@ export class CompanyStatus {
   @Column()
   blocked: boolean;
 
-  @OneToMany(() => Companies, companies => companies.status)
+  @OneToMany(() => Companies, (companies) => companies.status)
   company: Companies[];
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

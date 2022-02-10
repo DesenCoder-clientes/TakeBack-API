@@ -9,14 +9,7 @@ interface Props {
 class FindIndustryUseCase {
   async execute({ offset, limit }: Props) {
     const industries = await getRepository(Industries).find({
-      select: [
-        "id",
-        "description",
-        "categoryFee",
-        "createdAt",
-        "updatedAt",
-        "iconCategory",
-      ],
+      select: ["id", "description", "industryFee", "createdAt", "updatedAt"],
       relations: ["companies"],
       order: { description: "ASC" },
       take: parseInt(limit),

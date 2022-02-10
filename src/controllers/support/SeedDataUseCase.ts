@@ -1,5 +1,6 @@
 import { getRepository } from "typeorm";
 import { InternalError } from "../../config/GenerateErros";
+import * as bcrypt from "bcrypt";
 
 import { State } from "../../models/State";
 import { City } from "../../models/City";
@@ -9,6 +10,9 @@ import { CompanyUserTypes } from "../../models/CompanyUserTypes";
 import { CompanyStatus } from "../../models/CompanyStatus";
 import { PaymentMethods } from "../../models/PaymentMethod";
 import { TakeBackUserTypes } from "../../models/TakeBackUserTypes";
+import { TakeBackUsers } from "../../models/TakeBackUsers";
+import { generateRandomNumber } from "../../utils/RandomValueGenerate";
+import { sendMail } from "../../utils/SendMail";
 
 // import { StatesSeed } from "../../database/seeds/statesSeed";
 // import { TransactionTypesSeed } from "../../database/seeds/transactionTypesSeed";
@@ -316,8 +320,14 @@ const tbUserTypes = [
   },
 ];
 
+interface Props {
+  cpf: string;
+  email: string;
+  name: string;
+}
+
 class GenerateSeedData {
-  async execute() {
+  async execute({ cpf, email, name }: Props) {
     const [, count] = await getRepository(State).findAndCount();
 
     if (count > 0) {
@@ -404,6 +414,27 @@ class GenerateSeedData {
         400
       );
     }
+
+    const newPassword = generateRandomNumber(100000, 999999);
+    const sendedPasswordEncrypted = bcrypt.hashSync(newPassword.toString(), 10);
+
+    const takeBackUsers = await getRepository(TakeBackUsers).save({
+      cpf,
+      email,
+      name,
+      phone: "",
+      userType: takeBackUserTypes[0],
+      isActive: true,
+      password: sendedPasswordEncrypted,
+    });
+
+    if (!takeBackUsers) {
+      return new InternalError("Erro ao gerar usuário do take back", 400);
+    }
+
+    const message = `Bem vindo ${name}! CPF.: ${cpf}, Senha.: ${newPassword}`;
+
+    sendMail(email, "Usuário ROOT", message);
 
     return "Dados semeados";
   }

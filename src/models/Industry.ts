@@ -20,14 +20,14 @@ export class Industries {
   @Column({
     type: "float",
   })
-  categoryFee: number;
+  industryFee: number;
 
   @Column({
     default: 1,
   })
   iconCategory: number;
 
-  @OneToMany(()=> Companies, company => company.industry)
+  @OneToMany(() => Companies, (company) => company.industry)
   companies: Companies[];
 
   @CreateDateColumn()

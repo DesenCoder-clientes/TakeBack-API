@@ -5,14 +5,7 @@ import { Industries } from "../../../models/Industry";
 class FindIndustryUseCaseNotPaginated {
   async execute() {
     const industriesNotPaginated = await getRepository(Industries).find({
-      select: [
-        "id",
-        "description",
-        "categoryFee",
-        "createdAt",
-        "updatedAt",
-        "iconCategory",
-      ],
+      select: ["id", "description", "industryFee", "createdAt", "updatedAt"],
       relations: ["companies"],
       order: { description: "ASC" },
     });

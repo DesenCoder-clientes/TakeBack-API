@@ -17,6 +17,7 @@ export const AuthCompanyMiddleware = async (
   const company = await getRepository(Companies).findOne({
     select: ["id", "status"],
     relations: ["status"],
+    where: { id: companyId },
     cache: true,
   });
 

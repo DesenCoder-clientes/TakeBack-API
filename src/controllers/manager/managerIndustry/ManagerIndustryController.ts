@@ -6,29 +6,29 @@ import { UpdateIndustryUseCase } from "./UpdateIndustryUseCase";
 
 interface Props {
   description: string;
-  categoryFee: number;
+  industryFee: number;
 }
 
 class ManagerIndustryController {
   async registerIndustry(request: Request, response: Response) {
-    const { description, categoryFee }: Props = request.body;
+    const { description, industryFee }: Props = request.body;
 
     const registerIndustry = new RegisterIndustryUseCase();
 
-    const result = await registerIndustry.execute({ categoryFee, description });
+    const result = await registerIndustry.execute({ industryFee, description });
 
     response.status(201).json(result);
   }
 
   async updateIndustry(request: Request, response: Response) {
     const id = request.params.id;
-    const { description, categoryFee }: Props = request.body;
+    const { description, industryFee }: Props = request.body;
 
     const update = new UpdateIndustryUseCase();
 
     const result = await update.execute({
       description,
-      categoryFee,
+      industryFee,
       id,
     });
 
