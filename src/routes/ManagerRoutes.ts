@@ -52,11 +52,11 @@ routes.get(
   "/company/search/:offset/:limit",
   managerCompanies.listCompanyWithSearch
 );
-routes.put("/companies/update/:id", managerCompanies.updateCompany);
+routes.put("/company/update/:id", managerCompanies.updateCompany);
 
-routes.get("/companies/status/find", managerCompanyStatus.findCompanyStatus);
+routes.get("/company/status/find", managerCompanyStatus.findCompanyStatus);
 routes.put(
-  "/companies/status/update/:id",
+  "/company/status/update/:id",
   managerCompanyStatus.updateCompanyStatus
 );
 
