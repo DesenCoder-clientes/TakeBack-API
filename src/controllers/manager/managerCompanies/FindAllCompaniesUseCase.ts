@@ -34,8 +34,8 @@ class FindAllCompaniesUseCase {
       .addSelect(["industry.description", "status.description", "city.name"])
       .leftJoin(Industries, "industry", "industry.id = company.industry")
       .leftJoin(CompanyStatus, "status", "status.id = company.status")
-      .leftJoin(CompaniesAddress, "ca", "ca.id = company.address")
-      .leftJoin(City, "city", "city.id = ca.city")
+      .leftJoin(CompaniesAddress, "address", "address.id = company.address")
+      .leftJoin(City, "city", "city.id = address.city")
       .limit(parseInt(pagination.limit))
       .offset(parseInt(pagination.offset) * parseInt(pagination.limit));
 

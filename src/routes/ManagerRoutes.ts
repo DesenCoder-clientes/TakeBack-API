@@ -49,7 +49,7 @@ routes.get(
 );
 routes.get("/company/find/one/:id", managerCompanies.findOneCompany);
 routes.get(
-  "/companies/search/:offset/:limit",
+  "/company/search/:offset/:limit",
   managerCompanies.listCompanyWithSearch
 );
 routes.put("/companies/update/:id", managerCompanies.updateCompany);
