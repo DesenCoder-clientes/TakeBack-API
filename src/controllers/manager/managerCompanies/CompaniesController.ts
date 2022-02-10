@@ -6,6 +6,7 @@ import { UpdateCompanyUseCase } from "./UpdateCompanyUseCase";
 import { FindAllCompaniesUseCase } from "./FindAllCompaniesUseCase";
 import { ListCompanyWithSearchUseCase } from "./ListCompanyWithSearchUseCase";
 import { FindOneCompanyUseCase } from "./FindOneCompanyUseCase";
+import { FindCompanyUsersUseCase } from "./FindCompanyUsersUseCase";
 
 interface Props {
   companyId: string;
@@ -65,12 +66,16 @@ class CompaniesController {
     const companyId = request.params.id;
 
     const findUseCase = new FindOneCompanyUseCase();
+    const findUser = new FindCompanyUsersUseCase();
 
     const company = await findUseCase.execute({
       companyId,
     });
 
-    return response.status(200).json(company);
+    const users = await findUser.execute({
+      companyId,
+    });
+    return response.status(200).json({ company, users });
   }
 
   async listCompanyWithSearch(request: Request, response: Response) {
