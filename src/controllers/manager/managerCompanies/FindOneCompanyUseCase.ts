@@ -24,6 +24,8 @@ class FindOneCompanyUseCase {
         "company.phone",
         "company.balance",
         "company.monthlyPayment",
+        "company.customIndustryFee",
+        "company.customIndustryFeeActive",
       ])
       .addSelect([
         "industry.description",
