@@ -30,6 +30,7 @@ class FindOneCompanyUseCase {
         "industry.description",
         "industry.categoryFee",
         "status.description",
+        "status.id",
         "address.street",
         "address.district",
         "address.number",
@@ -47,7 +48,7 @@ class FindOneCompanyUseCase {
       .leftJoin(
         CompanyUserTypes,
         "userTypes",
-        "userTypes.users = users.companyUserTypes"
+        "userTypes.id = users.companyUserTypes"
       )
       .where("company.id = :companyId", {
         companyId,
