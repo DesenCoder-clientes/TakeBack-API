@@ -32,7 +32,13 @@ export class Transactions {
     nullable: true,
     type: "float",
   })
-  salesFee: number;
+  takebackFeePercent: number;
+
+  @Column({
+    nullable: true,
+    type: "float",
+  })
+  takebackFeeAmount: number;
 
   @Column({
     nullable: true,
