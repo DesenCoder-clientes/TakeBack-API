@@ -53,6 +53,7 @@ routes.get(
   managerCompanies.listCompanyWithSearch
 );
 routes.put("/company/update/:id", managerCompanies.updateCompany);
+routes.put("/company/fee/update/:id", managerCompanies.updateCustomFee);
 
 routes.get("/company/status/find", managerCompanyStatus.findCompanyStatus);
 routes.put(

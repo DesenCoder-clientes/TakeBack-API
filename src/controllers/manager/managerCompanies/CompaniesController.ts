@@ -7,6 +7,7 @@ import { FindAllCompaniesUseCase } from "./FindAllCompaniesUseCase";
 import { ListCompanyWithSearchUseCase } from "./ListCompanyWithSearchUseCase";
 import { FindOneCompanyUseCase } from "./FindOneCompanyUseCase";
 import { FindCompanyUsersUseCase } from "./FindCompanyUsersUseCase";
+import { UpdateCustomFeeUseCase } from "./UpdateCustomFeeUseCase";
 
 interface Props {
   companyId: string;
@@ -29,6 +30,11 @@ interface FindCompaniesQueryProps {
 
 interface ListCompanyWithSearchQueryProps {
   searchTerm?: string;
+}
+
+interface UpdateCustomFeeProps {
+  customIndustryFee: number;
+  customIndustryFeeActive: boolean;
 }
 
 class CompaniesController {
@@ -115,6 +121,24 @@ class CompaniesController {
     });
 
     response.status(200).json({ message, companies });
+  }
+
+  async updateCustomFee(request: Request, response: Response) {
+    const { customIndustryFee, customIndustryFeeActive }: UpdateCustomFeeProps =
+      request.body;
+    const companyId = request.params.id;
+    const { id } = request["tokenPayload"];
+
+    const update = new UpdateCustomFeeUseCase();
+
+    const result = await update.execute({
+      companyId,
+      customIndustryFee,
+      customIndustryFeeActive,
+      id,
+    });
+
+    response.status(200).json(result);
   }
 }
 
