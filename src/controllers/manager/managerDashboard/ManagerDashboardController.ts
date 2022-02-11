@@ -16,9 +16,11 @@ class DashboardController {
     const cashbackReport = new ReportCashbackPerPaymentMethodUseCase();
 
     const companyStatus = await companyReport.execute();
+    const consumerStatus = await consumerReport.execute();
 
     response.status(200).json({
       companyStatus,
+      consumerStatus,
     });
   }
 }
