@@ -72,14 +72,6 @@ routes.get("/cities/findAll", managerConsumers.listCities);
 
 routes.post("/payment", paymentMethod.registerPaymentMethod);
 
-routes.get("/dashboard/report/consumer", managerDashboard.reportConsumer);
-routes.get("/dashboard/report/company", managerDashboard.reportCompany);
-routes.get("/dashboard/report/receivable", managerDashboard.totalReceivable);
-routes.get("/dashboard/report/payable", managerDashboard.totalPayable);
-routes.get("/dashboard/report/revenues", managerDashboard.totalRevenues);
-routes.get(
-  "/dashboard/report/cashback",
-  managerDashboard.cashbackPerPaymentMethod
-);
+routes.get("/dashboard", managerDashboard.dashboardReport);
 
 export default routes;

@@ -7,72 +7,19 @@ import { ReportTotalPayableUseCase } from "./ReportTotalPayableUseCase";
 import { ReportTotalReceivableUseCase } from "./ReportTotalReceivableUseCase";
 
 class DashboardController {
-  async reportConsumer(request: Request, response: Response) {
-    const { id } = request["tokenPayload"];
-
+  async dashboardReport(request: Request, response: Response) {
     const consumerReport = new ReportConsumerActiveInactiveUseCase();
-
-    const result = await consumerReport.execute({
-      id,
-    });
-
-    response.status(200).json(result);
-  }
-
-  async reportCompany(request: Request, response: Response) {
     const companyReport = new ReportCompanyActiveInactiveUseCase();
-
-    const result = await companyReport.execute();
-
-    response.status(200).json(result);
-  }
-
-  async totalReceivable(request: Request, response: Response) {
-    const { id } = request["tokenPayload"];
-
     const totalReceivableReport = new ReportTotalReceivableUseCase();
-
-    const result = await totalReceivableReport.execute({
-      id,
-    });
-
-    response.status(200).json(result);
-  }
-
-  async totalPayable(request: Request, response: Response) {
-    const { id } = request["tokenPayload"];
-
     const totalPayableReport = new ReportTotalPayableUseCase();
-
-    const result = await totalPayableReport.execute({
-      id,
-    });
-
-    response.status(200).json(result);
-  }
-
-  async totalRevenues(request: Request, response: Response) {
-    const { id } = request["tokenPayload"];
-
     const revenuesReport = new ReportTotalRevenuesUseCase();
-
-    const result = await revenuesReport.execute({
-      id,
-    });
-
-    response.status(200).json(result);
-  }
-
-  async cashbackPerPaymentMethod(request: Request, response: Response) {
-    const { id } = request["tokenPayload"];
-
     const cashbackReport = new ReportCashbackPerPaymentMethodUseCase();
 
-    const result = await cashbackReport.execute({
-      id,
-    });
+    const companyStatus = await companyReport.execute();
 
-    response.status(200).json(result);
+    response.status(200).json({
+      companyStatus,
+    });
   }
 }
 
