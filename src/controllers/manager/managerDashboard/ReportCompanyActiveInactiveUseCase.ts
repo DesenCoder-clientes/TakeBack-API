@@ -1,14 +1,28 @@
 import { getRepository } from "typeorm";
-import { InternalError } from "../../../config/GenerateErros";
-import { Consumers } from "../../../models/Consumer";
-
-interface Props {
-  id: string;
-}
+import { Companies } from "../../../models/Company";
+import { CompanyStatus } from "../../../models/CompanyStatus";
 
 class ReportCompanyActiveInactiveUseCase {
-  async execute({ id }: Props) {
-    return "Empresas Ativas x Empresas Inativas (gráfico em rosca)";
+  async execute() {
+    const company = await getRepository(Companies)
+      .createQueryBuilder("company")
+      .select("COUNT(status.description)", "total")
+      .addSelect(["status.description"])
+      .leftJoin(CompanyStatus, "status", "status.id = company.status")
+      .groupBy("status.description")
+      .getRawMany();
+
+    const labels = [];
+    const values = [];
+
+    company.map((item) => {
+      labels.push(item.status_description);
+      values.push(parseInt(item.total));
+    });
+
+    const companyStatus = { labels, values };
+
+    return companyStatus;
   }
 }
 

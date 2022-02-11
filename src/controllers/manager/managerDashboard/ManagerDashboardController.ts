@@ -20,13 +20,9 @@ class DashboardController {
   }
 
   async reportCompany(request: Request, response: Response) {
-    const { id } = request["tokenPayload"];
-
     const companyReport = new ReportCompanyActiveInactiveUseCase();
 
-    const result = await companyReport.execute({
-      id,
-    });
+    const result = await companyReport.execute();
 
     response.status(200).json(result);
   }
