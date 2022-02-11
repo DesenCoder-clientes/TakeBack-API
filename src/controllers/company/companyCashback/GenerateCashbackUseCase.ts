@@ -99,7 +99,10 @@ class GenerateCashbackUseCase {
     });
 
     // Buscando a empresa e o usuário para injetar na tabela Transactions
-    const company = await getRepository(Companies).findOne(companyId);
+    const company = await getRepository(Companies).findOne({
+      where: { id: companyId },
+      relations: ["industry"],
+    });
     const companyUser = await getRepository(CompanyUsers).findOne(userId);
 
     // Buscando status e tipos de transações para injetar na tabela Transactions
@@ -117,6 +120,16 @@ class GenerateCashbackUseCase {
     const cashbackPercent =
       (cashbackAmount * 100) / parseFloat(costumer.value) / 100;
 
+    //Calculando o percentual da taxa da takeback
+    const takebackFeePercent = company.customIndustryFeeActive
+      ? company.customIndustryFee
+      : company.industry.industryFee;
+
+    //Calculando o valor da taxa da takeback
+    const takebackFeeAmount = company.customIndustryFeeActive
+      ? company.customIndustryFee * parseFloat(costumer.value)
+      : company.industry.industryFee * parseFloat(costumer.value);
+
     // Salvando as informações na tabela de Transactions caso não tenha o método de pagamento TakeBack
     const date = new Date();
     const newCashback = await getRepository(Transactions).save({
@@ -125,7 +138,8 @@ class GenerateCashbackUseCase {
       value: parseFloat(costumer.value),
       cashbackAmount,
       cashbackPercent: parseFloat(cashbackPercent.toFixed(3)),
-      salesFee: 0,
+      takebackFeePercent,
+      takebackFeeAmount,
       transactionTypes: transactionType,
       transactionStatus: transactionStatus,
       companyUsers: companyUser,
