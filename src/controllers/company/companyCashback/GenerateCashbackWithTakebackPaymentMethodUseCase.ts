@@ -163,7 +163,6 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
         value: parseFloat(costumer.value),
         cashbackAmount,
         cashbackPercent: parseFloat(cashbackPercent.toFixed(3)),
-        salesFee: 0,
         transactionTypes: transactionTypeUp,
         transactionStatus,
         dateAt: date.toLocaleDateString(),
