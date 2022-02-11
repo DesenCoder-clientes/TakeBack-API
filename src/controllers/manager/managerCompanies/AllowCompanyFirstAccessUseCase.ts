@@ -67,7 +67,8 @@ class AllowCompanyFirstAccessUseCase {
     }", Usuário: "${name || "Administrativo"}", Senha: "${newPassword}"`;
 
     sendMail(company.email, "TakeBack - Acesso ao sistema", newMessage);
-    return "Usuário administrativo criado";
+
+    return { message: "Usuário administrativo criado" };
   }
 }
 
