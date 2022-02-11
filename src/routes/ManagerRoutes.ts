@@ -10,6 +10,7 @@ import { ManagerIndustryController } from "../controllers/manager/managerIndustr
 import { PaymentMethodController } from "../controllers/manager/managerMethods/PaymentMethodsController";
 import { ManagerCompanyStatusController } from "../controllers/manager/managerCompanyStatus/ManagerCompanyStatusController";
 import { DataController } from "../controllers/manager/managerData/DataController";
+import { DashboardController } from "../controllers/manager/managerDashboard/ManagerDashboardController";
 
 const authorizationCompany = new CompaniesController();
 const paymentMethod = new PaymentMethodController();
@@ -19,6 +20,7 @@ const managerCompanies = new CompaniesController();
 const managerConsumers = new ConsumersController();
 const managerCompanyStatus = new ManagerCompanyStatusController();
 const managerData = new DataController();
+const managerDashboard = new DashboardController();
 
 const routes = Router();
 
@@ -69,5 +71,15 @@ routes.put("/consumers/update/:id", managerConsumers.updateConsumerStatus);
 routes.get("/cities/findAll", managerConsumers.listCities);
 
 routes.post("/payment", paymentMethod.registerPaymentMethod);
+
+routes.get("/dashboard/report/consumer", managerDashboard.reportConsumer);
+routes.get("/dashboard/report/company", managerDashboard.reportCompany);
+routes.get("/dashboard/report/receivable", managerDashboard.totalReceivable);
+routes.get("/dashboard/report/payable", managerDashboard.totalPayable);
+routes.get("/dashboard/report/revenues", managerDashboard.totalRevenues);
+routes.get(
+  "/dashboard/report/cashback",
+  managerDashboard.cashbackPerPaymentMethod
+);
 
 export default routes;
