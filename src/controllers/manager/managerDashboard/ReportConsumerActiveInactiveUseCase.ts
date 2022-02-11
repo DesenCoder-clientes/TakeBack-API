@@ -5,30 +5,26 @@ class ReportConsumerActiveInactiveUseCase {
   async execute() {
     const consumer = await getRepository(Consumers)
       .createQueryBuilder("consumer")
-      .select("COUNT(consumer.deactivedAccount)", "total")
-      .addSelect(["consumer.deactivedAccount", "consumer.id"])
+      .select(["consumer.deactivedAccount", "consumer.id"])
       .groupBy("consumer.deactivedAccount")
       .groupBy("consumer.id")
       .getRawMany();
 
     const labels = ["Ativo", "Inativo"];
     const values = [];
-    const consumerIds = [];
 
     var countInative = 0;
     var countActive = 0;
 
     consumer.map((item) => {
-      consumerIds.push(item.id);
-
-      if (item.consumer_deactivedAccount == false) {
-        countActive = countActive + 1;
-      } else {
+      if (item.consumer_deactivedAccount) {
         countInative = countInative + 1;
+      } else {
+        countActive = countActive + 1;
       }
     });
 
-    values.push({ countActive, countInative });
+    values.push(countActive, countInative);
 
     const consumerStatus = { labels, values };
     return consumerStatus;
