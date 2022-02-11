@@ -24,7 +24,7 @@ class UpdateIndustryUseCase {
 
     const updateIndustry = await getRepository(Industries).update(id, {
       description,
-      industryFee,
+      industryFee: industryFee / 100,
     });
 
     if (updateIndustry.affected !== 1) {

@@ -23,7 +23,7 @@ class RegisterIndustryUseCase {
 
     const registerIndustry = await getRepository(Industries).save({
       description,
-      industryFee,
+      industryFee: industryFee / 100,
     });
 
     if (!registerIndustry) {
