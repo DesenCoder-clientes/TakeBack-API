@@ -24,7 +24,7 @@ class ManagerIndustryController {
     const { description, industryFee }: Props = request.body;
 
     const update = new UpdateIndustryUseCase();
-    const industries = new FindIndustryUseCaseNotPaginated();
+    const find = new FindIndustryUseCaseNotPaginated();
 
     const message = await update.execute({
       description,
@@ -32,9 +32,9 @@ class ManagerIndustryController {
       id,
     });
 
-    const findIndustries = await industries.execute();
+    const industries = await find.execute();
 
-    return response.status(200).json({ message, findIndustries });
+    return response.status(200).json({ message, industries });
   }
 
   async findAllIndustries(request: Request, response: Response) {

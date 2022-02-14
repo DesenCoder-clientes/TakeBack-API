@@ -17,10 +17,10 @@ class FindCashbacksUseCase {
         "transaction.id",
         "transaction.value",
         "transaction.dateAt",
-        "transaction.cashbackPercent",
+        "transaction.takebackFeeAmount",
         "transaction.cashbackAmount",
       ])
-      .addSelect(["consumer.fullName", "user.name"])
+      .addSelect(["consumer.fullName", "status.description"])
       .leftJoin(Consumers, "consumer", "consumer.id = transaction.consumers")
       .leftJoin(CompanyUsers, "user", "user.id = transaction.companyUsers")
       .leftJoin(

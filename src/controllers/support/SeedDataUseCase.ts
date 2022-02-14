@@ -218,6 +218,12 @@ const TransactionStatusSeed = [
     createdAt: new Date(),
     updatedAt: new Date(),
   },
+  {
+    description: "Em processamento",
+    blocked: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
 ];
 
 const TransactionTypesSeed = [
