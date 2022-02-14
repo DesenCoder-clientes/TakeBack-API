@@ -14,6 +14,7 @@ import { TakeBackUsers } from "../../models/TakeBackUsers";
 import { generateRandomNumber } from "../../utils/RandomValueGenerate";
 import { sendMail } from "../../utils/SendMail";
 import { PaymentPlans } from "../../models/PaymentPlans";
+import { PaymentOrderStatus } from "../../models/PaymentOrderStatus";
 
 // import { StatesSeed } from "../../database/seeds/statesSeed";
 // import { TransactionTypesSeed } from "../../database/seeds/transactionTypesSeed";
@@ -258,6 +259,18 @@ const PaymentPlanSeed = [
   },
 ];
 
+const PaymentOrderStatusSeed = [
+  {
+    description: "Aguardando",
+  },
+  {
+    description: "Cancelada",
+  },
+  {
+    description: "Autorizadas",
+  },
+];
+
 const CompanyStatusSeed = [
   {
     description: "Ativo",
@@ -384,6 +397,18 @@ class GenerateSeedData {
 
     if (generatedTransactionStatus.length === 0) {
       return new InternalError("Erro ao gerar os status de transações", 400);
+    }
+
+    // Gerando status das ordens de pagamento
+    const generatePaymentOrderStatus = await getRepository(
+      PaymentOrderStatus
+    ).save(PaymentOrderStatusSeed);
+
+    if (generatePaymentOrderStatus.length === 0) {
+      return new InternalError(
+        "Erro ao gerar os status das ordens de pagamento",
+        400
+      );
     }
 
     // Gerando os Tipos de Usuários
