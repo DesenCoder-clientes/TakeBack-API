@@ -7,7 +7,7 @@ class FindIndustryUseCaseNotPaginated {
     const industriesNotPaginated = await getRepository(Industries).find({
       select: ["id", "description", "industryFee", "createdAt", "updatedAt"],
       relations: ["companies"],
-      order: { description: "ASC" },
+      order: { id: "ASC" },
     });
 
     if (!industriesNotPaginated) {
