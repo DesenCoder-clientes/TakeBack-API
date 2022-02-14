@@ -70,7 +70,9 @@ routes.put("/consumers/update/:id", managerConsumers.updateConsumerStatus);
 
 routes.get("/cities/findAll", managerConsumers.listCities);
 
-routes.post("/payment", paymentMethod.registerPaymentMethod);
+routes.get("/payment/find", paymentMethod.findAll);
+routes.post("/payment/register", paymentMethod.register);
+routes.put("/payment/update/:id", paymentMethod.update);
 
 routes.get("/dashboard", managerDashboard.dashboardReport);
 

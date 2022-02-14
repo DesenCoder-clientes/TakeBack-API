@@ -1,20 +1,45 @@
 import { Request, Response } from "express";
 
 import { RegisterPaymentMethodUseCase } from "./RegisterPaymentMethodUseCase";
+import { FindPaymentMethodsUseCase } from "./FindPaymentMethodsUseCase";
+import { UpdatePaymentMethodUseCase } from "./UpdatePaymentMethodUseCase";
 
 interface RegisterProps {
   description: string;
 }
 
 class PaymentMethodController {
-  async registerPaymentMethod(request: Request, response: Response) {
+  async register(request: Request, response: Response) {
     const { description }: RegisterProps = request.body;
 
-    const registerPaymentMethodUseCase = new RegisterPaymentMethodUseCase();
+    const register = new RegisterPaymentMethodUseCase();
+    const find = new FindPaymentMethodsUseCase();
 
-    const result = await registerPaymentMethodUseCase.execute({ description });
+    const message = await register.execute({ description });
+    const methods = await find.execute();
 
-    return response.status(200).json(result);
+    return response.status(200).json({ message, methods });
+  }
+
+  async findAll(request: Request, response: Response) {
+    const find = new FindPaymentMethodsUseCase();
+
+    const methods = await find.execute();
+
+    return response.status(200).json(methods);
+  }
+
+  async update(request: Request, response: Response) {
+    const id = request.params.id;
+    const { description } = request.body;
+
+    const update = new UpdatePaymentMethodUseCase();
+    const find = new FindPaymentMethodsUseCase();
+
+    const message = await update.execute({ id: parseInt(id), description });
+    const methods = await find.execute();
+
+    return response.status(200).json({ message, methods });
   }
 }
 
