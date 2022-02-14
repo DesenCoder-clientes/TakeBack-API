@@ -17,6 +17,7 @@ import { CompanyUsers } from "./CompanyUsers";
 import { CompanyStatus } from "./CompanyStatus";
 import { CompanyPaymentMethods } from "./CompanyPaymentMethod";
 import { PaymentPlans } from "./PaymentPlans";
+import { PaymentOrder } from "./PaymentOrder";
 
 @Entity()
 export class Companies {
@@ -80,6 +81,9 @@ export class Companies {
   @OneToOne(() => CompaniesAddress)
   @JoinColumn()
   address: CompaniesAddress;
+
+  @OneToMany(() => PaymentOrder, (paymentOrder) => paymentOrder.company)
+  paymentOrder: PaymentOrder[];
 
   @OneToMany(() => Transactions, (transactions) => transactions.companies)
   transaction: Transactions[];

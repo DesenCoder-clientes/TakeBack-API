@@ -17,6 +17,7 @@ import { Consumers } from "./Consumer";
 import { Companies } from "./Company";
 import { CompanyUsers } from "./CompanyUsers";
 import { TransactionPaymentMethods } from "./TransactionPaymentMethod";
+import { PaymentOrder } from "./PaymentOrder";
 
 @Entity()
 export class Transactions {
@@ -80,6 +81,9 @@ export class Transactions {
 
   @ManyToOne(() => Companies, (companies) => companies.transaction)
   companies: Companies;
+
+  @ManyToOne(() => PaymentOrder, (payment) => payment.transactions)
+  paymentOrder: PaymentOrder;
 
   @ManyToOne(() => CompanyUsers, (companyUsers) => companyUsers.transaction)
   companyUsers: CompanyUsers;
