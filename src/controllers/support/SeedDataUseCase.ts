@@ -273,7 +273,7 @@ const PaymentOrderStatusSeed = [
     description: "Cancelada",
   },
   {
-    description: "Autorizadas",
+    description: "Autorizada",
   },
 ];
 

@@ -9,6 +9,7 @@ import { CashbackController } from "../controllers/company/companyCashback/Cashb
 import { PaymentMethodsController } from "../controllers/company/companyMethods/PaymentMethodsController";
 import { CompanyUserController } from "../controllers/company/companyUser/CompanyUserController";
 import { CompanyDataController } from "../controllers/company/companyData/CompanyDataController";
+import { PaymentOrderController } from "../controllers/company/companyPaymentOrder/PaymentOrderController";
 
 const auth = new AuthCompanyController();
 const reports = new ReportsController();
@@ -16,6 +17,7 @@ const cashback = new CashbackController();
 const paymentMethod = new PaymentMethodsController();
 const companyUser = new CompanyUserController();
 const companyData = new CompanyDataController();
+const paymentOrder = new PaymentOrderController();
 
 const routes = Router();
 
@@ -50,5 +52,7 @@ routes.put("/user/update/:id", companyUser.updateCompanyUser);
 routes.put("/user/password/update", companyUser.updatePassword);
 
 routes.get("/cashbacks/find", cashback.findCashbacks);
+
+routes.post("/cashback/payment/generate", paymentOrder.generate);
 
 export default routes;
