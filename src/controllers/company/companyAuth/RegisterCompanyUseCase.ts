@@ -10,6 +10,7 @@ import { apiCorreiosResponseType } from "../../../types/ApiCorreiosResponse";
 
 import { CompanyStatus } from "../../../models/CompanyStatus";
 import { sendMail } from "../../../utils/SendMail";
+import { PaymentPlans } from "../../../models/PaymentPlans";
 
 interface Props {
   corporateName: string;
@@ -105,6 +106,10 @@ class RegisterCompanyUseCase {
       where: { description: "Cadastro solicitado" },
     });
 
+    const paymentPlan = await getRepository(PaymentPlans).findOne({
+      where: { id: 1 },
+    });
+
     const newCompany = await getRepository(Companies).save({
       corporateName,
       fantasyName,
@@ -114,6 +119,7 @@ class RegisterCompanyUseCase {
       address: address ? address : newAddress,
       industry: localizedIndustry,
       status: companyStatus,
+      paymentPlan,
     });
 
     if (!newCompany) {

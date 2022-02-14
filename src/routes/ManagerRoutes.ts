@@ -11,6 +11,7 @@ import { PaymentMethodController } from "../controllers/manager/managerMethods/P
 import { ManagerCompanyStatusController } from "../controllers/manager/managerCompanyStatus/ManagerCompanyStatusController";
 import { DataController } from "../controllers/manager/managerData/DataController";
 import { DashboardController } from "../controllers/manager/managerDashboard/ManagerDashboardController";
+import { PaymentPlanController } from "../controllers/manager/managerPaymentPlan/PaymentPlanController";
 
 const authorizationCompany = new CompaniesController();
 const paymentMethod = new PaymentMethodController();
@@ -21,6 +22,7 @@ const managerConsumers = new ConsumersController();
 const managerCompanyStatus = new ManagerCompanyStatusController();
 const managerData = new DataController();
 const managerDashboard = new DashboardController();
+const managerPaymentPlan = new PaymentPlanController();
 
 const routes = Router();
 
@@ -73,6 +75,10 @@ routes.get("/cities/findAll", managerConsumers.listCities);
 routes.get("/payment/find", paymentMethod.findAll);
 routes.post("/payment/register", paymentMethod.register);
 routes.put("/payment/update/:id", paymentMethod.update);
+
+routes.get("/plan/find", managerPaymentPlan.findAll);
+routes.post("/plan/register", managerPaymentPlan.register);
+routes.put("/plan/update/:id", managerPaymentPlan.update);
 
 routes.get("/dashboard", managerDashboard.dashboardReport);
 

@@ -13,6 +13,7 @@ import { TakeBackUserTypes } from "../../models/TakeBackUserTypes";
 import { TakeBackUsers } from "../../models/TakeBackUsers";
 import { generateRandomNumber } from "../../utils/RandomValueGenerate";
 import { sendMail } from "../../utils/SendMail";
+import { PaymentPlans } from "../../models/PaymentPlans";
 
 // import { StatesSeed } from "../../database/seeds/statesSeed";
 // import { TransactionTypesSeed } from "../../database/seeds/transactionTypesSeed";
@@ -248,6 +249,15 @@ const CompanyUserTypesSeed = [
   },
 ];
 
+const PaymentPlanSeed = [
+  {
+    description: "Plano padrão",
+    value: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
 const CompanyStatusSeed = [
   {
     description: "Ativo",
@@ -392,6 +402,18 @@ class GenerateSeedData {
 
     if (generatedCompanyStatus.length === 0) {
       return new InternalError("Erro ao gerar os status das empresas", 400);
+    }
+
+    // Gerando valor default para o Plano de Pagamento
+    const generatePaymentPlan = await getRepository(PaymentPlans).save(
+      PaymentPlanSeed
+    );
+
+    if (generatePaymentPlan.length === 0) {
+      return new InternalError(
+        "Erro ao gerar o plano padrão das empresas",
+        400
+      );
     }
 
     // Gerando o método de pagamneto Takeback

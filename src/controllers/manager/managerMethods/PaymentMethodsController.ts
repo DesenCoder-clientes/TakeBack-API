@@ -18,7 +18,7 @@ class PaymentMethodController {
     const message = await register.execute({ description });
     const methods = await find.execute();
 
-    return response.status(200).json({ message, methods });
+    return response.status(201).json({ message, methods });
   }
 
   async findAll(request: Request, response: Response) {

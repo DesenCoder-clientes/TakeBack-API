@@ -16,6 +16,7 @@ import { Transactions } from "./Transaction";
 import { CompanyUsers } from "./CompanyUsers";
 import { CompanyStatus } from "./CompanyStatus";
 import { CompanyPaymentMethods } from "./CompanyPaymentMethod";
+import { PaymentPlans } from "./PaymentPlans";
 
 @Entity()
 export class Companies {
@@ -87,10 +88,13 @@ export class Companies {
   industry: Industries;
 
   @OneToMany(() => CompanyUsers, (companyUser) => companyUser.company)
-  companies: CompanyUsers;
+  companies: CompanyUsers[];
 
   @ManyToOne(() => CompanyStatus, (status) => status.company)
   status: CompanyStatus;
+
+  @ManyToOne(() => PaymentPlans, (payment) => payment.company)
+  paymentPlan: PaymentPlans;
 
   @OneToMany(
     () => CompanyPaymentMethods,
