@@ -22,11 +22,6 @@ export class Industries {
   })
   industryFee: number;
 
-  @Column({
-    default: 1,
-  })
-  iconCategory: number;
-
   @OneToMany(() => Companies, (company) => company.industry)
   companies: Companies[];
 
