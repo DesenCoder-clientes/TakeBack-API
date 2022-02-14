@@ -32,7 +32,9 @@ class ManagerIndustryController {
       id,
     });
 
-    return response.status(200).json({ message, industries });
+    const findIndustries = await industries.execute();
+
+    return response.status(200).json({ message, findIndustries });
   }
 
   async findAllIndustries(request: Request, response: Response) {
