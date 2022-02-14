@@ -44,8 +44,7 @@ routes.post("/company/user", authorizationCompany.generateManagerUser);
 
 routes.post("/industry", managerIndustry.registerIndustry);
 routes.put("/industry/:id", managerIndustry.updateIndustry);
-routes.get("/industry/:offset/:limit", managerIndustry.findIndustry);
-routes.get("/industry/find", managerIndustry.findIndustryNotPaginated);
+routes.get("/industry/find", managerIndustry.findAllIndustries);
 
 routes.get(
   "/company/find/all/:offset/:limit",

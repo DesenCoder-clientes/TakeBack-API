@@ -1,5 +1,4 @@
 import { Request, response, Response } from "express";
-import { FindIndustryUseCase } from "./FindIndustryUseCase";
 import { FindIndustryUseCaseNotPaginated } from "./FindIndustryUseCaseNotPaginated";
 import { RegisterIndustryUseCase } from "./RegisterIndustryUseCase";
 import { UpdateIndustryUseCase } from "./UpdateIndustryUseCase";
@@ -25,29 +24,18 @@ class ManagerIndustryController {
     const { description, industryFee }: Props = request.body;
 
     const update = new UpdateIndustryUseCase();
+    const industries = new FindIndustryUseCaseNotPaginated();
 
-    const result = await update.execute({
+    const message = await update.execute({
       description,
       industryFee,
       id,
     });
 
-    return response.status(200).json(result);
+    return response.status(200).json({ message, industries });
   }
 
-  async findIndustry(request: Request, response: Response) {
-    const findIndustries = new FindIndustryUseCase();
-    const { offset, limit } = request.params;
-
-    const result = await findIndustries.execute({
-      offset,
-      limit,
-    });
-
-    return response.status(200).json(result);
-  }
-
-  async findIndustryNotPaginated(request: Request, response: Response) {
+  async findAllIndustries(request: Request, response: Response) {
     const findIndustries = new FindIndustryUseCaseNotPaginated();
 
     const result = await findIndustries.execute();
