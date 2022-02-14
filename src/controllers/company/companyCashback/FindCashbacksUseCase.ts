@@ -12,23 +12,31 @@ interface Props {
 class FindCashbacksUseCase {
   async execute({ companyId }: Props) {
     const cashbacks = await getRepository(Transactions)
-      .createQueryBuilder("t")
+      .createQueryBuilder("transaction")
       .select([
-        "t.id",
-        "t.value",
-        "t.dateAt",
-        "t.cashbackPercent",
-        "t.cashbackAmount",
+        "transaction.id",
+        "transaction.value",
+        "transaction.dateAt",
+        "transaction.cashbackPercent",
+        "transaction.cashbackAmount",
       ])
-      .addSelect(["c.fullName", "cu.name"])
-      .leftJoin(Consumers, "c", "c.id = t.consumers")
-      .leftJoin(CompanyUsers, "cu", "cu.id = t.companyUsers")
-      .leftJoin(TransactionStatus, "ts", "ts.id = t.transactionStatus")
-      .leftJoin(TransactionTypes, "tt", "tt.id = t.transactionTypes")
-      .where("tt.description = :description", { description: "Ganho" })
-      .andWhere("ts.description = :name", { name: "Pendente" })
-      .andWhere("t.companies = :companyId", { companyId })
-      .orderBy("t.id")
+      .addSelect(["consumer.fullName", "user.name"])
+      .leftJoin(Consumers, "consumer", "consumer.id = transaction.consumers")
+      .leftJoin(CompanyUsers, "user", "user.id = transaction.companyUsers")
+      .leftJoin(
+        TransactionStatus,
+        "status",
+        "status.id = transaction.transactionStatus"
+      )
+      .leftJoin(
+        TransactionTypes,
+        "type",
+        "type.id = transaction.transactionTypes"
+      )
+      .where("type.description = :description", { description: "Ganho" })
+      .andWhere("status.description = :name", { name: "Pendente" })
+      .andWhere("transaction.companies = :companyId", { companyId })
+      .orderBy("transaction.id")
       .getRawMany();
 
     return cashbacks;
