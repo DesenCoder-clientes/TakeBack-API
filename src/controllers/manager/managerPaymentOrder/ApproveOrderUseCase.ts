@@ -11,6 +11,7 @@ interface OrderProps {
 
 class ApproveOrder {
   async excute({ orderId }: OrderProps) {
+    // Buscando a ordem de pagamento pelo ID
     const order = await getRepository(PaymentOrder).findOne({
       where: { id: orderId },
       relations: ["transactions"],
@@ -20,6 +21,7 @@ class ApproveOrder {
       throw new InternalError("Ordem de pagamento não encontrada", 404);
     }
 
+    // Buscando o status 'Autorizada' para a ordem de pagamento
     const orderStatus = await getRepository(PaymentOrderStatus).findOne({
       where: { description: "Autorizada" },
     });
@@ -28,6 +30,7 @@ class ApproveOrder {
       where: { description: "Aprovada" },
     });
 
+    // Atualizando o status das transações
     order.transactions.map(async (item) => {
       await getRepository(Transactions).update(item.id, {
         transactionStatus,
