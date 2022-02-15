@@ -54,5 +54,6 @@ routes.put("/user/password/update", companyUser.updatePassword);
 routes.get("/cashbacks/find", cashback.findCashbacks);
 
 routes.post("/cashback/payment/generate", paymentOrder.generate);
+routes.put("/cashback/payment/cancel", paymentOrder.cancel);
 
 export default routes;
