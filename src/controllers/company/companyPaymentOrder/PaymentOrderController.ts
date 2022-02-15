@@ -25,12 +25,12 @@ class PaymentOrderController {
   }
 
   async cancel(request: Request, response: Response) {
-    const { orderId }: CancelProps = request.body;
+    const orderId = request.params.id;
 
     const cancelOrder = new CancelPaymentOrderUseCase();
 
     const result = await cancelOrder.execute({
-      orderId,
+      orderId: parseInt(orderId),
     });
 
     response.status(200).json(result);
