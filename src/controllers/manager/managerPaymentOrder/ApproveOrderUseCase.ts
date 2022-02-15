@@ -1,5 +1,6 @@
 import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
+import { Consumers } from "../../../models/Consumer";
 import { PaymentOrder } from "../../../models/PaymentOrder";
 import { PaymentOrderStatus } from "../../../models/PaymentOrderStatus";
 import { Transactions } from "../../../models/Transaction";
@@ -30,6 +31,11 @@ class ApproveOrder {
       where: { description: "Aprovada" },
     });
 
+    const findConsumer = await getRepository(Consumers)
+      .createQueryBuilder("consumer")
+      .select(["consumer.id", "consumer.fullName"])
+      .leftJoin(Transactions, "transaction");
+
     // Atualizando o status das transações
     order.transactions.map(async (item) => {
       await getRepository(Transactions).update(item.id, {
@@ -37,6 +43,7 @@ class ApproveOrder {
       });
     });
 
+    // Atualizando o status da ordem de pagamento
     const updateOrderStatus = await getRepository(PaymentOrder).update(
       orderId,
       {

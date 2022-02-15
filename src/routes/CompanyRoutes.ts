@@ -55,5 +55,6 @@ routes.get("/cashbacks/find", cashback.findCashbacks);
 
 routes.post("/cashback/payment/generate", paymentOrder.generate);
 routes.put("/cashback/payment/cancel/:id", paymentOrder.cancel);
+routes.get("/cashback/payment/methods/findAll", paymentOrder.findPaymentMethod);
 
 export default routes;

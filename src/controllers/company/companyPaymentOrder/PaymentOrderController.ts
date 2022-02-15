@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { CancelPaymentOrderUseCase } from "./CancelPaymentOrderUseCase";
+import { FindaPaymentMethodUseCase } from "./FindPaymentMethodUseCase";
 import { GeneratePaymentOrderUseCase } from "./GeneratePaymentOrderUseCase";
 
 interface Props {
@@ -30,6 +31,14 @@ class PaymentOrderController {
     const result = await cancelOrder.execute({
       orderId: parseInt(orderId),
     });
+
+    response.status(200).json(result);
+  }
+
+  async findPaymentMethod(request: Request, response: Response) {
+    const find = new FindaPaymentMethodUseCase();
+
+    const result = await find.execute();
 
     response.status(200).json(result);
   }
