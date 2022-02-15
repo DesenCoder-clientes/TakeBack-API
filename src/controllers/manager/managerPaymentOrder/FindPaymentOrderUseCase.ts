@@ -1,11 +1,27 @@
+import { query } from "express";
 import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
 import { PaymentOrder } from "../../../models/PaymentOrder";
 import { PaymentOrderStatus } from "../../../models/PaymentOrderStatus";
 
+interface QueryProps {
+  statusId?: string;
+  companyId?: string;
+}
+
+interface PaginationProps {
+  limit: string;
+  offset: string;
+}
+
+interface Props {
+  pagination: PaginationProps;
+  filters: QueryProps;
+}
+
 class FindPaymentOrderUseCase {
-  async execute() {
+  async execute({ filters, pagination }: Props) {
     const orderStatus = await getRepository(PaymentOrderStatus).findOne({
       where: { description: "Aguardando" },
     });
@@ -23,10 +39,24 @@ class FindPaymentOrderUseCase {
       .addSelect(["company.fantasyName", "status.description"])
       .leftJoin(Companies, "company", "company.id = order.company")
       .leftJoin(PaymentOrderStatus, "status", "status.id = order.status")
+      .limit(parseInt(pagination.limit))
+      .offset(parseInt(pagination.offset) * parseInt(pagination.limit));
 
-      .getRawMany();
+    if (filters.companyId) {
+      findOrder.where("company.id = :companyId", {
+        companyId: filters.companyId,
+      });
+    }
 
-    return findOrder;
+    if (filters.statusId) {
+      findOrder.andWhere("status.id = :statusId", {
+        statusId: filters.statusId,
+      });
+    }
+
+    const orders = await findOrder.getRawMany();
+
+    return orders;
   }
 }
 

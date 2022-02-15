@@ -1,13 +1,24 @@
 import { Request, Response } from "express";
 import { FindPaymentOrderUseCase } from "./FindPaymentOrderUseCase";
 
+interface FindOrdersQueryProps {
+  statusId?: string;
+  companyId?: string;
+}
+
 class ManagerPaymentOrderController {
   async findOrder(request: Request, response: Response) {
-    const find = new FindPaymentOrderUseCase();
+    const { offset, limit } = request.params;
+    const filters: FindOrdersQueryProps = request.query;
 
-    const result = await find.execute();
+    const findUseCase = new FindPaymentOrderUseCase();
 
-    response.status(200).json(result);
+    const orders = await findUseCase.execute({
+      pagination: { limit, offset },
+      filters,
+    });
+
+    response.status(200).json(orders);
   }
 }
 
