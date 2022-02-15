@@ -1,6 +1,7 @@
 import { getRepository, In } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
+import { PaymentMethodOfPaymentOrder } from "../../../models/PaymentMethodOfPaymentOrder";
 import { PaymentOrder } from "../../../models/PaymentOrder";
 import { PaymentOrderStatus } from "../../../models/PaymentOrderStatus";
 import { Transactions } from "../../../models/Transaction";
@@ -9,11 +10,12 @@ import { TransactionStatus } from "../../../models/TransactionStatus";
 interface Props {
   transactionIDs: number[];
   companyId: string;
+  paymentMethodId: number;
 }
 
 class GeneratePaymentOrderUseCase {
-  async execute({ transactionIDs, companyId }: Props) {
-    if (transactionIDs.length === 0) {
+  async execute({ transactionIDs, companyId, paymentMethodId }: Props) {
+    if (!paymentMethodId || transactionIDs.length === 0) {
       throw new InternalError("Campos incompletos", 400);
     }
 
@@ -71,10 +73,17 @@ class GeneratePaymentOrderUseCase {
       where: { description: "Aguardando" },
     });
 
+    const paymentMethod = await getRepository(
+      PaymentMethodOfPaymentOrder
+    ).findOne({
+      where: { id: paymentMethodId },
+    });
+
     const paymentOrder = await getRepository(PaymentOrder).save({
       value: takebackFeeAmount + cashbackAmount,
       company,
       status: awaitingStatus,
+      paymentMethod,
     });
 
     transactionsLocalized.map(async (item) => {

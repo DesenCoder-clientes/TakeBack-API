@@ -15,6 +15,7 @@ import { generateRandomNumber } from "../../utils/RandomValueGenerate";
 import { sendMail } from "../../utils/SendMail";
 import { PaymentPlans } from "../../models/PaymentPlans";
 import { PaymentOrderStatus } from "../../models/PaymentOrderStatus";
+import { PaymentMethodOfPaymentOrder } from "../../models/PaymentMethodOfPaymentOrder";
 
 // import { StatesSeed } from "../../database/seeds/statesSeed";
 // import { TransactionTypesSeed } from "../../database/seeds/transactionTypesSeed";
@@ -182,6 +183,19 @@ const StatesSeed = [
   {
     name: "Distrito Federal",
     initials: "DF",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+const PaymentMethodOfPaymentOrderSeed = [
+  {
+    description: "PIX",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Boleto",
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -403,6 +417,18 @@ class GenerateSeedData {
 
     if (generatedTransactionStatus.length === 0) {
       return new InternalError("Erro ao gerar os status de transações", 400);
+    }
+
+    // Gerando formas de pagamento para ordens de pagamento
+    const generatePaymentMethodForPaymentOrder = await getRepository(
+      PaymentMethodOfPaymentOrder
+    ).save(PaymentMethodOfPaymentOrderSeed);
+
+    if (generatePaymentMethodForPaymentOrder.length === 0) {
+      return new InternalError(
+        "Erro ao gerar formas de pagamento para ordens de pagamento",
+        400
+      );
     }
 
     // Gerando status das ordens de pagamento

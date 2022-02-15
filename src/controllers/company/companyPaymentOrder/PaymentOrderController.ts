@@ -4,21 +4,19 @@ import { GeneratePaymentOrderUseCase } from "./GeneratePaymentOrderUseCase";
 
 interface Props {
   transactionIDs: number[];
-}
-
-interface CancelProps {
-  orderId: number;
+  paymentMethodId: number;
 }
 
 class PaymentOrderController {
   async generate(request: Request, response: Response) {
     const { companyId } = request["tokenPayload"];
-    const { transactionIDs }: Props = request.body;
+    const { transactionIDs, paymentMethodId }: Props = request.body;
     const generatePaymentOrder = new GeneratePaymentOrderUseCase();
 
     const result = await generatePaymentOrder.execute({
       transactionIDs,
       companyId,
+      paymentMethodId,
     });
 
     response.status(200).json(result);

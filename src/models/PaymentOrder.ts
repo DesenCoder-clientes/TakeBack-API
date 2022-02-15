@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Companies } from "./Company";
+import { PaymentMethodOfPaymentOrder } from "./PaymentMethodOfPaymentOrder";
 import { PaymentOrderStatus } from "./PaymentOrderStatus";
 import { Transactions } from "./Transaction";
 
@@ -33,6 +34,12 @@ export class PaymentOrder {
 
   @OneToMany(() => Transactions, (transaction) => transaction.paymentOrder)
   transactions: Transactions[];
+
+  @ManyToOne(
+    () => PaymentMethodOfPaymentOrder,
+    (paymentMethod) => paymentMethod.paymentOrder
+  )
+  paymentMethod: PaymentMethodOfPaymentOrder;
 
   @CreateDateColumn()
   createdAt: Date;
