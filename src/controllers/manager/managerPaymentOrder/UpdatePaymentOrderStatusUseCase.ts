@@ -7,11 +7,10 @@ import { TransactionStatus } from "../../../models/TransactionStatus";
 
 interface OrderProps {
   orderId: string;
-  statusId: number;
 }
 
 class UpdatePaymentOrderStatus {
-  async excute({ orderId, statusId }: OrderProps) {
+  async excute({ orderId }: OrderProps) {
     const order = await getRepository(PaymentOrder).findOne({
       where: { id: orderId },
       relations: ["transactions"],
@@ -21,9 +20,9 @@ class UpdatePaymentOrderStatus {
       throw new InternalError("Ordem de pagamento não encontrada", 404);
     }
 
-    const orderStatus = await getRepository(PaymentOrderStatus).findOne(
-      statusId
-    );
+    const orderStatus = await getRepository(PaymentOrderStatus).findOne({
+      where: { description: "Autorizada" },
+    });
 
     const transactionStatus = await getRepository(TransactionStatus).findOne({
       where: { description: "Aprovada" },
