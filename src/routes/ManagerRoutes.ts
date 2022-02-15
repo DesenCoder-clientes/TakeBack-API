@@ -84,5 +84,6 @@ routes.put("/plan/update/:id", managerPaymentPlan.update);
 routes.get("/dashboard", managerDashboard.dashboardReport);
 
 routes.get("/order/findAll/:offset/:limit", managerPaymentOrder.findOrder);
+routes.put("/order/approve/:id", managerPaymentOrder.approveOrder);
 
 export default routes;

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { ApproveOrderUseCase } from "./ApproveOrderUseCase";
 import { FindPaymentOrderUseCase } from "./FindPaymentOrderUseCase";
 
 interface FindOrdersQueryProps {
@@ -19,6 +20,18 @@ class ManagerPaymentOrderController {
     });
 
     response.status(200).json(orders);
+  }
+
+  async approveOrder(request: Request, response: Response) {
+    const orderId = request.params.id;
+
+    const approve = new ApproveOrderUseCase();
+
+    const result = await approve.excute({
+      orderId: parseInt(orderId),
+    });
+
+    response.status(200).json(result);
   }
 }
 

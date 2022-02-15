@@ -1,4 +1,4 @@
-import { getRepository } from "typeorm";
+import { getRepository, In } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Consumers } from "../../../models/Consumer";
 import { PaymentOrder } from "../../../models/PaymentOrder";
@@ -7,53 +7,52 @@ import { Transactions } from "../../../models/Transaction";
 import { TransactionStatus } from "../../../models/TransactionStatus";
 
 interface OrderProps {
-  orderId: string;
+  orderId: number;
 }
 
-class ApproveOrder {
+class ApproveOrderUseCase {
   async excute({ orderId }: OrderProps) {
-    // Buscando a ordem de pagamento pelo ID
-    const order = await getRepository(PaymentOrder).findOne({
-      where: { id: orderId },
-      relations: ["transactions"],
-    });
-
-    if (!order) {
-      throw new InternalError("Ordem de pagamento não encontrada", 404);
-    }
-
-    // Buscando o status 'Autorizada' para a ordem de pagamento
-    const orderStatus = await getRepository(PaymentOrderStatus).findOne({
-      where: { description: "Autorizada" },
+    const findTransactions = await getRepository(Transactions).find({
+      where: { paymentOrder: orderId },
+      relations: ["consumers"],
     });
 
     const transactionStatus = await getRepository(TransactionStatus).findOne({
       where: { description: "Aprovada" },
     });
 
-    const findConsumer = await getRepository(Consumers)
-      .createQueryBuilder("consumer")
-      .select(["consumer.id", "consumer.fullName"])
-      .leftJoin(Transactions, "transaction");
-
-    // Atualizando o status das transações
-    order.transactions.map(async (item) => {
+    findTransactions.map(async (item) => {
       await getRepository(Transactions).update(item.id, {
         transactionStatus,
       });
+
+      const consumer = await getRepository(Consumers).findOne(
+        item.consumers.id
+      );
+
+      await getRepository(Consumers).update(item.consumers.id, {
+        blockedBalance: consumer.blockedBalance - item.cashbackAmount,
+        balance: consumer.balance + item.cashbackAmount,
+      });
     });
 
-    // Atualizando o status da ordem de pagamento
-    const updateOrderStatus = await getRepository(PaymentOrder).update(
+    const orderStatus = await getRepository(PaymentOrderStatus).findOne({
+      where: { description: "Autorizada" },
+    });
+
+    const updatedOrderStatus = await getRepository(PaymentOrder).update(
       orderId,
       {
         status: orderStatus,
       }
     );
-    if (updateOrderStatus.affected === 0) {
-      throw new InternalError("Erro ao atualizar ordem de pagamento", 400);
+
+    if (updatedOrderStatus.affected === 0) {
+      throw new InternalError("Erro ao autorizar ordem de pagamento", 400);
     }
+
+    return "Ordem de Pagamento aprovada!";
   }
 }
 
-export { ApproveOrder };
+export { ApproveOrderUseCase };
