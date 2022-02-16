@@ -190,6 +190,11 @@ const StatesSeed = [
 
 const PaymentMethodOfPaymentOrderSeed = [
   {
+    description: "Saldo Takeback",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
     description: "PIX",
     createdAt: new Date(),
     updatedAt: new Date(),

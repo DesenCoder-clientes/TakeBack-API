@@ -12,11 +12,13 @@ interface OrderProps {
 
 class ApproveOrderUseCase {
   async excute({ orderId }: OrderProps) {
+    // Encontrando transações pertencentes a ordem de pagamento
     const findTransactions = await getRepository(Transactions).find({
       where: { paymentOrder: orderId },
       relations: ["consumers"],
     });
 
+    // Pegando status "Aprovada" para alterar o status da transação
     const transactionStatus = await getRepository(TransactionStatus).findOne({
       where: { description: "Aprovada" },
     });

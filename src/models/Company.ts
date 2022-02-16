@@ -64,13 +64,13 @@ export class Companies {
     default: 0,
     type: "float",
   })
-  balance: number;
+  positiveBalance: number;
 
   @Column({
     default: 0,
     type: "float",
   })
-  blockedBalance: number;
+  negativeBalance: number;
 
   @Column({
     default: 0,
