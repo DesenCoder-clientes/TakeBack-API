@@ -13,7 +13,6 @@ import { TransactionTypes } from "../../../models/TransactionType";
 interface Props {
   companyId: string;
   userId: string;
-  code: string;
   cashbackData: {
     costumer: {
       cpf: string;
@@ -32,7 +31,6 @@ class GenerateCashbackUseCase {
   async execute({
     companyId,
     userId,
-    code,
     cashbackData: { costumer, method },
   }: Props) {
     // Verificando se todos os dados foram informados
@@ -67,13 +65,13 @@ class GenerateCashbackUseCase {
     }
 
     // Verificando se o método de pagamento TakeBack e seu códico de confirmação estão presentes
-    /* const takebackMethod = methodsWithoutNullItems.filter(
+    const takebackMethod = methodsWithoutNullItems.filter(
       (item) => item.method === "1"
     );
 
     if (takebackMethod.length > 0) {
       throw new InternalError("Houve um erro na chamada a API", 400);
-    } */
+    }
 
     // Criando array com ID's dos métodos de pagamento diferentes do método TakeBack
     const methodsId = [];
@@ -91,17 +89,11 @@ class GenerateCashbackUseCase {
     let cashbackAmount = 0;
     paymentMethods.map((databaseMethod) => {
       method.map((informedMethod) => {
-        if (
-          databaseMethod.id === parseInt(informedMethod.method) &&
-          databaseMethod.paymentMethodId !== 1
-        ) {
+        if (databaseMethod.id === parseInt(informedMethod.method)) {
           cashbackAmount =
             cashbackAmount +
             databaseMethod.cashbackPercentage *
               parseFloat(informedMethod.value);
-        }
-
-        if (databaseMethod.paymentMethodId === 1) {
         }
       });
     });
@@ -119,13 +111,8 @@ class GenerateCashbackUseCase {
       select: ["id"],
     });
 
-    const transactionTypeUp = await getRepository(TransactionTypes).findOne({
+    const transactionType = await getRepository(TransactionTypes).findOne({
       where: { description: "Ganho" },
-      select: ["id"],
-    });
-
-    const transactionTypeDown = await getRepository(TransactionTypes).findOne({
-      where: { description: "Abatimento" },
       select: ["id"],
     });
 
@@ -143,18 +130,6 @@ class GenerateCashbackUseCase {
       ? company.customIndustryFee * parseFloat(costumer.value)
       : company.industry.industryFee * parseFloat(costumer.value);
 
-    const existentTransaction = await getRepository(Transactions).findOne({
-      where: {
-        consumers: consumer,
-        keyTransaction: code,
-        transactionStatus: { description: "Aguardando" },
-      },
-    });
-
-    if (!existentTransaction) {
-      throw new InternalError("Compra não autorizada pelo cliente", 400);
-    }
-
     // Salvando as informações na tabela de Transactions caso não tenha o método de pagamento TakeBack
     const date = new Date();
     const newCashback = await getRepository(Transactions).save({
@@ -165,7 +140,7 @@ class GenerateCashbackUseCase {
       cashbackPercent: parseFloat(cashbackPercent.toFixed(3)),
       takebackFeePercent,
       takebackFeeAmount,
-      transactionTypes: transactionTypeUp,
+      transactionTypes: transactionType,
       transactionStatus: transactionStatus,
       companyUsers: companyUser,
       dateAt: date.toLocaleDateString(),
