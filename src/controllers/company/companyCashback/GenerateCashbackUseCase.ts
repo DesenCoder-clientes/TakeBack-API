@@ -13,7 +13,7 @@ import { TransactionTypes } from "../../../models/TransactionType";
 interface Props {
   companyId: string;
   userId: string;
-  code: string;
+  code: number;
   cashbackData: {
     costumer: {
       cpf: string;
@@ -89,6 +89,8 @@ class GenerateCashbackUseCase {
 
     // Calculando o valor do cashback
     let cashbackAmount = 0;
+    let takebackMethodExist = false;
+
     paymentMethods.map((databaseMethod) => {
       method.map((informedMethod) => {
         if (
@@ -102,10 +104,18 @@ class GenerateCashbackUseCase {
         }
 
         if (databaseMethod.paymentMethodId === 1) {
-          console.log("oi");
+          takebackMethodExist = true;
         }
       });
     });
+
+    let onlyTakebackMethod = false;
+    if (
+      paymentMethods.length === 1 &&
+      paymentMethods[0].paymentMethodId === 1
+    ) {
+      onlyTakebackMethod = true;
+    }
 
     // Buscando a empresa e o usuário para injetar na tabela Transactions
     const company = await getRepository(Companies).findOne({
@@ -144,78 +154,145 @@ class GenerateCashbackUseCase {
       ? company.customIndustryFee * parseFloat(costumer.value)
       : company.industry.industryFee * parseFloat(costumer.value);
 
-    const existentTransaction = await getRepository(Transactions).findOne({
-      where: {
-        consumers: consumer,
-        keyTransaction: code,
-        transactionStatus: { description: "Aguardando" },
-      },
-    });
-
-    if (!existentTransaction) {
-      throw new InternalError("Compra não autorizada pelo cliente", 400);
-    }
-
-    // Salvando as informações na tabela de Transactions caso não tenha o método de pagamento TakeBack
-    const date = new Date();
-    const newCashback = await getRepository(Transactions).save({
-      companies: company,
-      consumers: consumer,
-      value: parseFloat(costumer.value),
-      cashbackAmount,
-      cashbackPercent: parseFloat(cashbackPercent.toFixed(3)),
-      takebackFeePercent,
-      takebackFeeAmount,
-      transactionTypes: transactionTypeUp,
-      transactionStatus: transactionStatus,
-      companyUsers: companyUser,
-      dateAt: date.toLocaleDateString(),
-    });
-
-    // Verificando se as informações foram salvas
-    if (!newCashback) {
-      throw new InternalError("Houve um erro ao emitir o cashback", 400);
-    }
-
-    // Atualizando saldo do consumidor
-    const { affected } = await getRepository(Consumers).update(consumer.id, {
-      blockedBalance: consumer.blockedBalance + cashbackAmount,
-    });
-
-    if (affected !== 1) {
-      throw new InternalError("Houve um erro ao emitir o cashback", 400);
-    }
-
-    // Atualizando saldo negativo da empresa
-    const updatedNegativeBalance = await getRepository(Companies).update(
-      company.id,
-      {
-        negativeBalance:
-          company.negativeBalance + (takebackFeeAmount + cashbackAmount),
-      }
-    );
-
-    if (updatedNegativeBalance.affected === 0) {
-      throw new InternalError("Erro ao atualizar saldo da empresa", 400);
-    }
-
-    // Salvando cada método de pagamento e seus valores na tabela TransactionPaymentMethods
-    paymentMethods.map((databaseMethod) => {
-      method.map((informedMethod) => {
-        if (databaseMethod.id === parseInt(informedMethod.method)) {
-          getRepository(TransactionPaymentMethods).save({
-            transactions: newCashback,
-            paymentMethod: databaseMethod,
-            cashbackPercentage: databaseMethod.cashbackPercentage,
-            cashbackValue:
-              databaseMethod.cashbackPercentage *
-              parseFloat(informedMethod.value),
-          });
-        }
+    if (takebackMethodExist) {
+      const transactionAwait = await getRepository(TransactionStatus).findOne({
+        where: { description: "Aguardando" },
       });
-    });
 
-    return newCashback;
+      const existentTransaction = await getRepository(Transactions).findOne({
+        where: {
+          consumers: consumer,
+          keyTransaction: code,
+          transactionStatus: transactionAwait,
+        },
+        relations: ["consumers", "transactionStatus"],
+      });
+      console.log("STATUS: ", transactionAwait);
+      console.log("CONSUMIDOR", consumer);
+      console.log("CODIGO", code);
+
+      if (!existentTransaction) {
+        throw new InternalError("Compra não autorizada pelo cliente", 400);
+      }
+
+      const date = new Date();
+      const updatedTransaction = await getRepository(Transactions).update(
+        existentTransaction.id,
+        {
+          companies: company,
+          companyUsers: companyUser,
+          consumers: consumer,
+          value: parseFloat(costumer.value),
+          cashbackAmount,
+          cashbackPercent: parseFloat(cashbackPercent.toFixed(3)),
+          transactionTypes: transactionTypeUp,
+          transactionStatus,
+          dateAt: date.toLocaleDateString(),
+        }
+      );
+
+      if (updatedTransaction.affected === 0) {
+        throw new InternalError("Houve um erro ao utilizar o cashback", 400);
+      }
+
+      let value = 0;
+      paymentMethods.map((item) => {
+        method.map((method) => {
+          if (
+            item.paymentMethodId === 1 &&
+            parseInt(method.method) === item.id
+          ) {
+            value = parseInt(method.value);
+          }
+        });
+      });
+
+      // Atualizando saldo do consumidor
+      const consumerBalanceUpdate = await getRepository(Consumers).update(
+        consumer.id,
+        {
+          balance: consumer.balance - value,
+        }
+      );
+
+      if (consumerBalanceUpdate.affected === 0) {
+        throw new InternalError("Houve um erro ao emitir o cashback", 400);
+      }
+
+      // Atualizando saldo negativo da empresa
+      const updatedCompanyPositiveBalance = await getRepository(
+        Companies
+      ).update(company.id, {
+        positiveBalance: company.positiveBalance + value,
+      });
+
+      if (updatedCompanyPositiveBalance.affected === 0) {
+        throw new InternalError("Erro ao atualizar saldo da empresa", 400);
+      }
+    }
+
+    if (!onlyTakebackMethod) {
+      // Salvando as informações na tabela de Transactions caso não tenha o método de pagamento TakeBack
+      const date = new Date();
+      const newCashback = await getRepository(Transactions).save({
+        companies: company,
+        consumers: consumer,
+        value: parseFloat(costumer.value),
+        cashbackAmount,
+        cashbackPercent: parseFloat(cashbackPercent.toFixed(3)),
+        takebackFeePercent,
+        takebackFeeAmount,
+        transactionTypes: transactionTypeUp,
+        transactionStatus: transactionStatus,
+        companyUsers: companyUser,
+        dateAt: date.toLocaleDateString(),
+      });
+
+      // Verificando se as informações foram salvas
+      if (!newCashback) {
+        throw new InternalError("Houve um erro ao emitir o cashback", 400);
+      }
+
+      // Atualizando saldo do consumidor
+      const { affected } = await getRepository(Consumers).update(consumer.id, {
+        blockedBalance: consumer.blockedBalance + cashbackAmount,
+      });
+
+      if (affected !== 1) {
+        throw new InternalError("Houve um erro ao emitir o cashback", 400);
+      }
+
+      // Atualizando saldo negativo da empresa
+      const updatedNegativeBalance = await getRepository(Companies).update(
+        company.id,
+        {
+          negativeBalance:
+            company.negativeBalance + (takebackFeeAmount + cashbackAmount),
+        }
+      );
+
+      if (updatedNegativeBalance.affected === 0) {
+        throw new InternalError("Erro ao atualizar saldo da empresa", 400);
+      }
+
+      // Salvando cada método de pagamento e seus valores na tabela TransactionPaymentMethods
+      paymentMethods.map((databaseMethod) => {
+        method.map((informedMethod) => {
+          if (databaseMethod.id === parseInt(informedMethod.method)) {
+            getRepository(TransactionPaymentMethods).save({
+              transactions: newCashback,
+              paymentMethod: databaseMethod,
+              cashbackPercentage: databaseMethod.cashbackPercentage,
+              cashbackValue:
+                databaseMethod.cashbackPercentage *
+                parseFloat(informedMethod.value),
+            });
+          }
+        });
+      });
+    }
+
+    return "Cashback emitido";
   }
 }
 
