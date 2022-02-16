@@ -92,7 +92,7 @@ class GenerateCashbackWithTakebackPaymentMethodUseCase {
     });
 
     if (!existentTransaction) {
-      throw new InternalError("Compra não autorizada pelo cliente", 400);
+      throw new InternalError("Compra não autorizada pelo cliente2", 400);
     }
 
     method.map((item) => {

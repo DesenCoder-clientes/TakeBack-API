@@ -34,11 +34,11 @@ routes.put("/data/update", companyData.updateCompanyData);
 
 routes.get("/cashback/costumer/:cpf", cashback.getConsumerInfo);
 
-routes.post("/cashback", cashback.generateCashback);
-routes.post(
+routes.post("/cashback/generate", cashback.generateCashback);
+/* routes.post(
   "/cashback/:code",
   cashback.generateCashbackWithTakebackPaymentMethod
-);
+); */
 routes.put("/cashback/cancel", cashback.cancelCashBack);
 
 routes.get("/payments", paymentMethod.findCompanyMethods);

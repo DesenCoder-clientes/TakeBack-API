@@ -19,11 +19,14 @@ class CostumerAuthorizePurchaseUseCase {
       throw new InternalError("Dados incompletos", 400);
     }
 
-    const consumer = await getRepository(Consumers).findOne(consumerID, {
+    const consumers = await getRepository(Consumers).findOne(consumerID, {
       select: ["id", "signature", "balance"],
     });
 
-    const passwordMatch = await bcrypt.compare(signature, consumer.signature);
+    console.log("ID", consumerID);
+    console.log("CONSUMIDOR", consumers);
+
+    const passwordMatch = await bcrypt.compare(signature, consumers.signature);
 
     if (!passwordMatch) {
       throw new InternalError("Assinatura incorreta", 400);
@@ -35,7 +38,7 @@ class CostumerAuthorizePurchaseUseCase {
       },
     });
 
-    const transactionType = await getRepository(TransactionTypes).findOne({
+    const transactionTypes = await getRepository(TransactionTypes).findOne({
       where: {
         description: "Abatimento",
       },
@@ -48,13 +51,12 @@ class CostumerAuthorizePurchaseUseCase {
     const newCode = generateRandomNumber(1000, 9999);
 
     const transaction = await getRepository(Transactions).save({
+      consumers,
       value,
       keyTransaction: newCode,
-      consumer,
       transactionStatus,
-      transactionType,
+      transactionTypes,
     });
-
     return { code: newCode, transactionId: transaction.id };
   }
 }
