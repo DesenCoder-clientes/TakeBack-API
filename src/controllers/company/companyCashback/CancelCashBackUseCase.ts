@@ -1,5 +1,6 @@
 import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
+import { Companies } from "../../../models/Company";
 import { Consumers } from "../../../models/Consumer";
 import { Transactions } from "../../../models/Transaction";
 import { TransactionStatus } from "../../../models/TransactionStatus";
@@ -35,12 +36,28 @@ class CancelCashBackUseCase {
 
       const transaction = await getRepository(Transactions).findOne(id, {
         select: ["cashbackAmount"],
-        relations: ["consumers"],
+        relations: ["consumers", "companies"],
       });
 
       const costumer = await getRepository(Consumers).findOne(
         transaction.consumers.id
       );
+
+      const company = await getRepository(Companies).findOne(
+        transaction.companies
+      );
+
+      const updateCompanyBalance = await getRepository(Companies).update(
+        company.id,
+        {
+          negativeBalance:
+            company.negativeBalance -
+            (transaction.cashbackAmount + transaction.takebackFeeAmount),
+        }
+      );
+      if (updateCompanyBalance.affected === 0) {
+        throw new InternalError("Erro ao atualizar o saldo da empresa", 400); // Alterar mensagem
+      }
 
       const updatedBalanceCostumer = await getRepository(Consumers).update(
         costumer.id,
