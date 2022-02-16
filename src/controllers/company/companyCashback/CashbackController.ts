@@ -7,7 +7,6 @@ import { FindCashbacksUseCase } from "./FindCashbacksUseCase";
 import { CancelCashBackUseCase } from "./CancelCashBackUseCase";
 
 interface GenerateCashbackProps {
-  code: string;
   cashbackData: {
     costumer: {
       cpf: string;
@@ -30,7 +29,8 @@ interface CancelProps {
 class CashbackController {
   async generateCashback(request: Request, response: Response) {
     const { companyId, userId } = request["tokenPayload"];
-    const { cashbackData, code }: GenerateCashbackProps = request.body;
+    const { cashbackData }: GenerateCashbackProps = request.body;
+    const code = request.params.code;
 
     const cashback = new GenerateCashbackUseCase();
 
