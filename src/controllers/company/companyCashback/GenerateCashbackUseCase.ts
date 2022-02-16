@@ -102,6 +102,7 @@ class GenerateCashbackUseCase {
         }
 
         if (databaseMethod.paymentMethodId === 1) {
+          console.log("oi");
         }
       });
     });
