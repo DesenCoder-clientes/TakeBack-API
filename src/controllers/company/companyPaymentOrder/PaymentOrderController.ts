@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { CancelPaymentOrderUseCase } from "./CancelPaymentOrderUseCase";
 import { FindaPaymentMethodUseCase } from "./FindPaymentMethodUseCase";
 import { GeneratePaymentOrderUseCase } from "./GeneratePaymentOrderUseCase";
+import { GeneratePaymentOrderWithTakebackBalanceUseCase } from "./GeneratePaymentOrderWithTakebackBalanceUseCase";
 
 interface Props {
   transactionIDs: number[];
@@ -12,15 +13,29 @@ class PaymentOrderController {
   async generate(request: Request, response: Response) {
     const { companyId } = request["tokenPayload"];
     const { transactionIDs, paymentMethodId }: Props = request.body;
-    const generatePaymentOrder = new GeneratePaymentOrderUseCase();
 
-    const result = await generatePaymentOrder.execute({
-      transactionIDs,
-      companyId,
-      paymentMethodId,
-    });
+    if (paymentMethodId === 1) {
+      const generatePaymentOrderWithTakebackBalance =
+        new GeneratePaymentOrderWithTakebackBalanceUseCase();
 
-    response.status(200).json(result);
+      const result = await generatePaymentOrderWithTakebackBalance.execute({
+        transactionIDs,
+        companyId,
+        paymentMethodId,
+      });
+
+      return response.status(200).json(result);
+    } else {
+      const generatePaymentOrder = new GeneratePaymentOrderUseCase();
+
+      const result = await generatePaymentOrder.execute({
+        transactionIDs,
+        companyId,
+        paymentMethodId,
+      });
+
+      return response.status(200).json(result);
+    }
   }
 
   async cancel(request: Request, response: Response) {
@@ -32,7 +47,7 @@ class PaymentOrderController {
       orderId: parseInt(orderId),
     });
 
-    response.status(200).json(result);
+    return response.status(200).json(result);
   }
 
   async findPaymentMethod(request: Request, response: Response) {
@@ -40,7 +55,7 @@ class PaymentOrderController {
 
     const result = await find.execute();
 
-    response.status(200).json(result);
+    return response.status(200).json(result);
   }
 }
 

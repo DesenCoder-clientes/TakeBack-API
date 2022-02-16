@@ -46,12 +46,9 @@ class ReportBillingByPeriodUseCase {
         "transactions.dateAt >= :sevenDaysAgo AND transactions.dateAt < :today",
         { sevenDaysAgo, today }
       )
-      .andWhere(
-        "transactions.transactionStatus IN (:...transactionStatusId)",
-        {
-          transactionStatusId: [...transactionStatusIds],
-        }
-      )
+      .andWhere("transactions.transactionStatus IN (:...transactionStatusId)", {
+        transactionStatusId: [...transactionStatusIds],
+      })
       .andWhere("transactions.transactionTypes = :transactionsTypeId", {
         transactionsTypeId: transactionsTypes.id,
       })
@@ -60,7 +57,7 @@ class ReportBillingByPeriodUseCase {
     const company = await getRepository(Companies).findOne(companyId);
 
     const totalBilling = transactions[0].total;
-    const balance = company.balance;
+    const balance = company.positiveBalance;
 
     return { totalBilling, balance };
   }

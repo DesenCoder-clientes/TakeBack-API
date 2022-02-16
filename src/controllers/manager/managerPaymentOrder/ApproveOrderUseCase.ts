@@ -1,10 +1,12 @@
 import { getRepository, In } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
+import { Companies } from "../../../models/Company";
 import { Consumers } from "../../../models/Consumer";
 import { PaymentOrder } from "../../../models/PaymentOrder";
 import { PaymentOrderStatus } from "../../../models/PaymentOrderStatus";
 import { Transactions } from "../../../models/Transaction";
 import { TransactionStatus } from "../../../models/TransactionStatus";
+import { CompaniesController } from "../managerCompanies/CompaniesController";
 
 interface OrderProps {
   orderId: number;
@@ -37,6 +39,23 @@ class ApproveOrderUseCase {
         balance: consumer.balance + item.cashbackAmount,
       });
     });
+
+    const paymentOrder = await getRepository(PaymentOrder).findOne({
+      where: { id: orderId },
+      relations: ["company"],
+    });
+
+    const updatedCompanyBalance = await getRepository(Companies).update(
+      paymentOrder.company.id,
+      {
+        negativeBalance:
+          paymentOrder.company.negativeBalance - paymentOrder.value,
+      }
+    );
+
+    if (updatedCompanyBalance.affected === 0) {
+      throw new InternalError("Erro ao atualizar saldo da empresa", 400);
+    }
 
     const orderStatus = await getRepository(PaymentOrderStatus).findOne({
       where: { description: "Autorizada" },

@@ -1,6 +1,7 @@
-import { getRepository, In } from "typeorm";
+import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
+import { Consumers } from "../../../models/Consumer";
 import { PaymentMethodOfPaymentOrder } from "../../../models/PaymentMethodOfPaymentOrder";
 import { PaymentOrder } from "../../../models/PaymentOrder";
 import { PaymentOrderStatus } from "../../../models/PaymentOrderStatus";
@@ -13,8 +14,8 @@ interface Props {
   paymentMethodId: number;
 }
 
-class GeneratePaymentOrderUseCase {
-  async execute({ transactionIDs, companyId, paymentMethodId }: Props) {
+class GeneratePaymentOrderWithTakebackBalanceUseCase {
+  async execute({ companyId, paymentMethodId, transactionIDs }: Props) {
     if (!paymentMethodId || transactionIDs.length === 0) {
       throw new InternalError("Campos incompletos", 400);
     }
@@ -26,10 +27,9 @@ class GeneratePaymentOrderUseCase {
     }
 
     const processStatus = await getRepository(TransactionStatus).findOne({
-      where: { description: "Em processamento" },
+      where: { description: "Aprovada" },
     });
 
-    // Buscando transações da ordem de pagamento
     const transactionsLocalized = await getRepository(Transactions)
       .createQueryBuilder("transaction")
       .select([
@@ -54,7 +54,7 @@ class GeneratePaymentOrderUseCase {
 
     // Pegando os IDs das transações da ordem de pagamento
     const transactionsInProcess = [];
-    transactionsLocalized.map((item) => {
+    transactionsLocalized.map(async (item) => {
       if (item.transactionStatusId === processStatus.id) {
         transactionsInProcess.push(item.transaction_id);
       }
@@ -78,15 +78,17 @@ class GeneratePaymentOrderUseCase {
     }
 
     const awaitingStatus = await getRepository(PaymentOrderStatus).findOne({
-      where: { description: "Aguardando" },
+      where: { description: "Autorizada" },
     });
 
     // Buscando a ordem de pagamento pelo ID
     const paymentMethod = await getRepository(
       PaymentMethodOfPaymentOrder
-    ).findOne({
-      where: { id: paymentMethodId },
-    });
+    ).findOne(1);
+
+    if (company.positiveBalance < takebackFeeAmount + cashbackAmount) {
+      throw new InternalError("Saldo Takeback insuficiente", 400);
+    }
 
     // Atualizando a ordem de pagamento
     const paymentOrder = await getRepository(PaymentOrder).save({
@@ -104,8 +106,20 @@ class GeneratePaymentOrderUseCase {
       });
     });
 
+    // Autorizando cashback para os clientes
+    transactionsLocalized.map(async (item) => {
+      const consumer = await getRepository(Consumers).findOne(
+        item.consumers.id
+      );
+
+      await getRepository(Consumers).update(item.consumers.id, {
+        blockedBalance: consumer.blockedBalance - item.cashbackAmount,
+        balance: consumer.balance + item.cashbackAmount,
+      });
+    });
+
     return "sucesso";
   }
 }
 
-export { GeneratePaymentOrderUseCase };
+export { GeneratePaymentOrderWithTakebackBalanceUseCase };

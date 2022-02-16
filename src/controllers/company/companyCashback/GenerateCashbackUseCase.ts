@@ -160,6 +160,19 @@ class GenerateCashbackUseCase {
       throw new InternalError("Houve um erro ao emitir o cashback", 400);
     }
 
+    // Atualizando saldo negativo da empresa
+    const updatedNegativeBalance = await getRepository(Companies).update(
+      company.id,
+      {
+        negativeBalance:
+          company.negativeBalance + (takebackFeeAmount + cashbackAmount),
+      }
+    );
+
+    if (updatedNegativeBalance.affected === 0) {
+      throw new InternalError("Erro ao atualizar saldo da empresa", 400);
+    }
+
     // Salvando cada método de pagamento e seus valores na tabela TransactionPaymentMethods
     paymentMethods.map((databaseMethod) => {
       method.map((informedMethod) => {
