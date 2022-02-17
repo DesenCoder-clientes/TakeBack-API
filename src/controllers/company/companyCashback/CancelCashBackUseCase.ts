@@ -8,10 +8,15 @@ import { TransactionStatus } from "../../../models/TransactionStatus";
 interface CancelProps {
   transactionIDs: number[];
   cancellationDescription: string;
+  companyId: string;
 }
 
 class CancelCashBackUseCase {
-  async execute({ cancellationDescription, transactionIDs }: CancelProps) {
+  async execute({
+    cancellationDescription,
+    transactionIDs,
+    companyId,
+  }: CancelProps) {
     if (!cancellationDescription || transactionIDs.length === 0) {
       throw new InternalError("Campos incompletos", 400);
     }
@@ -43,9 +48,11 @@ class CancelCashBackUseCase {
         transaction.consumers.id
       );
 
-      const company = await getRepository(Companies).findOne(
-        transaction.companies
-      );
+      const company = await getRepository(Companies).findOne(companyId);
+
+      if (!company) {
+        throw new InternalError("Empresa não encontrada", 404);
+      }
 
       const updateCompanyBalance = await getRepository(Companies).update(
         company.id,
