@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class GenerateTable1645097591172 implements MigrationInterface {
-    name = 'GenerateTable1645097591172'
+export class GenerateTables1645114198772 implements MigrationInterface {
+    name = 'GenerateTables1645114198772'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "companies_address" ("id" SERIAL NOT NULL, "street" character varying, "district" character varying, "number" integer, "complement" character varying, "cityId" integer, CONSTRAINT "PK_ad150e1e829fc0c9013267f3e4c" PRIMARY KEY ("id"))`);
