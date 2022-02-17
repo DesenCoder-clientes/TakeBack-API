@@ -25,7 +25,7 @@ class UpdateCustomFeeUseCase {
     }
 
     const update = await getRepository(Companies).update(companyId, {
-      customIndustryFee,
+      customIndustryFee: customIndustryFee / 100,
       customIndustryFeeActive,
     });
 
