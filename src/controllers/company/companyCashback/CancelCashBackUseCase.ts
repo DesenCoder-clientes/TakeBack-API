@@ -1,4 +1,4 @@
-import { getRepository } from "typeorm";
+import { getRepository, In } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
 import { Consumers } from "../../../models/Consumer";
@@ -17,68 +17,139 @@ class CancelCashBackUseCase {
     transactionIDs,
     companyId,
   }: CancelProps) {
+    // Verificando se os dados necessários foram informados
     if (!cancellationDescription || transactionIDs.length === 0) {
       throw new InternalError("Campos incompletos", 400);
     }
 
+    // Buscando o status de cancelada pelo parceiro para atualizar a transação
     const status = await getRepository(TransactionStatus).findOne({
       where: { description: "Cancelada pelo parceiro" },
     });
 
+    // Verificando se o status foi localizado
     if (!status) {
       throw new InternalError("Erro ao cancelar transação", 400);
     }
 
-    transactionIDs.map(async (id) => {
-      const { affected } = await getRepository(Transactions).update(id, {
-        transactionStatus: status,
-        cancellationDescription,
+    // Buscando todas as transações informadas pelo usuário
+    const transactions = await getRepository(Transactions)
+      .createQueryBuilder("transaction")
+      .select([
+        "transaction.id",
+        "transaction.takebackFeePercent",
+        "transaction.takebackFeeAmount",
+        "transaction.cashbackPercent",
+        "transaction.cashbackAmount",
+      ])
+      .addSelect(["consumer.id"])
+      .where("transaction.id IN (:...transactionIDs)", {
+        transactionIDs: [...transactionIDs],
+      })
+      .leftJoin(Consumers, "consumer", "consumer.id = transaction.consumers")
+      .leftJoin(Companies, "company", "company.id = transaction.companies")
+      .getRawMany();
+
+    // Agrupando as transações por usuário
+    const transactionsReduced = transactions.reduce(
+      (previousValue, currentValue) => {
+        previousValue[currentValue.consumer_id] =
+          previousValue[currentValue.consumer_id] || [];
+        previousValue[currentValue.consumer_id].push(currentValue);
+        return previousValue;
+      },
+      Object.create(null)
+    );
+
+    // Alterando o formato do agrupamento para um formato compatível para mapeamento
+    const transactionGroupedPerConsumer = [];
+    for (const [key, values] of Object.entries(transactionsReduced)) {
+      transactionGroupedPerConsumer.push({
+        consumerId: key,
+        transactions: values,
+      });
+    }
+
+    const consumersAndValuesToSubtractBlockedBalances = [];
+    // Somando os valores das transações e agrupando por usuário
+    transactionGroupedPerConsumer.map((item) => {
+      let value = 0;
+      item.transactions.map((transaction) => {
+        value = value + transaction.transaction_cashbackAmount;
       });
 
-      if (!affected) {
-        throw new InternalError(`Erro ao cancelar a transação: ${id}`, 400);
-      }
-
-      const transaction = await getRepository(Transactions).findOne(id, {
-        relations: ["consumers", "companies"],
+      consumersAndValuesToSubtractBlockedBalances.push({
+        consumerId: item.consumerId,
+        value: value,
       });
-      console.log({ Transaction: transaction });
-      const costumer = await getRepository(Consumers).findOne(
-        transaction.consumers.id
-      );
+    });
 
-      const company = await getRepository(Companies).findOne(companyId);
-
-      if (!company) {
-        throw new InternalError("Empresa não encontrada", 404);
-      }
-
-      console.log("SALDO NEGATIVO: ", company.negativeBalance);
-      console.log("SALDO CASHBACK: ", transaction.cashbackAmount);
-      console.log("SALDO TAKEBACK: ", transaction.takebackFeeAmount);
-      const updateCompanyBalance = await getRepository(Companies).update(
-        companyId,
+    // Percorrendo cada uma das transações localizadas
+    transactions.map(async (transaction) => {
+      // Atualizando o status e motivo de cancelamento da transação
+      const transactionUpdated = await getRepository(Transactions).update(
+        transaction.transaction_id,
         {
-          negativeBalance:
-            company.negativeBalance -
-            (transaction.cashbackAmount + transaction.takebackFeeAmount),
-        }
-      );
-      if (updateCompanyBalance.affected === 0) {
-        throw new InternalError("Erro ao atualizar o saldo da empresa", 400); // Alterar mensagem
-      }
-
-      const updatedBalanceCostumer = await getRepository(Consumers).update(
-        costumer.id,
-        {
-          blockedBalance: costumer.blockedBalance - transaction.cashbackAmount,
+          transactionStatus: status,
+          cancellationDescription,
         }
       );
 
-      if (updatedBalanceCostumer.affected === 0) {
-        throw new InternalError("Erro ao atualizar o saldo do cliente", 400); // Alterar mensagem
+      // Verificando se a transação foi atualizada com sucesso
+      if (transactionUpdated.affected === 0) {
+        throw new InternalError(
+          `Erro ao cancelar a transação: ${transaction.id}`,
+          400
+        );
       }
     });
+
+    // Mapeando os usuários agrupados nas transações
+    consumersAndValuesToSubtractBlockedBalances.map(async (item) => {
+      const blockedBalanceOfConsumer = await getRepository(Consumers).findOne(
+        item.consumerId
+      );
+
+      // Atualizando o valor do salndo pendente dos usuários
+      const balanceConsumerUpdated = await getRepository(Consumers).update(
+        item.consumerId,
+        {
+          blockedBalance: blockedBalanceOfConsumer.blockedBalance - item.value,
+        }
+      );
+
+      if (balanceConsumerUpdated.affected === 0) {
+        throw new InternalError("Erro ao atualizar o saldo do cliente", 400);
+      }
+    });
+
+    // Buscando a empresa para pegar o saldo da mesma
+    const negativeBalanceOfCompany = await getRepository(Companies).findOne(
+      companyId
+    );
+
+    // Somando o valor total a ser descontado do saldo negativo da empresa
+    let valueToUpdateCompanyBalance = 0;
+    transactions.map((item) => {
+      valueToUpdateCompanyBalance =
+        valueToUpdateCompanyBalance +
+        item.transaction_takebackFeeAmount +
+        item.transaction_cashbackAmount;
+    });
+
+    // Atualizando o saldo negativo da empresa
+    const updatedCompanyNegativeBalance = await getRepository(Companies).update(
+      companyId,
+      {
+        negativeBalance:
+          negativeBalanceOfCompany.negativeBalance -
+          valueToUpdateCompanyBalance,
+      }
+    );
+
+    if (updatedCompanyNegativeBalance.affected === 0) {
+      throw new InternalError("Erro ao atualizar o saldo da empresa", 400);
+    }
 
     return true;
   }
