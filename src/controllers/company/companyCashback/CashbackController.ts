@@ -90,8 +90,6 @@ class CashbackController {
     const { cancellationDescription, transactionIDs }: CancelProps =
       request.body;
 
-    console.log("COMPANIA", companyId, request.body);
-
     const cancel = new CancelCashBackUseCase();
 
     const sucess = await cancel.execute({

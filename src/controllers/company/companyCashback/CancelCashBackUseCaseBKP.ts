@@ -40,9 +40,10 @@ class CancelCashBackUseCase {
       }
 
       const transaction = await getRepository(Transactions).findOne(id, {
+        select: ["cashbackAmount"],
         relations: ["consumers", "companies"],
       });
-      console.log({ Transaction: transaction });
+
       const costumer = await getRepository(Consumers).findOne(
         transaction.consumers.id
       );
