@@ -114,7 +114,7 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
     transactionsLocalized.map(async (item) => {
       const consumer = await getRepository(Consumers).findOne(item.consumer_id);
 
-      await getRepository(Consumers).update(item.consumers_id, {
+      await getRepository(Consumers).update(item.consumer_id, {
         blockedBalance: consumer.blockedBalance - item.cashbackAmount,
         balance: consumer.balance + item.cashbackAmount,
       });
