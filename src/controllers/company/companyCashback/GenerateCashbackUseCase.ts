@@ -159,6 +159,7 @@ class GenerateCashbackUseCase {
       ? company.customIndustryFee * parseFloat(costumer.value)
       : company.industry.industryFee * parseFloat(costumer.value);
 
+    // OPERAÇÃO DE ABATIMENTO DE SALDO DO CLIENTE
     if (takebackMethodExist) {
       const transactionAwait = await getRepository(TransactionStatus).findOne({
         where: { description: "Aguardando" },
@@ -209,23 +210,11 @@ class GenerateCashbackUseCase {
         throw new InternalError("Houve um erro ao utilizar o cashback", 400);
       }
 
-      let value = 0;
-      paymentMethods.map((item) => {
-        method.map((method) => {
-          if (
-            item.paymentMethodId === 1 &&
-            parseInt(method.method) === item.id
-          ) {
-            value = parseInt(method.value);
-          }
-        });
-      });
-
       // Atualizando saldo do consumidor
       const consumerBalanceUpdate = await getRepository(Consumers).update(
         consumer.id,
         {
-          balance: consumer.balance - value,
+          balance: consumer.balance - parseFloat(paymentValue),
         }
       );
 
@@ -237,7 +226,7 @@ class GenerateCashbackUseCase {
       const updatedCompanyPositiveBalance = await getRepository(
         Companies
       ).update(company.id, {
-        positiveBalance: company.positiveBalance + value,
+        positiveBalance: company.positiveBalance + parseFloat(paymentValue),
       });
 
       if (updatedCompanyPositiveBalance.affected === 0) {
