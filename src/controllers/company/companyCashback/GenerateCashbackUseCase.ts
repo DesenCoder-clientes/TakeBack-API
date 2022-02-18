@@ -125,8 +125,13 @@ class GenerateCashbackUseCase {
     const companyUser = await getRepository(CompanyUsers).findOne(userId);
 
     // Buscando status e tipos de transações para injetar na tabela Transactions
-    const transactionStatus = await getRepository(TransactionStatus).findOne({
+    const pendingStatus = await getRepository(TransactionStatus).findOne({
       where: { description: "Pendente" },
+      select: ["id"],
+    });
+
+    const approvedStatus = await getRepository(TransactionStatus).findOne({
+      where: { description: "Aprovada" },
       select: ["id"],
     });
 
@@ -167,9 +172,6 @@ class GenerateCashbackUseCase {
         },
         relations: ["consumers", "transactionStatus"],
       });
-      console.log("STATUS: ", transactionAwait);
-      console.log("CONSUMIDOR", consumer);
-      console.log("CODIGO", code);
 
       if (!existentTransaction) {
         throw new InternalError("Compra não autorizada pelo cliente", 400);
@@ -185,8 +187,8 @@ class GenerateCashbackUseCase {
           value: parseFloat(costumer.value),
           cashbackAmount,
           cashbackPercent: parseFloat(cashbackPercent.toFixed(3)),
-          transactionTypes: transactionTypeUp,
-          transactionStatus,
+          transactionTypes: transactionTypeDown,
+          transactionStatus: approvedStatus,
           dateAt: date.toLocaleDateString(),
         }
       );
@@ -243,7 +245,7 @@ class GenerateCashbackUseCase {
         takebackFeePercent,
         takebackFeeAmount,
         transactionTypes: transactionTypeUp,
-        transactionStatus: transactionStatus,
+        transactionStatus: pendingStatus,
         companyUsers: companyUser,
         dateAt: date.toLocaleDateString(),
       });
