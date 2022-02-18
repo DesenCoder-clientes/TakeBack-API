@@ -185,7 +185,7 @@ class GenerateCashbackUseCase {
             databaseMethod.id === parseInt(informedMethod.method) &&
             databaseMethod.paymentMethodId === 1
           ) {
-            paymentValue = informedMethod.value;
+            paymentValue = informedMethod.value.replace(",", ".");
           }
         });
       });
