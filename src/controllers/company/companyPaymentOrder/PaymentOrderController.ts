@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import { FindCashbacksUseCase } from "../companyCashback/FindCashbacksUseCase";
+import { FindCompanyDataUseCase } from "../companyData/FindCompanyDataUseCase";
 import { CancelPaymentOrderUseCase } from "./CancelPaymentOrderUseCase";
 import { FindaPaymentMethodUseCase } from "./FindPaymentMethodUseCase";
 import { GeneratePaymentOrderUseCase } from "./GeneratePaymentOrderUseCase";
@@ -18,23 +20,45 @@ class PaymentOrderController {
       const generatePaymentOrderWithTakebackBalance =
         new GeneratePaymentOrderWithTakebackBalanceUseCase();
 
-      const result = await generatePaymentOrderWithTakebackBalance.execute({
+      const finData = new FindCompanyDataUseCase();
+      const findCashbacks = new FindCashbacksUseCase();
+
+      const message = await generatePaymentOrderWithTakebackBalance.execute({
         transactionIDs,
         companyId,
         paymentMethodId,
       });
 
-      return response.status(200).json(result);
+      const companyData = await finData.execute({
+        companyId,
+      });
+
+      const transactions = await findCashbacks.execute({
+        companyId,
+      });
+
+      return response.status(200).json({ message, companyData, transactions });
     } else {
       const generatePaymentOrder = new GeneratePaymentOrderUseCase();
 
-      const result = await generatePaymentOrder.execute({
+      const finData = new FindCompanyDataUseCase();
+      const findCashbacks = new FindCashbacksUseCase();
+
+      const message = await generatePaymentOrder.execute({
         transactionIDs,
         companyId,
         paymentMethodId,
       });
 
-      return response.status(200).json(result);
+      const companyData = await finData.execute({
+        companyId,
+      });
+
+      const cashbacks = await findCashbacks.execute({
+        companyId,
+      });
+
+      return response.status(200).json({ message, companyData, cashbacks });
     }
   }
 
