@@ -26,7 +26,9 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
       throw new InternalError("Empresa inexistente", 404);
     }
 
-    const processStatus = await getRepository(TransactionStatus).findOne({
+    const approvedStatusTransaction = await getRepository(
+      TransactionStatus
+    ).findOne({
       where: { description: "Aprovada" },
     });
 
@@ -57,7 +59,7 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
     // Pegando os IDs das transações da ordem de pagamento
     const transactionsInProcess = [];
     transactionsLocalized.map(async (item) => {
-      if (item.transactionStatusId === processStatus.id) {
+      if (item.transactionStatusId === approvedStatusTransaction.id) {
         transactionsInProcess.push(item.transaction_id);
       }
 
@@ -104,7 +106,7 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
     transactionsLocalized.map(async (item) => {
       await getRepository(Transactions).update(item.transaction_id, {
         paymentOrder,
-        transactionStatus: processStatus,
+        transactionStatus: approvedStatusTransaction,
       });
     });
 
