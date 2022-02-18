@@ -220,6 +220,12 @@ const TransactionStatusSeed = [
     updatedAt: new Date(),
   },
   {
+    description: "Pago com takeback",
+    blocked: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
     description: "Aguardando",
     blocked: true,
     createdAt: new Date(),

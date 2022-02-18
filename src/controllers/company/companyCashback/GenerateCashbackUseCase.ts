@@ -130,8 +130,10 @@ class GenerateCashbackUseCase {
       select: ["id"],
     });
 
-    const approvedStatus = await getRepository(TransactionStatus).findOne({
-      where: { description: "Aprovada" },
+    const payWithTakebackStatus = await getRepository(
+      TransactionStatus
+    ).findOne({
+      where: { description: "Pago com takeback" },
       select: ["id"],
     });
 
@@ -201,7 +203,7 @@ class GenerateCashbackUseCase {
           cashbackAmount,
           cashbackPercent: parseFloat(cashbackPercent.toFixed(3)),
           transactionTypes: transactionTypeDown,
-          transactionStatus: approvedStatus,
+          transactionStatus: payWithTakebackStatus,
           dateAt: date.toLocaleDateString(),
         }
       );
