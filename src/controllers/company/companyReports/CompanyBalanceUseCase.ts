@@ -8,7 +8,7 @@ interface Props {
   companyId: string;
 }
 
-class ReportBillingByPeriodUseCase {
+class CompanyBalanceUseCase {
   async execute({ companyId }: Props) {
     const date = new Date();
     const today = date.toLocaleDateString();
@@ -63,4 +63,4 @@ class ReportBillingByPeriodUseCase {
   }
 }
 
-export { ReportBillingByPeriodUseCase };
+export { CompanyBalanceUseCase };

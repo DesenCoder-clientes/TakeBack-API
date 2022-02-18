@@ -27,7 +27,6 @@ routes.get("/verify-token", auth.verifyToken);
 
 routes.use(DecodeTokenMiddleware, AuthCompanyMiddleware);
 
-// routes.get("/find-app-data", reports.findAppData);
 routes.get("/data/dashboard", reports.dashboardReports);
 routes.get("/data/find", companyData.findCompanyData);
 routes.put("/data/update", companyData.updateCompanyData);
@@ -35,10 +34,7 @@ routes.put("/data/update", companyData.updateCompanyData);
 routes.get("/cashback/costumer/:cpf", cashback.getConsumerInfo);
 
 routes.post("/cashback/generate", cashback.generateCashback);
-/* routes.post(
-  "/cashback/:code",
-  cashback.generateCashbackWithTakebackPaymentMethod
-); */
+
 routes.put("/cashback/cancel", cashback.cancelCashBack);
 
 routes.get("/payments", paymentMethod.findCompanyMethods);
