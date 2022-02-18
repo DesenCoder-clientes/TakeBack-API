@@ -1,4 +1,4 @@
-import { getRepository } from "typeorm";
+import { getRepository, ObjectID } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
 import { Consumers } from "../../../models/Consumer";
@@ -32,7 +32,7 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
       where: { description: "Aprovada" },
     });
 
-    const transactionsLocalized = await getRepository(Transactions)
+    const transactions = await getRepository(Transactions)
       .createQueryBuilder("transaction")
       .select([
         "transaction.id",
@@ -52,13 +52,47 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
       })
       .getRawMany();
 
+    // Agrupando as transações por usuário
+    const transactionsReduced = transactions.reduce(
+      (previousValue, currentValue) => {
+        previousValue[currentValue.consumer_id] =
+          previousValue[currentValue.consumer_id] || [];
+        previousValue[currentValue.consumer_id].push(currentValue);
+        return previousValue;
+      },
+      Object.create(null)
+    );
+
+    // Alterando o formato do agrupamento para um formato compatível para mapeamento
+    const transactionGroupedPerConsumer = [];
+    for (const [key, values] of Object.entries(transactionsReduced)) {
+      transactionGroupedPerConsumer.push({
+        consumerId: key,
+        transactions: values,
+      });
+    }
+
+    const consumerToChangeBalance = [];
+    // Somando os valores das transações e agrupando por usuário
+    transactionGroupedPerConsumer.map((item) => {
+      let value = 0;
+      item.transactions.map((transaction) => {
+        value = value + transaction.transaction_cashbackAmount;
+      });
+
+      consumerToChangeBalance.push({
+        consumerId: item.consumerId,
+        value: value,
+      });
+    });
+
     //Variáveis para receber os valors da taxa takeback e cashback
     let takebackFeeAmount = 0;
     let cashbackAmount = 0;
 
     // Pegando os IDs das transações da ordem de pagamento
     const transactionsInProcess = [];
-    transactionsLocalized.map(async (item) => {
+    transactions.map(async (item) => {
       if (item.transactionStatusId === approvedStatusTransaction.id) {
         transactionsInProcess.push(item.transaction_id);
       }
@@ -103,7 +137,7 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
     });
 
     // Atualizando as transações
-    transactionsLocalized.map(async (item) => {
+    transactions.map(async (item) => {
       await getRepository(Transactions).update(item.transaction_id, {
         paymentOrder,
         transactionStatus: approvedStatusTransaction,
@@ -111,13 +145,25 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
     });
 
     // Autorizando cashback para os clientes
-    transactionsLocalized.map(async (item) => {
-      const consumer = await getRepository(Consumers).findOne(item.consumer_id);
+    consumerToChangeBalance.map(async (item) => {
+      const consumerBalance = await getRepository(Consumers).findOne(
+        item.consumerId
+      );
 
-      await getRepository(Consumers).update(item.consumer_id, {
-        blockedBalance: 0,
-        balance: 0,
-      });
+      const balanceUpdated = await getRepository(Consumers).update(
+        item.consumerId,
+        {
+          blockedBalance: consumerBalance.blockedBalance - item.value,
+          balance: consumerBalance.balance + item.value,
+        }
+      );
+
+      if (balanceUpdated.affected === 0) {
+        throw new InternalError(
+          "Houve um erro ao atualizar o saldo do consumidor",
+          400
+        );
+      }
     });
 
     const newBalance =
