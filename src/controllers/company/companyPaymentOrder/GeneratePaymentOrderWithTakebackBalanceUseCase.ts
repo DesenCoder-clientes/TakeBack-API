@@ -38,11 +38,13 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
         "transaction.takebackFeeAmount",
         "transaction.cashbackAmount",
       ])
+      .addSelect(["consumer.id"])
       .leftJoin(
         TransactionStatus,
         "status",
         "status.id = transaction.transactionStatus"
       )
+      .leftJoin(Consumers, "consumer", "consumer.id = transaction.consumers")
       .where("transaction.id IN (:...transactionIDs)", {
         transactionIDs,
       })
@@ -108,11 +110,9 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
 
     // Autorizando cashback para os clientes
     transactionsLocalized.map(async (item) => {
-      const consumer = await getRepository(Consumers).findOne(
-        item.consumers.id
-      );
+      const consumer = await getRepository(Consumers).findOne(item.consumer_id);
 
-      await getRepository(Consumers).update(item.consumers.id, {
+      await getRepository(Consumers).update(item.consumers_id, {
         blockedBalance: consumer.blockedBalance - item.cashbackAmount,
         balance: consumer.balance + item.cashbackAmount,
       });
