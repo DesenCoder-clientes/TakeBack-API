@@ -2,9 +2,7 @@ import { getRepository, In } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
 import { Consumers } from "../../../models/Consumer";
-import { PaymentMethods } from "../../../models/PaymentMethod";
 import { Transactions } from "../../../models/Transaction";
-import { TransactionPaymentMethods } from "../../../models/TransactionPaymentMethod";
 import { TransactionStatus } from "../../../models/TransactionStatus";
 
 interface CancelProps {
@@ -44,25 +42,13 @@ class CancelCashBackUseCase {
         "transaction.cashbackPercent",
         "transaction.cashbackAmount",
       ])
-      .addSelect(["consumer.id", "paymentmethods.id"])
+      .addSelect(["consumer.id"])
       .where("transaction.id IN (:...transactionIDs)", {
         transactionIDs: [...transactionIDs],
       })
       .leftJoin(Consumers, "consumer", "consumer.id = transaction.consumers")
       .leftJoin(Companies, "company", "company.id = transaction.companies")
-      .leftJoin(
-        TransactionPaymentMethods,
-        "method",
-        "method.id = transaction.transactionPaymentMethod"
-      )
-      .leftJoin(
-        PaymentMethods,
-        "paymentmethods",
-        "paymentmethods.id = method.paymentMethod"
-      )
       .getRawMany();
-
-    return transactions;
 
     // Agrupando as transações por usuário
     const transactionsReduced = transactions.reduce(
@@ -88,7 +74,6 @@ class CancelCashBackUseCase {
     // Somando os valores das transações e agrupando por usuário
     transactionGroupedPerConsumer.map((item) => {
       let value = 0;
-      let takebackValue = 0;
       item.transactions.map((transaction) => {
         value = value + transaction.transaction_cashbackAmount;
       });
