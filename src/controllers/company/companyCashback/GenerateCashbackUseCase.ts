@@ -177,6 +177,18 @@ class GenerateCashbackUseCase {
         throw new InternalError("Compra não autorizada pelo cliente", 400);
       }
 
+      let paymentValue = "";
+      paymentMethods.map((databaseMethod) => {
+        method.map((informedMethod) => {
+          if (
+            databaseMethod.id === parseInt(informedMethod.method) &&
+            databaseMethod.paymentMethodId === 1
+          ) {
+            paymentValue = informedMethod.value;
+          }
+        });
+      });
+
       const date = new Date();
       const updatedTransaction = await getRepository(Transactions).update(
         existentTransaction.id,
@@ -184,7 +196,7 @@ class GenerateCashbackUseCase {
           companies: company,
           companyUsers: companyUser,
           consumers: consumer,
-          value: parseFloat(costumer.value),
+          value: parseFloat(paymentValue),
           cashbackAmount,
           cashbackPercent: parseFloat(cashbackPercent.toFixed(3)),
           transactionTypes: transactionTypeDown,
