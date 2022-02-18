@@ -166,11 +166,11 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
       }
     });
 
-    const newBalance =
-      company.positiveBalance - (takebackFeeAmount + cashbackAmount);
-
     const updateBalance = await getRepository(Companies).update(companyId, {
-      positiveBalance: newBalance,
+      positiveBalance:
+        company.positiveBalance - (takebackFeeAmount + cashbackAmount),
+      negativeBalance:
+        company.negativeBalance - (takebackFeeAmount + cashbackAmount),
     });
 
     if (updateBalance.affected === 0) {
