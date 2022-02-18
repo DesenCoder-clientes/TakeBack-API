@@ -41,7 +41,7 @@ class CostumerFindAppDataUseCase {
 
     const transactions = await getRepository(Transactions)
       .createQueryBuilder("t")
-      .select(["t.id", "t.cashbackAmount", "t.createdAt"])
+      .select(["t.id", "t.cashbackAmount", "t.createdAt", "t.value"])
       .addSelect([
         "c.fantasyName",
         "ts.description",

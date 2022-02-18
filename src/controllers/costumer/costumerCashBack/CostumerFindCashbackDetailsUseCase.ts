@@ -46,14 +46,25 @@ class CostumerFindCashbackDetailsUseCase {
     const paymentMethods = await getRepository(TransactionPaymentMethods)
       .createQueryBuilder("tpm")
       .select(["tpm.id", "tpm.cashbackPercentage", "tpm.cashbackValue"])
-      .addSelect(["pm.description"])
+      .addSelect(["pm.id", "pm.description"])
       .leftJoin(CompanyPaymentMethods, "cpm", "cpm.id = tpm.paymentMethod")
       .leftJoin(PaymentMethods, "pm", "pm.id = cpm.paymentMethod")
       .leftJoin(Transactions, "t", "t.id = tpm.transactions")
       .where("t.id = :transactionID", { transactionID })
       .getRawMany();
 
-    return { transactions, paymentMethods };
+    let valuePayNotWithBalance = 0;
+    paymentMethods.map((item) => {
+      if (item.pm_id !== 1) {
+        valuePayNotWithBalance =
+          valuePayNotWithBalance +
+          item.tpm_cashbackValue / item.tpm_cashbackPercentage;
+      }
+    });
+
+    const valuePayWithBalance = transactions.t_value - valuePayNotWithBalance;
+
+    return { transactions, paymentMethods, valuePayWithBalance };
   }
 }
 
