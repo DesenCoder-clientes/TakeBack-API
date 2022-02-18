@@ -67,7 +67,7 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
       cashbackAmount = cashbackAmount + item.transaction_cashbackAmount;
     });
 
-    // Verificando se algum transação selecionada
+    // Verificando se alguma transação selecionada
     // para uma ordem de pagamento já está
     // em outra ordem de pagamento
     if (transactionsInProcess.length !== 0) {
@@ -77,7 +77,7 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
       };
     }
 
-    const awaitingStatus = await getRepository(PaymentOrderStatus).findOne({
+    const approvedStatus = await getRepository(PaymentOrderStatus).findOne({
       where: { description: "Autorizada" },
     });
 
@@ -94,7 +94,7 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
     const paymentOrder = await getRepository(PaymentOrder).save({
       value: takebackFeeAmount + cashbackAmount,
       company,
-      status: awaitingStatus,
+      status: approvedStatus,
       paymentMethod,
     });
 
@@ -117,6 +117,20 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
         balance: consumer.balance + item.cashbackAmount,
       });
     });
+
+    const newBalance =
+      company.positiveBalance - (takebackFeeAmount + cashbackAmount);
+
+    const updateBalance = await getRepository(Companies).update(companyId, {
+      positiveBalance: newBalance,
+    });
+
+    if (updateBalance.affected === 0) {
+      throw new InternalError(
+        "Houve um erro ao atualizar o saldo da empresa",
+        400
+      );
+    }
 
     return "sucesso";
   }
