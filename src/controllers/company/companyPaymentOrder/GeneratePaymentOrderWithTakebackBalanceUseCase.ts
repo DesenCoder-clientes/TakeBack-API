@@ -115,8 +115,8 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
       const consumer = await getRepository(Consumers).findOne(item.consumer_id);
 
       await getRepository(Consumers).update(item.consumer_id, {
-        blockedBalance: consumer.blockedBalance - item.cashbackAmount,
-        balance: consumer.balance + item.cashbackAmount,
+        blockedBalance: 0,
+        balance: 0,
       });
     });
 
