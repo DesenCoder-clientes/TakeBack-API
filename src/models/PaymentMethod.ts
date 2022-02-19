@@ -18,6 +18,11 @@ export class PaymentMethods {
   @Column()
   description: string;
 
+  @Column({
+    default: false,
+  })
+  isTakebackMethod: boolean;
+
   @OneToMany(
     () => CompanyPaymentMethods,
     (companyPaymentMethods) => companyPaymentMethods.paymentMethod

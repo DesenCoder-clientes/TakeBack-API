@@ -18,6 +18,7 @@ class RegisterPaymentMethodUseCase {
 
     const newMethod = await getRepository(PaymentMethods).save({
       description,
+      isTakebackMethod: false,
     });
 
     if (newMethod) {

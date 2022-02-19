@@ -17,12 +17,6 @@ import { PaymentPlans } from "../../models/PaymentPlans";
 import { PaymentOrderStatus } from "../../models/PaymentOrderStatus";
 import { PaymentMethodOfPaymentOrder } from "../../models/PaymentMethodOfPaymentOrder";
 
-// import { StatesSeed } from "../../database/seeds/statesSeed";
-// import { TransactionTypesSeed } from "../../database/seeds/transactionTypesSeed";
-// import { TransactionStatusSeed } from "../../database/seeds/transactionStatusSeed";
-// import { CompanyUserTypesSeed } from "../../database/seeds/companyUserTypesSeed";
-// import { CompanyStatusSeed } from "../../database/seeds/companyStatuSeed";
-
 const StatesSeed = [
   {
     name: "Acre",
@@ -487,6 +481,7 @@ class GenerateSeedData {
     // Gerando o método de pagamneto Takeback
     const generatedPaymentMethod = await getRepository(PaymentMethods).save({
       description: "Takeback",
+      isTakebackMethod: true,
     });
 
     if (!generatedPaymentMethod) {

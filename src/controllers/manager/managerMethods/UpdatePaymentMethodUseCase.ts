@@ -9,19 +9,27 @@ interface Props {
 
 class UpdatePaymentMethodUseCase {
   async execute({ id, description }: Props) {
-    const method = await getRepository(PaymentMethods).findOne({
+    const paymentMethod = await getRepository(PaymentMethods).findOne({
       where: { description },
     });
 
-    if (method) {
+    if (paymentMethod) {
       throw new InternalError("Forma de pagamento já cadastrada", 400);
     }
 
-    const newMethod = await getRepository(PaymentMethods).update(id, {
+    if (paymentMethod.isTakebackMethod) {
+      throw new InternalError(
+        "Não é possível editar o método padrão do sistema",
+        400
+      );
+    }
+
+    const updated = await getRepository(PaymentMethods).update(id, {
       description,
+      isTakebackMethod: false,
     });
 
-    if (newMethod.affected === 0) {
+    if (updated.affected === 0) {
       throw new InternalError("Houve um erro ao atualizar", 400);
     }
 
