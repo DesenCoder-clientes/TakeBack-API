@@ -37,10 +37,20 @@ routes.post("/cashback/generate", cashback.generateCashback);
 
 routes.put("/cashback/cancel", cashback.cancelCashBack);
 
-routes.get("/payments", paymentMethod.findCompanyMethods);
-routes.get("/payments/cashier", paymentMethod.findCompanyMethodsForCashier);
-routes.put("/payments/update", paymentMethod.updateCompanyMethod);
-routes.post("/payments/register", paymentMethod.registerCompanyMethod);
+routes.get("/payments-methods/find/system", paymentMethod.findPaymentMethods);
+routes.get("/payments-methods/find", paymentMethod.findCompanyPaymentMethods);
+routes.get(
+  "/payments-methods/find/cashier",
+  paymentMethod.findCompanyPaymentMethodsForCashier
+);
+routes.put(
+  "/payments-methods/update",
+  paymentMethod.updateCompanyPaymentMethod
+);
+routes.post(
+  "/payments-methods/register",
+  paymentMethod.registerCompanyPaymentMethod
+);
 
 routes.get("/user/find", companyUser.findCompanyUsers);
 routes.post("/user/register", companyUser.registerCompanyUser);

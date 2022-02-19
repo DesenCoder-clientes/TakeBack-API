@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 
+import { FindPaymentMethodsUseCase } from "./FindPaymentMethodsUseCase";
 import { FindCompanyPaymentMethodsUseCase } from "./FindCompanyPaymentMethodsUseCase";
 import { FindCompanyPaymentMethodsForCashierUseCase } from "./FindCompanyPaymentMethodsForCashierUseCase";
 import { UpdateCompanyPaymentMethodsUseCase } from "./UpdateCompanyPaymentMethodsUseCase";
@@ -12,17 +13,28 @@ interface Props {
 }
 
 class PaymentMethodsController {
-  async findCompanyMethods(request: Request, response: Response) {
-    const { companyId } = request["tokenPayload"];
+  async findPaymentMethods(request: Request, response: Response) {
+    const find = new FindPaymentMethodsUseCase();
 
-    const findCompanyMethods = new FindCompanyPaymentMethodsUseCase();
+    const methods = await find.execute();
 
-    const result = await findCompanyMethods.execute({ companyId });
-
-    return response.status(200).json(result);
+    return response.status(200).json(methods);
   }
 
-  async findCompanyMethodsForCashier(request: Request, response: Response) {
+  async findCompanyPaymentMethods(request: Request, response: Response) {
+    const { companyId } = request["tokenPayload"];
+
+    const find = new FindCompanyPaymentMethodsUseCase();
+
+    const methods = await find.execute({ companyId });
+
+    return response.status(200).json(methods);
+  }
+
+  async findCompanyPaymentMethodsForCashier(
+    request: Request,
+    response: Response
+  ) {
     const { companyId } = request["tokenPayload"];
 
     const findCompanyMethods = new FindCompanyPaymentMethodsForCashierUseCase();
@@ -32,37 +44,43 @@ class PaymentMethodsController {
     return response.status(200).json(result);
   }
 
-  async updateCompanyMethod(request: Request, response: Response) {
+  async updateCompanyPaymentMethod(request: Request, response: Response) {
     const { companyId } = request["tokenPayload"];
 
     const { cashbackPercentage, isActive, paymentId }: Props = request.body;
 
     const updateCompanyMethod = new UpdateCompanyPaymentMethodsUseCase();
+    const findCompanyMethods = new FindCompanyPaymentMethodsUseCase();
 
-    const result = await updateCompanyMethod.execute({
+    const message = await updateCompanyMethod.execute({
       cashbackPercentage,
       companyId,
       isActive,
       paymentId,
     });
 
-    return response.status(200).json(result);
+    const companyMethods = await findCompanyMethods.execute({ companyId });
+
+    return response.status(200).json({ message, companyMethods });
   }
 
-  async registerCompanyMethod(request: Request, response: Response) {
+  async registerCompanyPaymentMethod(request: Request, response: Response) {
     const { companyId } = request["tokenPayload"];
 
     const { cashbackPercentage, paymentId }: Props = request.body;
 
     const registerCompanyMethod = new RegisterCompanyPaymentMethodsUseCase();
+    const findCompanyMethods = new FindCompanyPaymentMethodsUseCase();
 
-    const result = await registerCompanyMethod.execute({
+    const message = await registerCompanyMethod.execute({
       cashbackPercentage,
       companyId,
       paymentId,
     });
 
-    return response.status(200).json(result);
+    const companyMethods = await findCompanyMethods.execute({ companyId });
+
+    return response.status(200).json({ message, companyMethods });
   }
 }
 
