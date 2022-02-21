@@ -11,7 +11,10 @@ import { UpdateCustomFeeUseCase } from "./UpdateCustomFeeUseCase";
 
 interface Props {
   companyId: string;
-  name?: string;
+  useCustomName?: boolean;
+  customName?: string;
+  useCustomFee?: boolean;
+  customFee?: number;
 }
 
 interface UpdateProps {
@@ -38,20 +41,26 @@ interface UpdateCustomFeeProps {
 }
 
 class CompaniesController {
-  async generateManagerUser(request: Request, response: Response) {
-    const { companyId, name }: Props = request.body;
+  async allowFirstAccess(request: Request, response: Response) {
+    const data: Props = request.body;
 
+    const findUseCase = new FindOneCompanyUseCase();
+    const findUser = new FindCompanyUsersUseCase();
     const registerCompanyMethod = new RegisterCompanyPaymentMethodsUseCase();
     const allowCompanyAccess = new AllowCompanyFirstAccessUseCase();
 
-    const result = await allowCompanyAccess.execute({ companyId, name });
+    const message = await allowCompanyAccess.execute(data);
     await registerCompanyMethod.execute({
-      companyId,
+      companyId: data.companyId,
       paymentId: 1,
       cashbackPercentage: 0,
     });
+    const companyData = await findUseCase.execute({
+      companyId: data.companyId,
+    });
+    const companyUsers = await findUser.execute({ companyId: data.companyId });
 
-    response.status(201).json(result);
+    response.status(200).json({ message, companyData, companyUsers });
   }
 
   async findAllCompanies(request: Request, response: Response) {

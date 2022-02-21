@@ -14,7 +14,6 @@ import { DashboardController } from "../controllers/manager/managerDashboard/Man
 import { PaymentPlanController } from "../controllers/manager/managerPaymentPlan/PaymentPlanController";
 import { ManagerPaymentOrderController } from "../controllers/manager/managerPaymentOrder/ManagerPaymentOrderController";
 
-const authorizationCompany = new CompaniesController();
 const paymentMethod = new PaymentMethodController();
 const managerAuth = new ManagerAuthController();
 const managerIndustry = new ManagerIndustryController();
@@ -42,12 +41,11 @@ routes.put("/user/password/update", managerAuth.updateUserPassword);
 routes.put("/user/password/forgot/:id", managerAuth.forgotPassword);
 routes.get("/user/types/find", managerAuth.findUserType);
 
-routes.post("/company/user", authorizationCompany.generateManagerUser);
-
 routes.post("/industry", managerIndustry.registerIndustry);
 routes.put("/industry/:id", managerIndustry.updateIndustry);
 routes.get("/industry/find", managerIndustry.findAllIndustries);
 
+routes.post("/company/allow-access", managerCompanies.allowFirstAccess);
 routes.get(
   "/company/find/all/:offset/:limit",
   managerCompanies.findAllCompanies

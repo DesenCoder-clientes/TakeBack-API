@@ -1,24 +1,36 @@
 import * as bcrypt from "bcrypt";
 import { InternalError } from "../../../config/GenerateErros";
-import { getRepository, In } from "typeorm";
+import { getRepository } from "typeorm";
 import { Companies } from "../../../models/Company";
 import { CompanyUsers } from "../../../models/CompanyUsers";
 import { generateRandomNumber } from "../../../utils/RandomValueGenerate";
 import { sendMail } from "../../../utils/SendMail";
 import { CompanyUserTypes } from "../../../models/CompanyUserTypes";
 import { CompanyStatus } from "../../../models/CompanyStatus";
+import { maskCNPJ } from "../../../utils/Masks";
 
 interface Props {
-  name?: string;
   companyId: string;
+  useCustomName?: boolean;
+  customName?: string;
+  useCustomFee?: boolean;
+  customFee?: number;
 }
 
 class AllowCompanyFirstAccessUseCase {
-  async execute({ companyId, name }: Props) {
-    const company = await getRepository(Companies).findOne(companyId);
+  async execute(data: Props) {
+    const company = await getRepository(Companies).findOne(data.companyId);
 
     if (!company) {
       throw new InternalError("Empresa não localizada", 404);
+    }
+
+    if (data.useCustomName && data.customName.length < 4) {
+      throw new InternalError("Nome de usuário inválido", 400);
+    }
+
+    if (data.useCustomFee && !data.customFee) {
+      throw new InternalError("Informe a taxa", 400);
     }
 
     const managerUser = await getRepository(CompanyUsers).find({
@@ -40,7 +52,7 @@ class AllowCompanyFirstAccessUseCase {
     );
 
     const newUser = await getRepository(CompanyUsers).save({
-      name: name || "Administrativo",
+      name: data.useCustomName ? data.customName : "Administrativo",
       email: company.email,
       password: newPasswordEncrypted,
       company,
@@ -58,17 +70,21 @@ class AllowCompanyFirstAccessUseCase {
 
     await getRepository(Companies).update(company.id, {
       status,
+      customIndustryFee: data.useCustomFee ? data.customFee / 100 : 0,
+      customIndustryFeeActive: data.useCustomFee,
     });
 
     const newMessage = `O cadastro da empresa ${
       company.fantasyName
-    } foi aprovado! Para acessar o sistema utilize as seguintes credenciais.: CNPJ: "${
+    } foi aprovado! Para acessar o sistema utilize as seguintes credenciais.: CNPJ: "${maskCNPJ(
       company.registeredNumber
-    }", Usuário: "${name || "Administrativo"}", Senha: "${newPassword}"`;
+    )}", Usuário: "${
+      data.customName || "Administrativo"
+    }", Senha: "${newPassword}"`;
 
     sendMail(company.email, "TakeBack - Acesso ao sistema", newMessage);
 
-    return { message: "Usuário administrativo criado" };
+    return "Acesso liberado";
   }
 }
 
