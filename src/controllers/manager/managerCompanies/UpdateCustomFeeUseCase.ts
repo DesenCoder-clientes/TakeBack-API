@@ -6,7 +6,6 @@ interface Props {
   companyId: string;
   customIndustryFee: number;
   customIndustryFeeActive: boolean;
-  id: string;
 }
 
 class UpdateCustomFeeUseCase {
@@ -14,7 +13,6 @@ class UpdateCustomFeeUseCase {
     companyId,
     customIndustryFee,
     customIndustryFeeActive,
-    id,
   }: Props) {
     const company = await getRepository(Companies).find({
       where: { id: companyId },

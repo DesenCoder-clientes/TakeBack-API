@@ -328,7 +328,7 @@ const CompanyStatusSeed = [
     updatedAt: new Date(),
   },
   {
-    description: "Inadiplente",
+    description: "Inadimplente",
     blocked: true,
     createdAt: new Date(),
     updatedAt: new Date(),

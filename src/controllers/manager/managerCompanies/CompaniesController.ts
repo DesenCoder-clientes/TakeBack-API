@@ -135,18 +135,19 @@ class CompaniesController {
     const { customIndustryFee, customIndustryFeeActive }: UpdateCustomFeeProps =
       request.body;
     const companyId = request.params.id;
-    const { id } = request["tokenPayload"];
 
     const update = new UpdateCustomFeeUseCase();
+    const findUseCase = new FindOneCompanyUseCase();
 
-    const result = await update.execute({
+    const message = await update.execute({
       companyId,
       customIndustryFee,
       customIndustryFeeActive,
-      id,
     });
 
-    response.status(200).json(result);
+    const companyData = await findUseCase.execute({ companyId });
+
+    response.status(200).json({ message, companyData });
   }
 }
 

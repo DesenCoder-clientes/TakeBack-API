@@ -27,9 +27,9 @@ class ManagerCompanyStatusController {
       statusId,
     });
 
-    const company = await findCompanyData.execute({ companyId });
+    const companyData = await findCompanyData.execute({ companyId });
 
-    return response.status(200).json({ message, company });
+    return response.status(200).json({ message, companyData });
   }
 }
 
