@@ -7,19 +7,21 @@ interface Props {
   password: string;
   newPassword: string;
   companyId: string;
+  userId: string;
 }
 
 class UpdateCompanyPasswordUseCase {
-  async execute({ companyId, newPassword, password }: Props) {
+  async execute({ companyId, newPassword, password, userId }: Props) {
     if (!password || !newPassword) {
       throw new InternalError("Dados incompletos", 400);
     }
 
-    const company = await getRepository(CompanyUsers).findOne(companyId, {
+    const companyUser = await getRepository(CompanyUsers).findOne({
+      where: { id: userId },
       select: ["id", "password"],
     });
 
-    const passwordMatch = await bcrypt.compare(password, company.password);
+    const passwordMatch = await bcrypt.compare(password, companyUser.password);
 
     if (!passwordMatch) {
       throw new InternalError("Senha incorreta", 400);
@@ -27,7 +29,7 @@ class UpdateCompanyPasswordUseCase {
 
     const newPasswordEncrypted = bcrypt.hashSync(newPassword, 10);
 
-    const updated = await getRepository(CompanyUsers).update(companyId, {
+    const updated = await getRepository(CompanyUsers).update(userId, {
       password: newPasswordEncrypted,
     });
 

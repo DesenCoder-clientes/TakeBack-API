@@ -69,7 +69,7 @@ class CompanyUserController {
   }
 
   async updatePassword(request: Request, response: Response) {
-    const { id } = request["tokenPayload"];
+    const { companyId, userId } = request["tokenPayload"];
 
     const { newPassword, password }: UpdatePasswordProps = request.body;
 
@@ -78,7 +78,8 @@ class CompanyUserController {
     const result = await update.execute({
       newPassword,
       password,
-      companyId: id,
+      companyId: companyId,
+      userId,
     });
 
     return response.status(200).json(result);
