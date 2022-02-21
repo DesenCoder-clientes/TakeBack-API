@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AllowCompanyFirstAccessUseCase } from "./AllowCompanyFirstAccessUseCase";
-import { RegisterCompanyPaymentMethodsUseCase } from "../../company/companyMethods/RegisterCompanyPaymentMethodsUseCase";
+import { RegisterCompanyTakebackPaymentMethodsUseCase } from "./RegisterCompanyTakebackPaymentMethodsUseCase";
 import { ListCompanyUseCase } from "./ListCompanyUseCase";
 import { UpdateCompanyUseCase } from "./UpdateCompanyUseCase";
 import { FindAllCompaniesUseCase } from "./FindAllCompaniesUseCase";
@@ -46,14 +46,13 @@ class CompaniesController {
 
     const findUseCase = new FindOneCompanyUseCase();
     const findUser = new FindCompanyUsersUseCase();
-    const registerCompanyMethod = new RegisterCompanyPaymentMethodsUseCase();
+    const registerTakebackMethod =
+      new RegisterCompanyTakebackPaymentMethodsUseCase();
     const allowCompanyAccess = new AllowCompanyFirstAccessUseCase();
 
     const message = await allowCompanyAccess.execute(data);
-    await registerCompanyMethod.execute({
+    await registerTakebackMethod.execute({
       companyId: data.companyId,
-      paymentId: 1,
-      cashbackPercentage: 0,
     });
     const companyData = await findUseCase.execute({
       companyId: data.companyId,
