@@ -89,6 +89,7 @@ class CompaniesController {
     const users = await findUser.execute({
       companyId,
     });
+
     return response.status(200).json({ company, users });
   }
 

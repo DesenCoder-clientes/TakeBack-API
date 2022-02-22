@@ -2,6 +2,7 @@ import { getRepository } from "typeorm";
 import { City } from "../../../models/City";
 import { CompanyStatus } from "../../../models/CompanyStatus";
 import { Industries } from "../../../models/Industry";
+import { PaymentPlans } from "../../../models/PaymentPlans";
 
 class FindDataToUseInAplicationUseCase {
   async execute() {
@@ -21,7 +22,11 @@ class FindDataToUseInAplicationUseCase {
       order: { name: "ASC" },
     });
 
-    return { industries, status, cities };
+    const plans = await getRepository(PaymentPlans).find({
+      order: { id: "ASC" },
+    });
+
+    return { industries, status, cities, plans };
   }
 }
 

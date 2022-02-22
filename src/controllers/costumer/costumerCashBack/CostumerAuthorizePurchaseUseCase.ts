@@ -23,9 +23,6 @@ class CostumerAuthorizePurchaseUseCase {
       select: ["id", "signature", "balance"],
     });
 
-    console.log("ID", consumerID);
-    console.log("CONSUMIDOR", consumers);
-
     const passwordMatch = await bcrypt.compare(signature, consumers.signature);
 
     if (!passwordMatch) {

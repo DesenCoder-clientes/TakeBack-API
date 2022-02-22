@@ -19,9 +19,14 @@ class SignInCompanyUseCase {
 
     const company = await getRepository(Companies).findOne({
       where: { registeredNumber },
+      relations: ["status"],
     });
 
     if (!company) {
+      throw new InternalError("Erro ao realizar login", 400);
+    }
+
+    if (company.status.blocked) {
       throw new InternalError("Erro ao realizar login", 400);
     }
 
@@ -48,6 +53,7 @@ class SignInCompanyUseCase {
     const token = generateToken(
       {
         companyId: company.id,
+        generateCashback: company.status.generateCashback,
         userId: companyUser.id,
         isManager: companyUser.companyUserTypes.isManager,
         name: companyUser.name,
@@ -59,6 +65,7 @@ class SignInCompanyUseCase {
 
     return {
       token,
+      generateCashback: company.status.generateCashback,
       isManager: companyUser.companyUserTypes.isManager,
       name: companyUser.name,
       office: companyUser.companyUserTypes.description,

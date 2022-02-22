@@ -54,9 +54,6 @@ class CancelCashBackUseCase {
         throw new InternalError("Empresa não encontrada", 404);
       }
 
-      console.log("SALDO NEGATIVO: ", company.negativeBalance);
-      console.log("SALDO CASHBACK: ", transaction.cashbackAmount);
-      console.log("SALDO TAKEBACK: ", transaction.takebackFeeAmount);
       const updateCompanyBalance = await getRepository(Companies).update(
         companyId,
         {

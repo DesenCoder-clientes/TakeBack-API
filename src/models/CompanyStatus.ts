@@ -13,6 +13,9 @@ export class CompanyStatus {
   @Column()
   blocked: boolean;
 
+  @Column()
+  generateCashback: boolean;
+
   @OneToMany(() => Companies, (companies) => companies.status)
   company: Companies[];
 }
