@@ -16,12 +16,13 @@ interface PaginationProps {
 }
 
 interface Props {
+  companyId?: string;
   pagination: PaginationProps;
   filters: QueryProps;
 }
 
 class FindPaymentOrderUseCase {
-  async execute({ filters, pagination }: Props) {
+  async execute({ companyId, filters, pagination }: Props) {
     const orderStatus = await getRepository(PaymentOrderStatus).findOne({
       where: { description: "Aguardando" },
     });
@@ -33,7 +34,7 @@ class FindPaymentOrderUseCase {
       );
     }
 
-    const findOrder = await getRepository(PaymentOrder)
+    const findOrder = getRepository(PaymentOrder)
       .createQueryBuilder("order")
       .select(["order.id", "order.value", "order.createdAt"])
       .addSelect([
@@ -48,14 +49,9 @@ class FindPaymentOrderUseCase {
         "paymentMethod",
         "paymentMethod.id = order.paymentMethod"
       )
+      .where("company.id = :companyId", { companyId })
       .limit(parseInt(pagination.limit))
       .offset(parseInt(pagination.offset) * parseInt(pagination.limit));
-
-    if (filters.companyId) {
-      findOrder.where("company.id = :companyId", {
-        companyId: filters.companyId,
-      });
-    }
 
     if (filters.statusId) {
       findOrder.andWhere("status.id = :statusId", {

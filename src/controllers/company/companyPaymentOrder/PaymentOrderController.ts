@@ -5,10 +5,15 @@ import { CancelPaymentOrderUseCase } from "./CancelPaymentOrderUseCase";
 import { FindaPaymentMethodUseCase } from "./FindPaymentMethodUseCase";
 import { GeneratePaymentOrderUseCase } from "./GeneratePaymentOrderUseCase";
 import { GeneratePaymentOrderWithTakebackBalanceUseCase } from "./GeneratePaymentOrderWithTakebackBalanceUseCase";
+import { FindPaymentOrderUseCase } from "./FindPaymentOrderUseCase";
 
 interface Props {
   transactionIDs: number[];
   paymentMethodId: number;
+}
+
+interface FindOrdersQueryProps {
+  statusId?: string;
 }
 
 class PaymentOrderController {
@@ -80,6 +85,22 @@ class PaymentOrderController {
     const result = await find.execute();
 
     return response.status(200).json(result);
+  }
+
+  async findOrders(request: Request, response: Response) {
+    const { companyId } = request["tokenPayload"];
+    const { offset, limit } = request.params;
+    const filters: FindOrdersQueryProps = request.query;
+
+    const findUseCase = new FindPaymentOrderUseCase();
+
+    const orders = await findUseCase.execute({
+      companyId,
+      pagination: { limit, offset },
+      filters,
+    });
+
+    response.status(200).json(orders);
   }
 }
 

@@ -7,7 +7,7 @@ interface FindOrdersQueryProps {
   companyId?: string;
 }
 
-class ManagerPaymentOrderController {
+class PaymentOrderController {
   async findOrder(request: Request, response: Response) {
     const { offset, limit } = request.params;
     const filters: FindOrdersQueryProps = request.query;
@@ -35,4 +35,4 @@ class ManagerPaymentOrderController {
   }
 }
 
-export { ManagerPaymentOrderController };
+export { PaymentOrderController };

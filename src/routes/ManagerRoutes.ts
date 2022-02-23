@@ -12,7 +12,7 @@ import { ManagerCompanyStatusController } from "../controllers/manager/managerCo
 import { DataController } from "../controllers/manager/managerData/DataController";
 import { DashboardController } from "../controllers/manager/managerDashboard/ManagerDashboardController";
 import { PaymentPlanController } from "../controllers/manager/managerPaymentPlan/PaymentPlanController";
-import { ManagerPaymentOrderController } from "../controllers/manager/managerPaymentOrder/ManagerPaymentOrderController";
+import { PaymentOrderController } from "../controllers/manager/managerPaymentOrder/PaymentOrderController";
 
 const paymentMethod = new PaymentMethodController();
 const managerAuth = new ManagerAuthController();
@@ -23,7 +23,7 @@ const managerCompanyStatus = new ManagerCompanyStatusController();
 const managerData = new DataController();
 const managerDashboard = new DashboardController();
 const managerPaymentPlan = new PaymentPlanController();
-const managerPaymentOrder = new ManagerPaymentOrderController();
+const managerPaymentOrder = new PaymentOrderController();
 
 const routes = Router();
 
@@ -88,7 +88,7 @@ routes.put("/plan/update/:id", managerPaymentPlan.update);
 
 routes.get("/dashboard", managerDashboard.dashboardReport);
 
-routes.get("/order/findAll/:offset/:limit", managerPaymentOrder.findOrder);
+routes.get("/order/find/all/:offset/:limit", managerPaymentOrder.findOrder);
 routes.put("/order/approve/:id", managerPaymentOrder.approveOrder);
 
 export default routes;
