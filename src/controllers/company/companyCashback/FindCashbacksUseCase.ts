@@ -5,13 +5,18 @@ import { Transactions } from "../../../models/Transaction";
 import { TransactionStatus } from "../../../models/TransactionStatus";
 import { TransactionTypes } from "../../../models/TransactionType";
 
+interface FilterProps {
+  statusId?: string;
+  typeId?: string;
+}
 interface Props {
   companyId: string;
+  filters?: FilterProps;
 }
 
 class FindCashbacksUseCase {
-  async execute({ companyId }: Props) {
-    const cashbacks = await getRepository(Transactions)
+  async execute({ companyId, filters }: Props) {
+    const query = await getRepository(Transactions)
       .createQueryBuilder("transaction")
       .select([
         "transaction.id",
@@ -33,11 +38,20 @@ class FindCashbacksUseCase {
         "type",
         "type.id = transaction.transactionTypes"
       )
-      .where("type.description = :description", { description: "Ganho" })
-      .andWhere("status.description = :name", { name: "Pendente" })
-      .andWhere("transaction.companies = :companyId", { companyId })
-      .orderBy("transaction.id")
-      .getRawMany();
+      .where("transaction.companies = :companyId", { companyId })
+      .orderBy("transaction.id");
+
+    if (filters.statusId) {
+      query.andWhere("status.id = :statusId", {
+        statusId: parseInt(filters.statusId),
+      });
+    }
+
+    if (filters.typeId) {
+      query.andWhere("type.description = :typeId", { typeId: filters.typeId });
+    }
+
+    const cashbacks = query.getRawMany();
 
     return cashbacks;
   }

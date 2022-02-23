@@ -17,12 +17,16 @@ class GetConsumerInfoUseCase {
     }
 
     const consumer = await getRepository(Consumers).findOne({
-      select: ["fullName"],
+      select: ["fullName", "deactivedAccount"],
       where: { cpf },
     });
 
     if (!consumer) {
       throw new InternalError("O cliente não possui cadastro", 404);
+    }
+
+    if (consumer.deactivedAccount) {
+      throw new InternalError("O cliente não está ativo no sistema", 400);
     }
 
     return consumer;

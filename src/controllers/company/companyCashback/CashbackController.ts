@@ -3,8 +3,10 @@ import { Request, Response } from "express";
 import { GenerateCashbackUseCase } from "./GenerateCashbackUseCase";
 import { GenerateCashbackWithTakebackPaymentMethodUseCase } from "./GenerateCashbackWithTakebackPaymentMethodUseCase";
 import { GetConsumerInfoUseCase } from "./GetConsumerInfoUseCase";
-import { FindCashbacksUseCase } from "./FindCashbacksUseCase";
 import { CancelCashBackUseCase } from "./CancelCashBackUseCase";
+import { FindCashbacksUseCase } from "./FindCashbacksUseCase";
+import { FindCashbackStatusUseCase } from "./FindCashbackStatusUseCase";
+import { FindCashbackTypesUseCase } from "./FindCashbackTypesUseCase";
 
 interface GenerateCashbackProps {
   code?: string;
@@ -76,12 +78,17 @@ class CashbackController {
 
   async findCashbacks(request: Request, response: Response) {
     const { companyId } = request["tokenPayload"];
+    const filters = request.query;
 
-    const cashbacks = new FindCashbacksUseCase();
+    const findCashbacks = new FindCashbacksUseCase();
+    const findStatus = new FindCashbackStatusUseCase();
+    const findTypes = new FindCashbackTypesUseCase();
 
-    const result = await cashbacks.execute({ companyId });
+    const cashbacks = await findCashbacks.execute({ companyId, filters });
+    const status = await findStatus.execute();
+    const types = await findTypes.execute();
 
-    return response.status(200).json(result);
+    return response.status(200).json({ cashbacks, status, types });
   }
 
   async cancelCashBack(request: Request, response: Response) {
