@@ -8,6 +8,7 @@ import { ListCompanyWithSearchUseCase } from "./ListCompanyWithSearchUseCase";
 import { FindOneCompanyUseCase } from "./FindOneCompanyUseCase";
 import { FindCompanyUsersUseCase } from "./FindCompanyUsersUseCase";
 import { UpdateCustomFeeUseCase } from "./UpdateCustomFeeUseCase";
+import { UpdateCompanyMontlyPlanUseCase } from "./UpdateCompanyMontlyPlanUseCase";
 
 interface Props {
   companyId: string;
@@ -146,6 +147,19 @@ class CompaniesController {
       customIndustryFeeActive,
     });
 
+    const companyData = await findUseCase.execute({ companyId });
+
+    response.status(200).json({ message, companyData });
+  }
+
+  async updatePaymentPlan(request: Request, response: Response) {
+    const { planId } = request.body;
+    const companyId = request.params.id;
+
+    const update = new UpdateCompanyMontlyPlanUseCase();
+    const findUseCase = new FindOneCompanyUseCase();
+
+    const message = await update.execute({ companyId, planId });
     const companyData = await findUseCase.execute({ companyId });
 
     response.status(200).json({ message, companyData });

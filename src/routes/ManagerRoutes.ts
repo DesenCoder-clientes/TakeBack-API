@@ -63,6 +63,7 @@ routes.put(
   "/company/status/update/:id",
   managerCompanyStatus.updateCompanyStatus
 );
+routes.put("/company/plan/update/:id", managerCompanies.updatePaymentPlan);
 
 routes.get("/consumers/find/:offset/:limit", managerConsumers.listConsumer);
 routes.get("/consumers/search/:offset/:limit", managerConsumers.searchConsumer);
