@@ -22,17 +22,6 @@ interface Props {
 
 class FindPaymentOrderUseCase {
   async execute({ filters, pagination }: Props) {
-    const orderStatus = await getRepository(PaymentOrderStatus).findOne({
-      where: { description: "Aguardando" },
-    });
-
-    if (!orderStatus) {
-      throw new InternalError(
-        "Não há ordens de pagamento aguardando aprovação",
-        400
-      );
-    }
-
     const findOrder = await getRepository(PaymentOrder)
       .createQueryBuilder("order")
       .select(["order.id", "order.value", "order.createdAt"])
