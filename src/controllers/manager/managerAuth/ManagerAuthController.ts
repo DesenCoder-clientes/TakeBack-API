@@ -13,7 +13,6 @@ interface RegisterProps {
   cpf: string;
   email: string;
   password?: string;
-  isActive: true;
   userTypeId: string;
   phone: string;
   generatePassword?: boolean;
@@ -24,7 +23,7 @@ interface UpdateProps {
   cpf: string;
   email: string;
   userTypeId: string;
-  isActive: boolean;
+  isActive: string;
   phone: string;
 }
 
@@ -80,7 +79,7 @@ class ManagerAuthController {
       name,
       cpf,
       email,
-      isActive,
+      isActive: isActive === "0",
       phone,
       userTypeId,
       id: userId,

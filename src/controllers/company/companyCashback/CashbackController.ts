@@ -4,9 +4,10 @@ import { GenerateCashbackUseCase } from "./GenerateCashbackUseCase";
 import { GenerateCashbackWithTakebackPaymentMethodUseCase } from "./GenerateCashbackWithTakebackPaymentMethodUseCase";
 import { GetConsumerInfoUseCase } from "./GetConsumerInfoUseCase";
 import { CancelCashBackUseCase } from "./CancelCashBackUseCase";
-import { FindCashbacksUseCase } from "./FindCashbacksUseCase";
+import { FindPendingCashbacksUseCase } from "./FindPendingCashbacksUseCase";
 import { FindCashbackStatusUseCase } from "./FindCashbackStatusUseCase";
 import { FindCashbackTypesUseCase } from "./FindCashbackTypesUseCase";
+import { FindAllCashbacksUseCase } from "./FindAllCashbacksUseCase";
 
 interface GenerateCashbackProps {
   code?: string;
@@ -76,15 +77,31 @@ class CashbackController {
     return response.status(200).json(result);
   }
 
-  async findCashbacks(request: Request, response: Response) {
+  async findPendingCashbacks(request: Request, response: Response) {
+    const { companyId } = request["tokenPayload"];
+
+    const findCashbacks = new FindPendingCashbacksUseCase();
+
+    const cashbacks = await findCashbacks.execute({ companyId });
+
+    return response.status(200).json(cashbacks);
+  }
+
+  async findAllCashbacks(request: Request, response: Response) {
     const { companyId } = request["tokenPayload"];
     const filters = request.query;
+    const { offset, limit } = request.params;
 
-    const findCashbacks = new FindCashbacksUseCase();
+    const findCashbacks = new FindAllCashbacksUseCase();
     const findStatus = new FindCashbackStatusUseCase();
     const findTypes = new FindCashbackTypesUseCase();
 
-    const cashbacks = await findCashbacks.execute({ companyId, filters });
+    const cashbacks = await findCashbacks.execute({
+      companyId,
+      filters,
+      offset,
+      limit,
+    });
     const status = await findStatus.execute();
     const types = await findTypes.execute();
 
@@ -106,7 +123,7 @@ class CashbackController {
     });
 
     if (sucess) {
-      const cashbacks = new FindCashbacksUseCase();
+      const cashbacks = new FindPendingCashbacksUseCase();
 
       const result = await cashbacks.execute({ companyId });
 

@@ -10,7 +10,6 @@ interface DataProps {
   name: string;
   cpf: string;
   email: string;
-  isActive: true;
   phone: string;
   userTypeId: string;
   generatePassword?: boolean;
@@ -76,6 +75,7 @@ class RegisterUserUseCase {
       cpf: data.cpf,
       email: data.email,
       userType: userType,
+      isActive: true,
       phone: data.phone,
       password: data.generatePassword
         ? passwordGeneratedEncrypted

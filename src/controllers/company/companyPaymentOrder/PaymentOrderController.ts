@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { FindCashbacksUseCase } from "../companyCashback/FindCashbacksUseCase";
+import { FindPendingCashbacksUseCase } from "../companyCashback/FindPendingCashbacksUseCase";
 import { FindCompanyDataUseCase } from "../companyData/FindCompanyDataUseCase";
 import { CancelPaymentOrderUseCase } from "./CancelPaymentOrderUseCase";
 import { FindaPaymentMethodUseCase } from "./FindPaymentMethodUseCase";
@@ -21,7 +21,7 @@ class PaymentOrderController {
         new GeneratePaymentOrderWithTakebackBalanceUseCase();
 
       const finData = new FindCompanyDataUseCase();
-      const findCashbacks = new FindCashbacksUseCase();
+      const findCashbacks = new FindPendingCashbacksUseCase();
 
       const message = await generatePaymentOrderWithTakebackBalance.execute({
         transactionIDs,
@@ -42,7 +42,7 @@ class PaymentOrderController {
       const generatePaymentOrder = new GeneratePaymentOrderUseCase();
 
       const finData = new FindCompanyDataUseCase();
-      const findCashbacks = new FindCashbacksUseCase();
+      const findCashbacks = new FindPendingCashbacksUseCase();
 
       const message = await generatePaymentOrder.execute({
         transactionIDs,
