@@ -57,13 +57,16 @@ routes.get(
 );
 routes.put("/company/update/:id", managerCompanies.updateCompany);
 routes.put("/company/fee/update/:id", managerCompanies.updateCustomFee);
-
 routes.get("/company/status/find", managerCompanyStatus.findCompanyStatus);
 routes.put(
   "/company/status/update/:id",
   managerCompanyStatus.updateCompanyStatus
 );
 routes.put("/company/plan/update/:id", managerCompanies.updatePaymentPlan);
+routes.put(
+  "/company/forgot-password/:id",
+  managerCompanies.forgotPasswordToRootUser
+);
 
 routes.get(
   "/consumers/find/all/:offset/:limit",

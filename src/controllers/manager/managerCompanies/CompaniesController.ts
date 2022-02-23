@@ -9,6 +9,7 @@ import { FindOneCompanyUseCase } from "./FindOneCompanyUseCase";
 import { FindCompanyUsersUseCase } from "./FindCompanyUsersUseCase";
 import { UpdateCustomFeeUseCase } from "./UpdateCustomFeeUseCase";
 import { UpdateCompanyMontlyPlanUseCase } from "./UpdateCompanyMontlyPlanUseCase";
+import { ForgotPasswordToRootUserUseCase } from "./ForgotPasswordToRootUserUseCase";
 
 interface Props {
   companyId: string;
@@ -163,6 +164,19 @@ class CompaniesController {
     const companyData = await findUseCase.execute({ companyId });
 
     response.status(200).json({ message, companyData });
+  }
+
+  async forgotPasswordToRootUser(request: Request, response: Response) {
+    const companyId = request.params.id;
+    const { userName, email } = request.body;
+
+    const forgot = new ForgotPasswordToRootUserUseCase();
+    const findUser = new FindCompanyUsersUseCase();
+
+    const message = await forgot.execute({ companyId, email, userName });
+    const users = await findUser.execute({ companyId });
+
+    response.status(200).json({ message, users });
   }
 }
 
