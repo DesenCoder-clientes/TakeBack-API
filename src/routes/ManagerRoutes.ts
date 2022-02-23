@@ -65,10 +65,16 @@ routes.put(
 );
 routes.put("/company/plan/update/:id", managerCompanies.updatePaymentPlan);
 
-routes.get("/consumers/find/:offset/:limit", managerConsumers.listConsumer);
+routes.get(
+  "/consumers/find/all/:offset/:limit",
+  managerConsumers.findAllConsumers
+);
+routes.get("/consumers/find/one/:id", managerConsumers.findOneConsumer);
 routes.get("/consumers/search/:offset/:limit", managerConsumers.searchConsumer);
-routes.get("/consumers/:id", managerConsumers.findConsumerData);
-routes.put("/consumers/update/:id", managerConsumers.updateConsumerStatus);
+routes.put(
+  "/consumers/update/status/:id",
+  managerConsumers.updateConsumerStatus
+);
 
 routes.get("/cities/findAll", managerConsumers.listCities);
 

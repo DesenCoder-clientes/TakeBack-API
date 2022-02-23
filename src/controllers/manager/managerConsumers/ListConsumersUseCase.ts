@@ -15,49 +15,37 @@ interface QueryProps {
 
 interface Props {
   pagination: PaginationProps;
-  query: QueryProps;
+  filters: QueryProps;
 }
 
 class ListConsumersUseCase {
-  async execute({
-    pagination: { limit, offset },
-    query: { city, status },
-  }: Props) {
-    const cities = await getRepository(City).find({
-      select: ["id"],
-    });
-
-    const cityIds = [];
-    cities.map((item) => {
-      cityIds.push(item.id);
-    });
-
-    const listConsumers = await getRepository(Consumers)
-      .createQueryBuilder("c")
+  async execute({ pagination: { limit, offset }, filters }: Props) {
+    const query = getRepository(Consumers)
+      .createQueryBuilder("consumer")
       .select([
-        "c.id",
-        "c.createdAt",
-        "c.fullName",
-        "c.cpf",
-        "c.phone",
-        "c.balance",
-        "c.deactivedAccount",
-        "c.blockedBalance",
+        "consumer.id",
+        "consumer.createdAt",
+        "consumer.fullName",
+        "consumer.balance",
+        "consumer.blockedBalance",
+        "consumer.deactivedAccount",
       ])
-      .addSelect(["ci.name"])
-      .leftJoin(ConsumerAddress, "ca", "ca.id = c.address")
-      .leftJoin(City, "ci", "ci.id = ca.city")
-      .where("c.deactivedAccount IN (:...status)", {
-        status: status ? [status == "2"] : [true, false],
-      })
-      .andWhere("ci.id IN (:...cityId)", {
-        cityId: city ? [city] : [...cityIds],
+      .addSelect(["city.name"])
+      .leftJoin(ConsumerAddress, "address", "address.id = consumer.address")
+      .leftJoin(City, "city", "city.id = address.city")
+      .where("consumer.deactivedAccount IN (:...status)", {
+        status: filters.status ? [filters.status == "2"] : [true, false],
       })
       .limit(parseInt(limit))
-      .offset(parseInt(offset) * parseInt(limit))
-      .getRawMany();
+      .offset(parseInt(offset) * parseInt(limit));
 
-    return listConsumers;
+    if (filters.city) {
+      query.andWhere("city.id = :cityId", { cityId: filters.city });
+    }
+
+    const consumers = await query.getRawMany();
+
+    return consumers;
   }
 }
 

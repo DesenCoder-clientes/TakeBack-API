@@ -4,22 +4,25 @@ import { Consumers } from "../../../models/Consumer";
 
 interface Props {
   deactivedAccount: boolean;
-  id: string;
+  consumerId: string;
 }
 
 class UpdateStatusConsumerUseCase {
-  async execute({ deactivedAccount, id }: Props) {
+  async execute({ deactivedAccount, consumerId }: Props) {
     const consumer = await getRepository(Consumers).findOne({
-      where: { id },
+      where: { id: consumerId },
     });
 
     if (!consumer) {
       throw new InternalError("Cliente não encontrado", 404);
     }
 
-    const updateConsumerStatus = await getRepository(Consumers).update(id, {
-      deactivedAccount,
-    });
+    const updateConsumerStatus = await getRepository(Consumers).update(
+      consumerId,
+      {
+        deactivedAccount,
+      }
+    );
 
     if (updateConsumerStatus.affected === 0) {
       throw new InternalError("Erro ao atualizar usuário", 500);

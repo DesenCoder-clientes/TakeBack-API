@@ -19,18 +19,30 @@ interface UpdateStatusProps {
 }
 
 class ConsumersController {
-  async listConsumer(request: Request, response: Response) {
+  async findAllConsumers(request: Request, response: Response) {
     const { offset, limit } = request.params;
-    const query: QueryProps = request.query;
+    const filters: QueryProps = request.query;
 
     const find = new ListConsumersUseCase();
 
     const result = await find.execute({
       pagination: { limit, offset },
-      query,
+      filters,
     });
 
     return response.status(200).json(result);
+  }
+
+  async findOneConsumer(request: Request, response: Response) {
+    const consumerId = request.params.id;
+
+    const find = new FindConsumersDataUseCase();
+
+    const consumerData = await find.execute({
+      consumerId,
+    });
+
+    return response.status(200).json({ consumerData });
   }
 
   async searchConsumer(request: Request, response: Response) {
@@ -55,30 +67,23 @@ class ConsumersController {
     return response.status(200).json(result);
   }
 
-  async findConsumerData(request: Request, response: Response) {
-    const consumerId = request.params.id;
-
-    const find = new FindConsumersDataUseCase();
-
-    const result = await find.execute({
-      consumerId,
-    });
-
-    return response.status(200).json(result);
-  }
-
   async updateConsumerStatus(request: Request, response: Response) {
-    const id = request.params.id;
+    const consumerId = request.params.id;
     const { deactivedAccount }: UpdateStatusProps = request.body;
 
     const update = new UpdateStatusConsumerUseCase();
+    const find = new FindConsumersDataUseCase();
 
-    const result = await update.execute({
-      id,
+    const message = await update.execute({
+      consumerId,
       deactivedAccount,
     });
 
-    return response.status(200).json(result);
+    const consumerData = await find.execute({
+      consumerId,
+    });
+
+    return response.status(200).json({ message, consumerData });
   }
 }
 

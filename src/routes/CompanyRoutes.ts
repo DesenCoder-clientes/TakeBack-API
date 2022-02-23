@@ -31,12 +31,6 @@ routes.get("/data/dashboard", reports.dashboardReports);
 routes.get("/data/find", companyData.findCompanyData);
 routes.put("/data/update", companyData.updateCompanyData);
 
-routes.get("/cashback/costumer/:cpf", cashback.getConsumerInfo);
-
-routes.post("/cashback/generate", cashback.generateCashback);
-
-routes.put("/cashback/cancel", cashback.cancelCashBack);
-
 routes.get("/payments-methods/find/system", paymentMethod.findPaymentMethods);
 routes.get("/payments-methods/find", paymentMethod.findCompanyPaymentMethods);
 routes.get(
@@ -57,8 +51,10 @@ routes.post("/user/register", companyUser.registerCompanyUser);
 routes.put("/user/update/:id", companyUser.updateCompanyUser);
 routes.put("/user/password/update", companyUser.updatePassword);
 
+routes.get("/cashback/costumer/:cpf", cashback.getConsumerInfo);
+routes.post("/cashback/generate", cashback.generateCashback);
+routes.put("/cashback/cancel", cashback.cancelCashBack);
 routes.get("/cashbacks/find", cashback.findCashbacks);
-
 routes.post("/cashback/payment/generate", paymentOrder.generate);
 routes.put("/cashback/payment/cancel/:id", paymentOrder.cancel);
 routes.get("/cashback/payment/methods/findAll", paymentOrder.findPaymentMethod);

@@ -10,36 +10,36 @@ interface Props {
 class FindConsumersDataUseCase {
   async execute({ consumerId }: Props) {
     const consumersData = await getRepository(Consumers)
-      .createQueryBuilder("c")
+      .createQueryBuilder("consumer")
       .select([
-        "c.id",
-        "c.fullName",
-        "c.birthDate",
-        "c.createdAt",
-        "c.phone",
-        "c.email",
-        "c.cpf",
-        "c.signatureRegistered",
-        "c.balance",
-        "c.blockedBalance",
-        "c.emailConfirmated",
-        "c.deactivedAccount",
+        "consumer.id",
+        "consumer.fullName",
+        "consumer.birthDate",
+        "consumer.createdAt",
+        "consumer.phone",
+        "consumer.email",
+        "consumer.cpf",
+        "consumer.signatureRegistered",
+        "consumer.balance",
+        "consumer.blockedBalance",
+        "consumer.emailConfirmated",
+        "consumer.deactivedAccount",
       ])
       .addSelect([
-        "ca.street",
-        "ca.district",
-        "ca.number",
-        "ca.complement",
-        "ci.name",
-        "ci.state",
-        "ci.zipCode",
+        "address.street",
+        "address.district",
+        "address.number",
+        "address.complement",
+        "city.name",
+        "city.state",
+        "city.zipCode",
       ])
-      .leftJoin(ConsumerAddress, "ca", "ca.id = c.address")
-      .leftJoin(City, "ci", "ci.id = ca.city")
-      .where("c.id = :consumerId", {
+      .leftJoin(ConsumerAddress, "address", "address.id = consumer.address")
+      .leftJoin(City, "city", "city.id = address.city")
+      .where("consumer.id = :consumerId", {
         consumerId,
       })
-      .getRawMany();
+      .getRawOne();
 
     return consumersData;
   }
