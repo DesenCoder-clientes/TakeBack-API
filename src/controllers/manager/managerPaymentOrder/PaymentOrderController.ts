@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { ApproveOrderUseCase } from "./ApproveOrderUseCase";
 import { FindPaymentOrderUseCase } from "./FindPaymentOrderUseCase";
+import { FindFilterOptionsToPaymentOrderUseCase } from "./FindFilterOptionsToPaymentOrderUseCase";
 
 interface FindOrdersQueryProps {
   statusId?: string;
-  companyId?: string;
+  paymentMethodId?: string;
 }
 
 class PaymentOrderController {
@@ -19,7 +20,15 @@ class PaymentOrderController {
       filters,
     });
 
-    response.status(200).json(orders);
+    return response.status(200).json(orders);
+  }
+
+  async findFilterOptions(request: Request, response: Response) {
+    const find = new FindFilterOptionsToPaymentOrderUseCase();
+
+    const filters = await find.execute();
+
+    return response.status(200).json(filters);
   }
 
   async approveOrder(request: Request, response: Response) {
@@ -31,7 +40,7 @@ class PaymentOrderController {
       orderId: parseInt(orderId),
     });
 
-    response.status(200).json(result);
+    return response.status(200).json(result);
   }
 }
 

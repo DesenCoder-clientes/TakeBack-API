@@ -286,7 +286,10 @@ const PaymentPlanSeed = [
 
 const PaymentOrderStatusSeed = [
   {
-    description: "Aguardando",
+    description: "Pagamento solicitado",
+  },
+  {
+    description: "Aguardando pagamento",
   },
   {
     description: "Cancelada",

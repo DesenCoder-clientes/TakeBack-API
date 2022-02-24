@@ -21,6 +21,8 @@ class PaymentOrderController {
     const { companyId } = request["tokenPayload"];
     const { transactionIDs, paymentMethodId }: Props = request.body;
 
+    console.log(`MÉTODO DE PAGAMENTO =>>>>>>>>>>>>>> ${paymentMethodId}`);
+
     if (paymentMethodId === 1) {
       const generatePaymentOrderWithTakebackBalance =
         new GeneratePaymentOrderWithTakebackBalanceUseCase();
@@ -59,11 +61,11 @@ class PaymentOrderController {
         companyId,
       });
 
-      const cashbacks = await findCashbacks.execute({
+      const transactions = await findCashbacks.execute({
         companyId,
       });
 
-      return response.status(200).json({ message, companyData, cashbacks });
+      return response.status(200).json({ message, companyData, transactions });
     }
   }
 

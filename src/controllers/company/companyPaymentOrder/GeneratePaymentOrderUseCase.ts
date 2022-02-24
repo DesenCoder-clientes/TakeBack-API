@@ -48,7 +48,7 @@ class GeneratePaymentOrderUseCase {
       })
       .getRawMany();
 
-    //Variáveis para receber os valors da taxa takeback e cashback
+    // Variáveis para receber os valores da taxa takeback e cashback
     let takebackFeeAmount = 0;
     let cashbackAmount = 0;
 
@@ -78,7 +78,7 @@ class GeneratePaymentOrderUseCase {
     }
 
     const awaitingStatus = await getRepository(PaymentOrderStatus).findOne({
-      where: { description: "Aguardando" },
+      where: { description: "Pagamento solicitado" },
     });
 
     // Buscando a ordem de pagamento pelo ID
@@ -88,7 +88,7 @@ class GeneratePaymentOrderUseCase {
       where: { id: paymentMethodId },
     });
 
-    // Atualizando a ordem de pagamento
+    // Criando a ordem de pagamento
     const paymentOrder = await getRepository(PaymentOrder).save({
       value: takebackFeeAmount + cashbackAmount,
       company,

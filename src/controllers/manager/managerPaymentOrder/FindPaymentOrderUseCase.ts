@@ -1,5 +1,4 @@
 import { getRepository } from "typeorm";
-import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
 import { PaymentMethodOfPaymentOrder } from "../../../models/PaymentMethodOfPaymentOrder";
 import { PaymentOrder } from "../../../models/PaymentOrder";
@@ -7,7 +6,7 @@ import { PaymentOrderStatus } from "../../../models/PaymentOrderStatus";
 
 interface QueryProps {
   statusId?: string;
-  companyId?: string;
+  paymentMethodId?: string;
 }
 
 interface PaginationProps {
@@ -22,12 +21,13 @@ interface Props {
 
 class FindPaymentOrderUseCase {
   async execute({ filters, pagination }: Props) {
-    const findOrder = await getRepository(PaymentOrder)
+    const query = getRepository(PaymentOrder)
       .createQueryBuilder("order")
       .select(["order.id", "order.value", "order.createdAt"])
       .addSelect([
         "company.fantasyName",
         "status.description",
+        "paymentMethod.id",
         "paymentMethod.description",
       ])
       .leftJoin(Companies, "company", "company.id = order.company")
@@ -37,22 +37,23 @@ class FindPaymentOrderUseCase {
         "paymentMethod",
         "paymentMethod.id = order.paymentMethod"
       )
+      .orderBy("order.id", "DESC")
       .limit(parseInt(pagination.limit))
       .offset(parseInt(pagination.offset) * parseInt(pagination.limit));
 
-    if (filters.companyId) {
-      findOrder.where("company.id = :companyId", {
-        companyId: filters.companyId,
-      });
-    }
-
     if (filters.statusId) {
-      findOrder.andWhere("status.id = :statusId", {
-        statusId: filters.statusId,
+      query.andWhere("status.id = :statusId", {
+        statusId: parseInt(filters.statusId),
       });
     }
 
-    const orders = await findOrder.getRawMany();
+    if (filters.paymentMethodId) {
+      query.andWhere("paymentMethod.id = :paymentMethodId", {
+        paymentMethodId: parseInt(filters.paymentMethodId),
+      });
+    }
+
+    const orders = await query.getRawMany();
 
     return orders;
   }
