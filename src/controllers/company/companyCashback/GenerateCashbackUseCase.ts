@@ -1,3 +1,4 @@
+import * as bcrypt from "bcrypt";
 import { getRepository, In } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 
@@ -13,6 +14,7 @@ import { TransactionTypes } from "../../../models/TransactionType";
 interface Props {
   companyId: string;
   userId: string;
+  userPassword: string;
   code: string;
   cashbackData: {
     costumer: {
@@ -32,12 +34,33 @@ class GenerateCashbackUseCase {
   async execute({
     companyId,
     userId,
+    userPassword,
     code,
     cashbackData: { costumer, method },
   }: Props) {
     // Verificando se todos os dados foram informados
-    if (!costumer.cpf || !costumer.value || method.length < 1) {
+    if (
+      !userPassword ||
+      !costumer.cpf ||
+      !costumer.value ||
+      method.length < 1
+    ) {
       throw new InternalError("Dados incompletos", 400);
+    }
+
+    // Buscando o usuário da empresa
+    const companyUser = await getRepository(CompanyUsers).findOne({
+      where: { id: userId },
+      select: ["id", "password"],
+    });
+
+    // Verificando se a senha dele está correta
+    const passwordMatch = await bcrypt.compare(
+      userPassword,
+      companyUser.password
+    );
+    if (!passwordMatch) {
+      throw new InternalError("Erro ao validar a senha", 400);
     }
 
     // Verificando se o cliente está cadastrado e ativo
@@ -81,6 +104,7 @@ class GenerateCashbackUseCase {
     // Calculando o valor do cashback
     let cashbackAmount = 0;
     let takebackMethodExist = false;
+    let takebackMethodValue = 0;
 
     paymentMethods.map((databaseMethod) => {
       method.map((informedMethod) => {
@@ -96,6 +120,7 @@ class GenerateCashbackUseCase {
 
         if (databaseMethod.paymentMethodId === 1) {
           takebackMethodExist = true;
+          takebackMethodValue = parseFloat(informedMethod.value);
         }
       });
     });
@@ -108,12 +133,11 @@ class GenerateCashbackUseCase {
       onlyTakebackMethod = true;
     }
 
-    // Buscando a empresa e o usuário para injetar na tabela Transactions
+    // Buscando a empresa para injetar na tabela Transactions
     const company = await getRepository(Companies).findOne({
       where: { id: companyId },
       relations: ["industry"],
     });
-    const companyUser = await getRepository(CompanyUsers).findOne(userId);
 
     // Buscando status e tipos de transações para injetar na tabela Transactions
     const pendingStatus = await getRepository(TransactionStatus).findOne({
@@ -167,6 +191,7 @@ class GenerateCashbackUseCase {
         where: {
           consumers: consumer,
           keyTransaction: parseInt(code),
+          value: takebackMethodValue,
           transactionStatus: transactionAwait,
         },
         relations: ["consumers", "transactionStatus"],

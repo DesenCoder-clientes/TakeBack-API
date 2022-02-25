@@ -13,6 +13,7 @@ import { ValidateUserPasswordUseCase } from "./ValidateUserPasswordUseCase";
 
 interface GenerateCashbackProps {
   code?: string;
+  userPassword: string;
   cashbackData: {
     costumer: {
       cpf: string;
@@ -49,7 +50,8 @@ class CashbackController {
 
   async generateCashback(request: Request, response: Response) {
     const { companyId, userId } = request["tokenPayload"];
-    const { cashbackData, code }: GenerateCashbackProps = request.body;
+    const { cashbackData, code, userPassword }: GenerateCashbackProps =
+      request.body;
 
     const cashback = new GenerateCashbackUseCase();
 
@@ -57,26 +59,7 @@ class CashbackController {
       cashbackData,
       companyId,
       userId,
-      code,
-    });
-
-    return response.status(200).json(result);
-  }
-
-  async generateCashbackWithTakebackPaymentMethod(
-    request: Request,
-    response: Response
-  ) {
-    const { companyId, userId } = request["tokenPayload"];
-    const { cashbackData }: GenerateCashbackProps = request.body;
-    const code = request.params.code;
-
-    const cashback = new GenerateCashbackWithTakebackPaymentMethodUseCase();
-
-    const result = await cashback.execute({
-      cashbackData,
-      companyId,
-      userId,
+      userPassword,
       code,
     });
 

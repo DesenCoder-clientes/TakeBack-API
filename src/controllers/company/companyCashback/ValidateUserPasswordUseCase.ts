@@ -1,7 +1,7 @@
+import * as bcrypt from "bcrypt";
 import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { CompanyUsers } from "../../../models/CompanyUsers";
-import * as bcrypt from "bcrypt";
 
 interface Props {
   companyId: string;
