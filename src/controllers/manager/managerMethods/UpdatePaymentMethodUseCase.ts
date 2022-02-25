@@ -17,7 +17,7 @@ class UpdatePaymentMethodUseCase {
       throw new InternalError("Forma de pagamento já cadastrada", 400);
     }
 
-    if (paymentMethod.isTakebackMethod) {
+    if (paymentMethod && paymentMethod.isTakebackMethod) {
       throw new InternalError(
         "Não é possível editar o método padrão do sistema",
         400
@@ -26,7 +26,6 @@ class UpdatePaymentMethodUseCase {
 
     const updated = await getRepository(PaymentMethods).update(id, {
       description,
-      isTakebackMethod: false,
     });
 
     if (updated.affected === 0) {

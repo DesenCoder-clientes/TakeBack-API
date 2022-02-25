@@ -8,6 +8,7 @@ import { FindPendingCashbacksUseCase } from "./FindPendingCashbacksUseCase";
 import { FindCashbackStatusUseCase } from "./FindCashbackStatusUseCase";
 import { FindCashbackTypesUseCase } from "./FindCashbackTypesUseCase";
 import { FindAllCashbacksUseCase } from "./FindAllCashbacksUseCase";
+import { FindCashbackFiltersUseCase } from "./FindCashbackFiltersUseCase";
 
 interface GenerateCashbackProps {
   code?: string;
@@ -75,6 +76,14 @@ class CashbackController {
     const result = await consumerInfo.execute({ cpf });
 
     return response.status(200).json(result);
+  }
+
+  async findCashbackFilters(request: Request, response: Response) {
+    const find = new FindCashbackFiltersUseCase();
+
+    const status = await find.execute();
+
+    return response.status(200).json(status);
   }
 
   async findPendingCashbacks(request: Request, response: Response) {

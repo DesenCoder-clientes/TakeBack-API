@@ -56,6 +56,7 @@ routes.post("/cashback/generate", cashback.generateCashback);
 routes.put("/cashback/cancel", cashback.cancelCashBack);
 routes.get("/cashbacks/find/pending", cashback.findPendingCashbacks);
 routes.get("/cashbacks/find/all/:offset/:limit", cashback.findAllCashbacks);
+routes.get("/cashbacks/find/filters", cashback.findCashbackFilters);
 
 routes.post("/order/payment/generate", paymentOrder.generate);
 routes.put("/order/payment/cancel/:id", paymentOrder.cancel);

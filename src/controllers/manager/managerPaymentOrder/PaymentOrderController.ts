@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { ApproveOrderUseCase } from "./ApproveOrderUseCase";
 import { FindPaymentOrderUseCase } from "./FindPaymentOrderUseCase";
 import { FindFilterOptionsToPaymentOrderUseCase } from "./FindFilterOptionsToPaymentOrderUseCase";
+import { SendPaymentInfoToEmailUseCase } from "./SendPaymentInfoToEmailUseCase";
 
 interface FindOrdersQueryProps {
   statusId?: string;
@@ -41,6 +42,13 @@ class PaymentOrderController {
     });
 
     return response.status(200).json(result);
+  }
+
+  async sendPaymentInfoToEmail(request: Request, response: Response) {
+    console.log(request);
+
+    return response.status(200).json("ok");
+    // const sendMail = new SendPaymentInfoToEmailUseCase()
   }
 }
 

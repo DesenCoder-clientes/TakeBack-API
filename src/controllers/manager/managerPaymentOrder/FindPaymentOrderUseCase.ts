@@ -25,7 +25,9 @@ class FindPaymentOrderUseCase {
       .createQueryBuilder("order")
       .select(["order.id", "order.value", "order.createdAt"])
       .addSelect([
+        "company.id",
         "company.fantasyName",
+        "company.email",
         "status.description",
         "paymentMethod.id",
         "paymentMethod.description",

@@ -19,7 +19,7 @@ interface Props {
 
 class FindAllCashbacksUseCase {
   async execute({ companyId, filters, offset, limit }: Props) {
-    const query = await getRepository(Transactions)
+    const query = getRepository(Transactions)
       .createQueryBuilder("transaction")
       .select([
         "transaction.id",
