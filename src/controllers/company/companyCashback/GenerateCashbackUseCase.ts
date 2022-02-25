@@ -13,7 +13,7 @@ import { TransactionTypes } from "../../../models/TransactionType";
 interface Props {
   companyId: string;
   userId: string;
-  code: number;
+  code: string;
   cashbackData: {
     costumer: {
       cpf: string;
@@ -65,15 +65,6 @@ class GenerateCashbackUseCase {
     if (uniqueValue.length !== methodsWithoutNullItems.length) {
       throw new InternalError("Há itens duplicados", 400);
     }
-
-    // Verificando se o método de pagamento TakeBack e seu códico de confirmação estão presentes
-    /* const takebackMethod = methodsWithoutNullItems.filter(
-      (item) => item.method === "1"
-    );
-
-    if (takebackMethod.length > 0) {
-      throw new InternalError("Houve um erro na chamada a API", 400);
-    } */
 
     // Criando array com ID's dos métodos de pagamento diferentes do método TakeBack
     const methodsId = [];
@@ -161,8 +152,13 @@ class GenerateCashbackUseCase {
       ? company.customIndustryFee * parseFloat(costumer.value)
       : company.industry.industryFee * parseFloat(costumer.value);
 
+    // Verificando se está tudo ok com a chave de compra
+    if (takebackMethodExist && (isNaN(parseInt(code)) || code.length === 0)) {
+      throw new InternalError("Chave da compra não informada", 400);
+    }
+
     // OPERAÇÃO DE ABATIMENTO DE SALDO DO CLIENTE
-    if (takebackMethodExist) {
+    if (takebackMethodExist && (!isNaN(parseInt(code)) || code.length > 0)) {
       const transactionAwait = await getRepository(TransactionStatus).findOne({
         where: { description: "Aguardando" },
       });
@@ -170,7 +166,7 @@ class GenerateCashbackUseCase {
       const existentTransaction = await getRepository(Transactions).findOne({
         where: {
           consumers: consumer,
-          keyTransaction: code,
+          keyTransaction: parseInt(code),
           transactionStatus: transactionAwait,
         },
         relations: ["consumers", "transactionStatus"],

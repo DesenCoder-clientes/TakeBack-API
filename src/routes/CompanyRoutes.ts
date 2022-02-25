@@ -51,6 +51,10 @@ routes.post("/user/register", companyUser.registerCompanyUser);
 routes.put("/user/update/:id", companyUser.updateCompanyUser);
 routes.put("/user/password/update", companyUser.updatePassword);
 
+routes.post(
+  "/cashback/confirm-password",
+  cashback.validateUserPasswordToGenerateCashback
+);
 routes.get("/cashback/costumer/:cpf", cashback.getConsumerInfo);
 routes.post("/cashback/generate", cashback.generateCashback);
 routes.put("/cashback/cancel", cashback.cancelCashBack);

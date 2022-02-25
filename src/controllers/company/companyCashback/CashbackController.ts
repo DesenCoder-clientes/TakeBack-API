@@ -9,6 +9,7 @@ import { FindCashbackStatusUseCase } from "./FindCashbackStatusUseCase";
 import { FindCashbackTypesUseCase } from "./FindCashbackTypesUseCase";
 import { FindAllCashbacksUseCase } from "./FindAllCashbacksUseCase";
 import { FindCashbackFiltersUseCase } from "./FindCashbackFiltersUseCase";
+import { ValidateUserPasswordUseCase } from "./ValidateUserPasswordUseCase";
 
 interface GenerateCashbackProps {
   code?: string;
@@ -32,6 +33,20 @@ interface CancelProps {
 }
 
 class CashbackController {
+  async validateUserPasswordToGenerateCashback(
+    request: Request,
+    response: Response
+  ) {
+    const { companyId, userId } = request["tokenPayload"];
+    const { password } = request.body;
+
+    const verify = new ValidateUserPasswordUseCase();
+
+    const result = await verify.execute({ companyId, password, userId });
+
+    return response.status(200).json(result);
+  }
+
   async generateCashback(request: Request, response: Response) {
     const { companyId, userId } = request["tokenPayload"];
     const { cashbackData, code }: GenerateCashbackProps = request.body;
@@ -42,7 +57,7 @@ class CashbackController {
       cashbackData,
       companyId,
       userId,
-      code: parseInt(code),
+      code,
     });
 
     return response.status(200).json(result);
