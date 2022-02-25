@@ -94,6 +94,10 @@ routes.get("/dashboard", managerDashboard.dashboardReport);
 routes.get("/order/find/all/:offset/:limit", managerPaymentOrder.findOrder);
 routes.get("/order/find/filters", managerPaymentOrder.findFilterOptions);
 routes.put("/order/approve/:id", managerPaymentOrder.approveOrder);
+routes.put(
+  "/order/update/status/:id",
+  managerPaymentOrder.updatePaymentOrderStatus
+);
 routes.post(
   "/order/send-payment-info",
   managerPaymentOrder.sendPaymentInfoToEmail
