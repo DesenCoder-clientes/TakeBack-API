@@ -4,6 +4,7 @@ import { FindPaymentOrderUseCase } from "./FindPaymentOrderUseCase";
 import { FindFilterOptionsToPaymentOrderUseCase } from "./FindFilterOptionsToPaymentOrderUseCase";
 import { SendTicketToEmailUseCase } from "./SendTicketToEmailUseCase";
 import { UpdatePaymentOrderStatusUseCase } from "./UpdatePaymentOrderStatusUseCase";
+import { FindTransactionsInPaymentOrderUseCase } from "./FindTransactionsInPaymentOrderUseCase";
 
 interface FindOrdersQueryProps {
   statusId?: string;
@@ -31,6 +32,18 @@ class PaymentOrderController {
     const filters = await find.execute();
 
     return response.status(200).json(filters);
+  }
+
+  async findTransactionsInPaymentOrder(request: Request, response: Response) {
+    const paymentOrderId = request.params.id;
+
+    const find = new FindTransactionsInPaymentOrderUseCase();
+
+    const transactions = await find.execute({
+      paymentOrderId: parseInt(paymentOrderId),
+    });
+
+    return response.status(200).json(transactions);
   }
 
   async approveOrder(request: Request, response: Response) {

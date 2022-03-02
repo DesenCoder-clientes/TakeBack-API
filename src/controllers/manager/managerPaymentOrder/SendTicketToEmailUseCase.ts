@@ -46,7 +46,7 @@ class SendTicketToEmailUseCase {
       throw new InternalError("Empresa não localizada", 404);
     }
 
-    const message = `Email`;
+    const message = `Segue em anexo o boleto para o pagamento dos cashbacks contidos na ordem de pagamento número: ${paymentOrder.id}.`;
 
     transporter.sendMail(
       {
@@ -85,7 +85,7 @@ class SendTicketToEmailUseCase {
 
     if (updatedPaymentOrder.affected === 0) {
       throw new InternalError(
-        "Ouve um erro ao atualizar o status da ordem de pagemento",
+        "Ouve um erro ao atualizar o status da ordem de pagamento",
         400
       );
     }
