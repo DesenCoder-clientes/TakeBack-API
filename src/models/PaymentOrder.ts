@@ -23,6 +23,21 @@ export class PaymentOrder {
   })
   value: number;
 
+  @Column({
+    nullable: true,
+  })
+  ticketName: string;
+
+  @Column({
+    nullable: true,
+  })
+  ticketPath: string;
+
+  @Column({
+    nullable: true,
+  })
+  pixKey: string;
+
   @ManyToOne(
     () => PaymentOrderStatus,
     (paymentStatus) => paymentStatus.paymentOrder

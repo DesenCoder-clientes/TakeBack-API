@@ -46,14 +46,14 @@ class SendTicketToEmailUseCase {
       throw new InternalError("Empresa não localizada", 404);
     }
 
-    const message = ``;
+    const message = `Email`;
 
     transporter.sendMail(
       {
         from: process.env.MAIL_CONFIG_USER,
         to: useCustomEmail === "true" ? customEmail : company.email,
         subject: "Boleto TakeBack",
-        text: "",
+        text: message,
         attachments: [
           {
             filename: fileName,

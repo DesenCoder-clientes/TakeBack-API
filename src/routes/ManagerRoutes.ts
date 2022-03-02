@@ -101,7 +101,7 @@ routes.put(
   managerPaymentOrder.updatePaymentOrderStatus
 );
 routes.post(
-  "/order/send-payment-info",
+  "/order/send-payment-info/:id",
   multer(TicketMiddleware).single("Boleto"),
   managerPaymentOrder.sendPaymentInfoToEmail
 );

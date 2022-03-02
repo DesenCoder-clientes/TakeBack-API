@@ -46,17 +46,20 @@ class PaymentOrderController {
   }
 
   async sendPaymentInfoToEmail(request: Request, response: Response) {
+    const paymentOrderId = request.params.id;
+
     const sendTicket = new SendTicketToEmailUseCase();
 
     if (request.file) {
       const message = await sendTicket.execute({
+        paymentOrderId: parseInt(paymentOrderId),
         fileName: request.file.originalname,
         filePath: request.file.path,
         useCustomEmail: request.body.useCustomEmail,
         customEmail: request.body.customEmail,
       });
 
-      return response.status(200).json(message);
+      return response.status(200).json({ message });
     } else {
       return response.status(200).json("Sem arquivo");
     }
