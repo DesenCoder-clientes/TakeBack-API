@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { ApproveOrderUseCase } from "./ApproveOrderUseCase";
 import { FindPaymentOrderUseCase } from "./FindPaymentOrderUseCase";
 import { FindFilterOptionsToPaymentOrderUseCase } from "./FindFilterOptionsToPaymentOrderUseCase";
-import { SendPaymentInfoToEmailUseCase } from "./SendPaymentInfoToEmailUseCase";
+import { SendTicketToEmailUseCase } from "./SendTicketToEmailUseCase";
 import { UpdatePaymentOrderStatusUseCase } from "./UpdatePaymentOrderStatusUseCase";
 
 interface FindOrdersQueryProps {
@@ -46,10 +46,20 @@ class PaymentOrderController {
   }
 
   async sendPaymentInfoToEmail(request: Request, response: Response) {
-    console.log(request);
+    const sendTicket = new SendTicketToEmailUseCase();
 
-    return response.status(200).json("ok");
-    // const sendMail = new SendPaymentInfoToEmailUseCase()
+    if (request.file) {
+      const message = await sendTicket.execute({
+        fileName: request.file.originalname,
+        filePath: request.file.path,
+        useCustomEmail: request.body.useCustomEmail,
+        customEmail: request.body.customEmail,
+      });
+
+      return response.status(200).json(message);
+    } else {
+      return response.status(200).json("Sem arquivo");
+    }
   }
 
   async updatePaymentOrderStatus(request: Request, response: Response) {

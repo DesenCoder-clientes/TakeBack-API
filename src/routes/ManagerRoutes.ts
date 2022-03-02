@@ -1,7 +1,9 @@
 import { Router } from "express";
+import multer = require("multer");
 
 import { DecodeTokenMiddleware } from "../middlewares/DecodeTokenMiddleware";
 import { AuthManagerMiddleware } from "../middlewares/AuthManagerMiddleware";
+import { TicketMiddleware } from "../middlewares/TicketMiddleware";
 
 import { ManagerAuthController } from "../controllers/manager/managerAuth/ManagerAuthController";
 import { CompaniesController } from "../controllers/manager/managerCompanies/CompaniesController";
@@ -100,6 +102,7 @@ routes.put(
 );
 routes.post(
   "/order/send-payment-info",
+  multer(TicketMiddleware).single("Boleto"),
   managerPaymentOrder.sendPaymentInfoToEmail
 );
 

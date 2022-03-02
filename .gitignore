@@ -4,5 +4,12 @@ node_modules/
 dist/
 tmp/
 temp/
+
+# Environment Variables
 .env
 .env.local
+
+# Static files
+uploads/tickets/*
+
+!uploads/tickets/.gitkeep
