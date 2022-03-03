@@ -5,6 +5,7 @@ import { FindFilterOptionsToPaymentOrderUseCase } from "./FindFilterOptionsToPay
 import { SendTicketToEmailUseCase } from "./SendTicketToEmailUseCase";
 import { UpdatePaymentOrderStatusUseCase } from "./UpdatePaymentOrderStatusUseCase";
 import { FindTransactionsInPaymentOrderUseCase } from "./FindTransactionsInPaymentOrderUseCase";
+import { SendPixToEmailUseCase } from "./SendPixToEmailUseCase";
 
 interface FindOrdersQueryProps {
   statusId?: string;
@@ -62,6 +63,7 @@ class PaymentOrderController {
     const paymentOrderId = request.params.id;
 
     const sendTicket = new SendTicketToEmailUseCase();
+    const sendPix = new SendPixToEmailUseCase();
 
     if (request.file) {
       const message = await sendTicket.execute({
@@ -74,7 +76,14 @@ class PaymentOrderController {
 
       return response.status(200).json({ message });
     } else {
-      return response.status(200).json("Sem arquivo");
+      const message = await sendPix.execute({
+        paymentOrderId: parseInt(paymentOrderId),
+        pixKey: request.body.pixKey,
+        useCustomEmail: request.body.useCustomEmail,
+        customEmail: request.body.customEmail,
+      });
+
+      return response.status(200).json({ message });
     }
   }
 
