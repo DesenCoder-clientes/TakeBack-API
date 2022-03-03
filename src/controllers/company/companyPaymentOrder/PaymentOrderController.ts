@@ -22,8 +22,6 @@ class PaymentOrderController {
     const { companyId } = request["tokenPayload"];
     const { transactionIDs, paymentMethodId }: Props = request.body;
 
-    console.log(`MÉTODO DE PAGAMENTO =>>>>>>>>>>>>>> ${paymentMethodId}`);
-
     if (paymentMethodId === 1) {
       const generatePaymentOrderWithTakebackBalance =
         new GeneratePaymentOrderWithTakebackBalanceUseCase();
