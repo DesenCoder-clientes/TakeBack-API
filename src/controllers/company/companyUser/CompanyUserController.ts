@@ -92,22 +92,23 @@ class CompanyUserController {
   }
 
   async rootUserUpdateUserPassword(request: Request, response: Response) {
-    const { companyId } = request["tokenPayload"];
-    const userId = request.params.id;
+    const { companyId, userId } = request["tokenPayload"];
+    const userToUpdateId = request.params.id;
 
     const { userName, newPassword }: RootUserUpdateUserPasswordProps =
       request.body;
 
     const update = new RootUserUpdateCompanyUserPasswordUseCase();
 
-    const result = await update.execute({
+    const message = await update.execute({
       userName,
-      userId,
+      userToUpdateId,
       companyId: companyId,
       newPassword,
+      userId,
     });
 
-    return response.status(200).json(result);
+    return response.status(200).json({ message });
   }
 }
 
