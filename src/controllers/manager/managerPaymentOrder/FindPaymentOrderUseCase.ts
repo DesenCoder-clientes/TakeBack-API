@@ -23,7 +23,15 @@ class FindPaymentOrderUseCase {
   async execute({ filters, pagination }: Props) {
     const query = getRepository(PaymentOrder)
       .createQueryBuilder("order")
-      .select(["order.id", "order.value", "order.createdAt"])
+      .select([
+        "order.id",
+        "order.value",
+        "order.createdAt",
+        "order.approvedAt",
+        "order.ticketName",
+        "order.ticketPath",
+        "order.pixKey",
+      ])
       .addSelect([
         "company.id",
         "company.fantasyName",

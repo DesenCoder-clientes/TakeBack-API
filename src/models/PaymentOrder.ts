@@ -38,6 +38,11 @@ export class PaymentOrder {
   })
   pixKey: string;
 
+  @Column({
+    nullable: true,
+  })
+  approvedAt: Date;
+
   @ManyToOne(
     () => PaymentOrderStatus,
     (paymentStatus) => paymentStatus.paymentOrder
