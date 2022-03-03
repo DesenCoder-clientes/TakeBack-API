@@ -70,5 +70,9 @@ routes.post("/order/payment/generate", paymentOrder.generate);
 routes.put("/order/payment/cancel/:id", paymentOrder.cancel);
 routes.get("/order/payment/methods/findAll", paymentOrder.findPaymentMethod);
 routes.get("/order/find/all/:offset/:limit", paymentOrder.findOrders);
+routes.get(
+  "/order/find/transactions/:id",
+  paymentOrder.findTransactionsInPaymentOrder
+);
 
 export default routes;

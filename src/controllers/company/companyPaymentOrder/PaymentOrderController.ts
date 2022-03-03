@@ -6,6 +6,7 @@ import { FindaPaymentMethodUseCase } from "./FindPaymentMethodUseCase";
 import { GeneratePaymentOrderUseCase } from "./GeneratePaymentOrderUseCase";
 import { GeneratePaymentOrderWithTakebackBalanceUseCase } from "./GeneratePaymentOrderWithTakebackBalanceUseCase";
 import { FindPaymentOrderUseCase } from "./FindPaymentOrderUseCase";
+import { FindTransactionsInPaymentOrderUseCase } from "./FindTransactionsInPaymentOrderUseCase";
 
 interface Props {
   transactionIDs: number[];
@@ -103,6 +104,20 @@ class PaymentOrderController {
     });
 
     response.status(200).json(orders);
+  }
+
+  async findTransactionsInPaymentOrder(request: Request, response: Response) {
+    const { companyId } = request["tokenPayload"];
+    const paymentOrderId = request.params.id;
+
+    const find = new FindTransactionsInPaymentOrderUseCase();
+
+    const transactions = await find.execute({
+      companyId,
+      paymentOrderId: parseInt(paymentOrderId),
+    });
+
+    return response.status(200).json(transactions);
   }
 }
 
