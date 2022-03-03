@@ -31,11 +31,11 @@ interface RootUserUpdateUserPasswordProps {
 
 class CompanyUserController {
   async findCompanyUsers(request: Request, response: Response) {
-    const { companyId } = request["tokenPayload"];
+    const { companyId, userId } = request["tokenPayload"];
 
     const findCompanyUsers = new FindCompanyUsersUseCase();
 
-    const result = await findCompanyUsers.execute({ companyId });
+    const result = await findCompanyUsers.execute({ companyId, userId });
 
     return response.status(200).json(result);
   }
