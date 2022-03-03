@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { DecodeTokenMiddleware } from "../middlewares/DecodeTokenMiddleware";
 import { AuthCompanyMiddleware } from "../middlewares/AuthCompanyMiddleware";
+import { VerifyIfIsAuthorizedToEmitCashbacks } from "../middlewares/VerifyIfIsAuthorizedToEmitCashbacks";
 
 import { AuthCompanyController } from "../controllers/company/companyAuth/AuthCompanyController";
 import { ReportsController } from "../controllers/company/companyReports/ReportsController";
@@ -57,10 +58,19 @@ routes.put(
 
 routes.post(
   "/cashback/confirm-password",
+  VerifyIfIsAuthorizedToEmitCashbacks,
   cashback.validateUserPasswordToGenerateCashback
 );
-routes.get("/cashback/costumer/:cpf", cashback.getConsumerInfo);
-routes.post("/cashback/generate", cashback.generateCashback);
+routes.get(
+  "/cashback/costumer/:cpf",
+  VerifyIfIsAuthorizedToEmitCashbacks,
+  cashback.getConsumerInfo
+);
+routes.post(
+  "/cashback/generate",
+  VerifyIfIsAuthorizedToEmitCashbacks,
+  cashback.generateCashback
+);
 routes.put("/cashback/cancel", cashback.cancelCashBack);
 routes.get("/cashbacks/find/pending", cashback.findPendingCashbacks);
 routes.get("/cashbacks/find/all/:offset/:limit", cashback.findAllCashbacks);
