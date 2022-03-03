@@ -50,6 +50,10 @@ routes.get("/user/find", companyUser.findCompanyUsers);
 routes.post("/user/register", companyUser.registerCompanyUser);
 routes.put("/user/update/:id", companyUser.updateCompanyUser);
 routes.put("/user/password/update", companyUser.updatePassword);
+routes.put(
+  "/user/password/update/root/:id",
+  companyUser.rootUserUpdateUserPassword
+);
 
 routes.post(
   "/cashback/confirm-password",

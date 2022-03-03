@@ -4,6 +4,7 @@ import { FindCompanyUsersUseCase } from "./FindCompanyUsersUseCase";
 import { RegisterCompanyUsersUseCase } from "./RegisterCompanyUsersUseCase";
 import { UpdateCompanyPasswordUseCase } from "./UpdateCompanyUserPasswordUseCase";
 import { UpdateCompanyUsersUseCase } from "./UpdateCompanyUsersUseCase";
+import { RootUserUpdateCompanyUserPasswordUseCase } from "./RootUserUpdateCompanyUserPasswordUseCase";
 
 interface RegisterProps {
   name: string;
@@ -20,6 +21,11 @@ interface UpdateProps {
 
 interface UpdatePasswordProps {
   password: string;
+  newPassword: string;
+}
+
+interface RootUserUpdateUserPasswordProps {
+  userName: string;
   newPassword: string;
 }
 
@@ -80,6 +86,25 @@ class CompanyUserController {
       password,
       companyId: companyId,
       userId,
+    });
+
+    return response.status(200).json(result);
+  }
+
+  async rootUserUpdateUserPassword(request: Request, response: Response) {
+    const { companyId } = request["tokenPayload"];
+    const userId = request.params.id;
+
+    const { userName, newPassword }: RootUserUpdateUserPasswordProps =
+      request.body;
+
+    const update = new RootUserUpdateCompanyUserPasswordUseCase();
+
+    const result = await update.execute({
+      userName,
+      userId,
+      companyId: companyId,
+      newPassword,
     });
 
     return response.status(200).json(result);
