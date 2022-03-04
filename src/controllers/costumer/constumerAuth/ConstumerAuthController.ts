@@ -57,7 +57,6 @@ class CostumerAuthController {
 
   async registerCostumer(request: Request, response: Response) {
     const data: RegisterProps = request.body;
-    console.log(request.body);
 
     const register = new RegisterCostumerUseCase();
 

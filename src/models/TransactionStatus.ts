@@ -1,11 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 import { Transactions } from "./Transaction";
 
@@ -22,12 +15,9 @@ export class TransactionStatus {
   })
   blocked: boolean;
 
-  @OneToMany(() => Transactions, transactions => transactions.transactionStatus)
+  @OneToMany(
+    () => Transactions,
+    (transactions) => transactions.transactionStatus
+  )
   transaction: Transactions[];
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

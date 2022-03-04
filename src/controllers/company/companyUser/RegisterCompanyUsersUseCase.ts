@@ -21,14 +21,16 @@ class RegisterCompanyUsersUseCase {
     }
 
     const userExist = await getRepository(CompanyUsers).findOne({
-      where: { name },
+      where: { name, company },
     });
 
     if (userExist) {
       throw new InternalError("Usuário já cadastrado", 400);
     }
 
-    const companyUserTypes = await getRepository(CompanyUserTypes).findOne(userTypeId);
+    const companyUserTypes = await getRepository(CompanyUserTypes).findOne(
+      userTypeId
+    );
 
     const passwordEncrypted = bcrypt.hashSync(password, 10);
 

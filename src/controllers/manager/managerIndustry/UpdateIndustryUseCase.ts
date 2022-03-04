@@ -4,13 +4,13 @@ import { Industries } from "../../../models/Industry";
 
 interface UpdateProps {
   description: string;
-  categoryFee: number;
+  industryFee: number;
   id: string;
 }
 
 class UpdateIndustryUseCase {
-  async execute({ description, categoryFee, id }: UpdateProps) {
-    if (!description || !categoryFee) {
+  async execute({ description, industryFee, id }: UpdateProps) {
+    if (!description || !industryFee) {
       throw new InternalError("Dados incompletos", 400);
     }
 
@@ -24,7 +24,7 @@ class UpdateIndustryUseCase {
 
     const updateIndustry = await getRepository(Industries).update(id, {
       description,
-      categoryFee,
+      industryFee: industryFee / 100,
     });
 
     if (updateIndustry.affected !== 1) {

@@ -1,5 +1,6 @@
 import { getRepository } from "typeorm";
 import { InternalError } from "../../config/GenerateErros";
+import * as bcrypt from "bcrypt";
 
 import { State } from "../../models/State";
 import { City } from "../../models/City";
@@ -9,12 +10,12 @@ import { CompanyUserTypes } from "../../models/CompanyUserTypes";
 import { CompanyStatus } from "../../models/CompanyStatus";
 import { PaymentMethods } from "../../models/PaymentMethod";
 import { TakeBackUserTypes } from "../../models/TakeBackUserTypes";
-
-// import { StatesSeed } from "../../database/seeds/statesSeed";
-// import { TransactionTypesSeed } from "../../database/seeds/transactionTypesSeed";
-// import { TransactionStatusSeed } from "../../database/seeds/transactionStatusSeed";
-// import { CompanyUserTypesSeed } from "../../database/seeds/companyUserTypesSeed";
-// import { CompanyStatusSeed } from "../../database/seeds/companyStatuSeed";
+import { TakeBackUsers } from "../../models/TakeBackUsers";
+import { generateRandomNumber } from "../../utils/RandomValueGenerate";
+import { sendMail } from "../../utils/SendMail";
+import { PaymentPlans } from "../../models/PaymentPlans";
+import { PaymentOrderStatus } from "../../models/PaymentOrderStatus";
+import { PaymentMethodOfPaymentOrder } from "../../models/PaymentMethodOfPaymentOrder";
 
 const StatesSeed = [
   {
@@ -181,6 +182,24 @@ const StatesSeed = [
   },
 ];
 
+const PaymentMethodOfPaymentOrderSeed = [
+  {
+    description: "Saldo Takeback",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "PIX",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Boleto",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
 const TransactionStatusSeed = [
   {
     description: "Pendente",
@@ -190,6 +209,12 @@ const TransactionStatusSeed = [
   },
   {
     description: "Aprovada",
+    blocked: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Pago com takeback",
     blocked: false,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -208,6 +233,12 @@ const TransactionStatusSeed = [
   },
   {
     description: "Cancelada pelo cliente",
+    blocked: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Em processamento",
     blocked: true,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -244,16 +275,91 @@ const CompanyUserTypesSeed = [
   },
 ];
 
+const PaymentPlanSeed = [
+  {
+    description: "Plano padrão",
+    value: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+const PaymentOrderStatusSeed = [
+  {
+    description: "Pagamento solicitado",
+  },
+  {
+    description: "Aguardando pagamento",
+  },
+  {
+    description: "Cancelada",
+  },
+  {
+    description: "Autorizada",
+  },
+];
+
 const CompanyStatusSeed = [
   {
     description: "Ativo",
     blocked: false,
+    generateCashback: true,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
     description: "Bloqueado",
     blocked: true,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Cadastro solicitado",
+    blocked: true,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Em análise",
+    blocked: true,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Documentação pendente",
+    blocked: true,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Inadimplente",
+    blocked: false,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Cadastro não aprovado",
+    blocked: true,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Pendente à aprovação",
+    blocked: true,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Demonstração",
+    blocked: false,
+    generateCashback: false,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -280,8 +386,14 @@ const tbUserTypes = [
   },
 ];
 
+interface Props {
+  cpf: string;
+  email: string;
+  name: string;
+}
+
 class GenerateSeedData {
-  async execute() {
+  async execute({ cpf, email, name }: Props) {
     const [, count] = await getRepository(State).findAndCount();
 
     if (count > 0) {
@@ -330,6 +442,30 @@ class GenerateSeedData {
       return new InternalError("Erro ao gerar os status de transações", 400);
     }
 
+    // Gerando formas de pagamento para ordens de pagamento
+    const generatePaymentMethodForPaymentOrder = await getRepository(
+      PaymentMethodOfPaymentOrder
+    ).save(PaymentMethodOfPaymentOrderSeed);
+
+    if (generatePaymentMethodForPaymentOrder.length === 0) {
+      return new InternalError(
+        "Erro ao gerar formas de pagamento para ordens de pagamento",
+        400
+      );
+    }
+
+    // Gerando status das ordens de pagamento
+    const generatePaymentOrderStatus = await getRepository(
+      PaymentOrderStatus
+    ).save(PaymentOrderStatusSeed);
+
+    if (generatePaymentOrderStatus.length === 0) {
+      return new InternalError(
+        "Erro ao gerar os status das ordens de pagamento",
+        400
+      );
+    }
+
     // Gerando os Tipos de Usuários
     const generatedUserTypes = await getRepository(CompanyUserTypes).save(
       CompanyUserTypesSeed
@@ -348,9 +484,22 @@ class GenerateSeedData {
       return new InternalError("Erro ao gerar os status das empresas", 400);
     }
 
+    // Gerando valor default para o Plano de Pagamento
+    const generatePaymentPlan = await getRepository(PaymentPlans).save(
+      PaymentPlanSeed
+    );
+
+    if (generatePaymentPlan.length === 0) {
+      return new InternalError(
+        "Erro ao gerar o plano padrão das empresas",
+        400
+      );
+    }
+
     // Gerando o método de pagamneto Takeback
     const generatedPaymentMethod = await getRepository(PaymentMethods).save({
       description: "Takeback",
+      isTakebackMethod: true,
     });
 
     if (!generatedPaymentMethod) {
@@ -368,6 +517,27 @@ class GenerateSeedData {
         400
       );
     }
+
+    const newPassword = generateRandomNumber(100000, 999999);
+    const sendedPasswordEncrypted = bcrypt.hashSync(newPassword.toString(), 10);
+
+    const takeBackUsers = await getRepository(TakeBackUsers).save({
+      cpf,
+      email,
+      name,
+      phone: "",
+      userType: takeBackUserTypes[0],
+      isActive: true,
+      password: sendedPasswordEncrypted,
+    });
+
+    if (!takeBackUsers) {
+      return new InternalError("Erro ao gerar usuário do take back", 400);
+    }
+
+    const message = `Bem vindo ${name}! CPF.: ${cpf}, Senha.: ${newPassword}`;
+
+    sendMail(email, "Usuário ROOT", message);
 
     return "Dados semeados";
   }

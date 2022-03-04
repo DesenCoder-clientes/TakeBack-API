@@ -18,10 +18,11 @@ class RegisterPaymentMethodUseCase {
 
     const newMethod = await getRepository(PaymentMethods).save({
       description,
+      isTakebackMethod: false,
     });
 
     if (newMethod) {
-      return `Método '${description}' cadastrado`;
+      return "Método cadastrado";
     }
 
     throw new InternalError("Houve um erro", 400);

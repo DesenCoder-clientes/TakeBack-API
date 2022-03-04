@@ -2,7 +2,9 @@ import { Request, Response } from "express";
 
 import { FindCompanyUsersUseCase } from "./FindCompanyUsersUseCase";
 import { RegisterCompanyUsersUseCase } from "./RegisterCompanyUsersUseCase";
+import { UpdateCompanyPasswordUseCase } from "./UpdateCompanyUserPasswordUseCase";
 import { UpdateCompanyUsersUseCase } from "./UpdateCompanyUsersUseCase";
+import { RootUserUpdateCompanyUserPasswordUseCase } from "./RootUserUpdateCompanyUserPasswordUseCase";
 
 interface RegisterProps {
   name: string;
@@ -17,13 +19,23 @@ interface UpdateProps {
   isActive: boolean;
 }
 
+interface UpdatePasswordProps {
+  password: string;
+  newPassword: string;
+}
+
+interface RootUserUpdateUserPasswordProps {
+  userName: string;
+  newPassword: string;
+}
+
 class CompanyUserController {
   async findCompanyUsers(request: Request, response: Response) {
-    const { companyId } = request["tokenPayload"];
+    const { companyId, userId } = request["tokenPayload"];
 
     const findCompanyUsers = new FindCompanyUsersUseCase();
 
-    const result = await findCompanyUsers.execute({ companyId });
+    const result = await findCompanyUsers.execute({ companyId, userId });
 
     return response.status(200).json(result);
   }
@@ -60,6 +72,43 @@ class CompanyUserController {
     });
 
     return response.status(200).json(result);
+  }
+
+  async updatePassword(request: Request, response: Response) {
+    const { companyId, userId } = request["tokenPayload"];
+
+    const { newPassword, password }: UpdatePasswordProps = request.body;
+
+    const update = new UpdateCompanyPasswordUseCase();
+
+    const result = await update.execute({
+      newPassword,
+      password,
+      companyId: companyId,
+      userId,
+    });
+
+    return response.status(200).json(result);
+  }
+
+  async rootUserUpdateUserPassword(request: Request, response: Response) {
+    const { companyId, userId } = request["tokenPayload"];
+    const userToUpdateId = request.params.id;
+
+    const { userName, newPassword }: RootUserUpdateUserPasswordProps =
+      request.body;
+
+    const update = new RootUserUpdateCompanyUserPasswordUseCase();
+
+    const message = await update.execute({
+      userName,
+      userToUpdateId,
+      companyId: companyId,
+      newPassword,
+      userId,
+    });
+
+    return response.status(200).json({ message });
   }
 }
 

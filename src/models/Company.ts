@@ -16,6 +16,8 @@ import { Transactions } from "./Transaction";
 import { CompanyUsers } from "./CompanyUsers";
 import { CompanyStatus } from "./CompanyStatus";
 import { CompanyPaymentMethods } from "./CompanyPaymentMethod";
+import { PaymentPlans } from "./PaymentPlans";
+import { PaymentOrder } from "./PaymentOrder";
 
 @Entity()
 export class Companies {
@@ -51,19 +53,24 @@ export class Companies {
     default: 0,
     type: "float",
   })
-  cashbackPercentDefault: number;
+  customIndustryFee: number;
+
+  @Column({
+    default: false,
+  })
+  customIndustryFeeActive: boolean;
 
   @Column({
     default: 0,
     type: "float",
   })
-  balance: number;
+  positiveBalance: number;
 
   @Column({
     default: 0,
     type: "float",
   })
-  blockedBalance: number;
+  negativeBalance: number;
 
   @Column({
     default: 0,
@@ -75,19 +82,28 @@ export class Companies {
   @JoinColumn()
   address: CompaniesAddress;
 
-  @OneToMany(() => Transactions, transactions => transactions.companies)
+  @OneToMany(() => PaymentOrder, (paymentOrder) => paymentOrder.company)
+  paymentOrder: PaymentOrder[];
+
+  @OneToMany(() => Transactions, (transactions) => transactions.companies)
   transaction: Transactions[];
 
-  @ManyToOne(()=> Industries, industry => industry.companies)
-  industry: Industries
- 
-  @OneToMany(() => CompanyUsers, companyUser => companyUser.company)
-  companies: CompanyUsers;
+  @ManyToOne(() => Industries, (industry) => industry.companies)
+  industry: Industries;
 
-  @ManyToOne(() => CompanyStatus, status => status.company)
+  @OneToMany(() => CompanyUsers, (companyUser) => companyUser.company)
+  companies: CompanyUsers[];
+
+  @ManyToOne(() => CompanyStatus, (status) => status.company)
   status: CompanyStatus;
 
-  @OneToMany(() => CompanyPaymentMethods,  companyPaymentMethods => companyPaymentMethods.company)
+  @ManyToOne(() => PaymentPlans, (payment) => payment.company)
+  paymentPlan: PaymentPlans;
+
+  @OneToMany(
+    () => CompanyPaymentMethods,
+    (companyPaymentMethods) => companyPaymentMethods.company
+  )
   public companyPaymentMethod!: CompanyPaymentMethods[];
 
   @CreateDateColumn()

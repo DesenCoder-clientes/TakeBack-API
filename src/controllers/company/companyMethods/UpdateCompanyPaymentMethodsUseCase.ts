@@ -16,29 +16,44 @@ class UpdateCompanyPaymentMethodsUseCase {
     }
 
     if (cashbackPercentage < 0) {
-      throw new InternalError("Percentual negativo informado", 400);
+      throw new InternalError(
+        "Não é possível informar percentual negativo",
+        400
+      );
     }
 
-    if (cashbackPercentage > 1) {
+    if (cashbackPercentage > 100) {
       throw new InternalError(
         "Não é possível informar valores acima de 100%",
         400
       );
     }
 
-    const { affected } = await getRepository(CompanyPaymentMethods).update(
+    const paymentMethod = await getRepository(CompanyPaymentMethods).findOne({
+      where: { id: paymentId },
+      relations: ["paymentMethod"],
+    });
+
+    if (paymentMethod.paymentMethod.id === 1) {
+      throw new InternalError(
+        "Não é possível editar o método de pagamento Takeback",
+        400
+      );
+    }
+
+    const updated = await getRepository(CompanyPaymentMethods).update(
       paymentId,
       {
-        cashbackPercentage,
+        cashbackPercentage: cashbackPercentage / 100,
         isActive,
       }
     );
 
-    if (affected === 1) {
-      return "Método de pagamento atualizado";
+    if (updated.affected === 0) {
+      throw new InternalError("Erro atualizar método de pagamento", 400);
     }
 
-    throw new InternalError("Houve um erro", 500);
+    return "Método de pagamento atualizado";
   }
 }
 

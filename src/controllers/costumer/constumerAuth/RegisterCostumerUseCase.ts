@@ -31,7 +31,7 @@ class RegisterCostumerUseCase {
     password,
   }: userDataProps) {
     if (!fullName || !cpf || !birthDate || !zipCode || !email || !password) {
-      throw new InternalError("Dados incompletos", 401);
+      throw new InternalError("Dados incompletos", 400);
     }
 
     if (!CPFValidate(cpf)) {

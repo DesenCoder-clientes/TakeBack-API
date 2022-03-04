@@ -16,7 +16,7 @@ export const AuthManagerMiddleware = async (
 
   const takeBackUser = await getRepository(TakeBackUsers).findOne(id);
 
-  if (!takeBackUser) {
+  if (!takeBackUser || !takeBackUser.isActive) {
     throw new InternalError("Não autorizado", 401);
   }
 

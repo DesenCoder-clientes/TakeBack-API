@@ -3,14 +3,14 @@ import { Request, Response } from "express";
 
 import { ReportCashbackByPeriodUseCase } from "./ReportCashbackByPeriodUseCase";
 import { ReportCashbackByPaymentMethodUseCase } from "./ReportCashbackByPaymentMethodUseCase";
-import { ReportBillingByPeriodUseCase } from "./ReportBillingByPeriodUseCase";
+import { CompanyBalanceUseCase } from "./CompanyBalanceUseCase";
 
 class ReportsController {
   async dashboardReports(request: Request, response: Response) {
     const { companyId, userId } = request["tokenPayload"];
 
     const cashbacksByPeriod = new ReportCashbackByPeriodUseCase();
-    const billingReport = new ReportBillingByPeriodUseCase();
+    const billingReport = new CompanyBalanceUseCase();
     const cashbacksByPaymentMethods =
       new ReportCashbackByPaymentMethodUseCase();
 

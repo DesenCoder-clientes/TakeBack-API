@@ -9,6 +9,8 @@ import { State } from "../../../models/State";
 import { apiCorreiosResponseType } from "../../../types/ApiCorreiosResponse";
 
 import { CompanyStatus } from "../../../models/CompanyStatus";
+import { sendMail } from "../../../utils/SendMail";
+import { PaymentPlans } from "../../../models/PaymentPlans";
 
 interface Props {
   corporateName: string;
@@ -39,7 +41,7 @@ class RegisterCompanyUseCase {
       !registeredNumber ||
       !zipCode
     ) {
-      throw new InternalError("Dados incompletos", 401);
+      throw new InternalError("Dados incompletos", 400);
     }
 
     const company = await getRepository(Companies).findOne({
@@ -101,7 +103,11 @@ class RegisterCompanyUseCase {
     }
 
     const companyStatus = await getRepository(CompanyStatus).findOne({
-      where: { description: "Bloqueado" },
+      where: { description: "Cadastro solicitado" },
+    });
+
+    const paymentPlan = await getRepository(PaymentPlans).findOne({
+      where: { id: 1 },
     });
 
     const newCompany = await getRepository(Companies).save({
@@ -113,13 +119,24 @@ class RegisterCompanyUseCase {
       address: address ? address : newAddress,
       industry: localizedIndustry,
       status: companyStatus,
+      paymentPlan,
     });
 
-    if (newCompany) {
-      return "Solicitação recebida";
+    if (!newCompany) {
+      throw new InternalError("Houve um erro", 500);
     }
 
-    throw new InternalError("Houve um erro", 500);
+    const newMessage = `Recebemos sua solicitação de cadastro da empresa ${newCompany.fantasyName}.
+    Assim que houver alguma alteração em seu status 
+    você receberá um novo email! `;
+
+    sendMail(
+      newCompany.email,
+      "TakeBack - Solicitação de cadastro",
+      newMessage
+    );
+
+    return "Solicitação recebida";
   }
 }
 

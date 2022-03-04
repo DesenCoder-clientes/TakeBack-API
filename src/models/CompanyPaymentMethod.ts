@@ -32,10 +32,13 @@ export class CompanyPaymentMethods {
   })
   public isActive!: boolean;
 
-  @ManyToOne(() => Companies, companies => companies.companyPaymentMethod)
+  @ManyToOne(() => Companies, (companies) => companies.companyPaymentMethod)
   public company!: Companies;
 
-  @ManyToOne(() => PaymentMethods, paymentMethods => paymentMethods.companyPaymentMethod)
+  @ManyToOne(
+    () => PaymentMethods,
+    (paymentMethods) => paymentMethods.companyPaymentMethod
+  )
   public paymentMethod!: PaymentMethods;
 
   @CreateDateColumn()

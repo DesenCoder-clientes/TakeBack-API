@@ -14,7 +14,6 @@ class SignInCostumerUseCase {
     if (!cpf || !password) {
       throw new InternalError("Dados incompletos", 400);
     }
-    console.log(cpf);
 
     const consumer = await getRepository(Consumers).findOne({
       where: {
@@ -41,7 +40,7 @@ class SignInCostumerUseCase {
     const passwordMatch = await bcrypt.compare(password, consumer.password);
 
     if (!passwordMatch) {
-      throw new InternalError("Erro ao efetuar login", 401);
+      throw new InternalError("Erro ao efetuar login", 400);
     }
 
     const token = generateToken(

@@ -1,11 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 import { CompanyPaymentMethods } from "./CompanyPaymentMethod";
 import { Transactions } from "./Transaction";
@@ -38,10 +31,4 @@ export class TransactionPaymentMethods {
     (companyPaymentMethods) => companyPaymentMethods.paymentMethod
   )
   public paymentMethod!: CompanyPaymentMethods;
-
-  @CreateDateColumn()
-  public createdAt!: Date;
-
-  @UpdateDateColumn()
-  public updatedAt!: Date;
 }

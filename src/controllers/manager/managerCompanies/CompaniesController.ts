@@ -1,60 +1,182 @@
 import { Request, Response } from "express";
 import { AllowCompanyFirstAccessUseCase } from "./AllowCompanyFirstAccessUseCase";
-import { RegisterCompanyPaymentMethodsUseCase } from "../../company/companyMethods/RegisterCompanyPaymentMethodsUseCase";
+import { RegisterCompanyTakebackPaymentMethodsUseCase } from "./RegisterCompanyTakebackPaymentMethodsUseCase";
 import { ListCompanyUseCase } from "./ListCompanyUseCase";
-import { FindCompanyUseCase } from "./FindCompanyUseCase";
-
-import {ParsedQs} from 'qs';
+import { UpdateCompanyUseCase } from "./UpdateCompanyUseCase";
+import { FindAllCompaniesUseCase } from "./FindAllCompaniesUseCase";
+import { ListCompanyWithSearchUseCase } from "./ListCompanyWithSearchUseCase";
+import { FindOneCompanyUseCase } from "./FindOneCompanyUseCase";
+import { FindCompanyUsersUseCase } from "./FindCompanyUsersUseCase";
+import { UpdateCustomFeeUseCase } from "./UpdateCustomFeeUseCase";
+import { UpdateCompanyMontlyPlanUseCase } from "./UpdateCompanyMontlyPlanUseCase";
+import { ForgotPasswordToRootUserUseCase } from "./ForgotPasswordToRootUserUseCase";
 
 interface Props {
   companyId: string;
-  name?: string;
+  useCustomName?: boolean;
+  customName?: string;
+  useCustomFee?: boolean;
+  customFee?: number;
+}
+
+interface UpdateProps {
+  email: string;
+  industryId: string;
+  statusId: string;
+  limit: string;
+  offset: string;
+}
+
+interface FindCompaniesQueryProps {
+  statusId?: string;
+  industryId?: string;
+  cityId?: string;
+}
+
+interface ListCompanyWithSearchQueryProps {
+  searchTerm?: string;
+}
+
+interface UpdateCustomFeeProps {
+  customIndustryFee: number;
+  customIndustryFeeActive: boolean;
 }
 
 class CompaniesController {
-  async generateManagerUser(request: Request, response: Response) {
-    const { companyId, name }: Props = request.body;
+  async allowFirstAccess(request: Request, response: Response) {
+    const data: Props = request.body;
 
-    const registerCompanyMethod = new RegisterCompanyPaymentMethodsUseCase();
+    const findUseCase = new FindOneCompanyUseCase();
+    const findUser = new FindCompanyUsersUseCase();
+    const registerTakebackMethod =
+      new RegisterCompanyTakebackPaymentMethodsUseCase();
     const allowCompanyAccess = new AllowCompanyFirstAccessUseCase();
 
-    const result = await allowCompanyAccess.execute({ companyId, name });
-    await registerCompanyMethod.execute({
-      companyId,
-      paymentId: 1,
-      cashbackPercentage: 0,
+    const message = await allowCompanyAccess.execute(data);
+    await registerTakebackMethod.execute({
+      companyId: data.companyId,
     });
+    const companyData = await findUseCase.execute({
+      companyId: data.companyId,
+    });
+    const companyUsers = await findUser.execute({ companyId: data.companyId });
 
-    response.status(201).json(result);
+    response.status(200).json({ message, companyData, companyUsers });
   }
 
-  async listCompany(request: Request, response: Response){
-
+  async findAllCompanies(request: Request, response: Response) {
     const { offset, limit } = request.params;
+    const filters: FindCompaniesQueryProps = request.query;
 
+    const findUseCase = new FindAllCompaniesUseCase();
+
+    const companies = await findUseCase.execute({
+      pagination: { limit, offset },
+      filters,
+    });
+
+    response.status(200).json(companies);
+  }
+
+  async findOneCompany(request: Request, response: Response) {
+    const companyId = request.params.id;
+
+    const findUseCase = new FindOneCompanyUseCase();
+    const findUser = new FindCompanyUsersUseCase();
+
+    const company = await findUseCase.execute({
+      companyId,
+    });
+
+    const users = await findUser.execute({
+      companyId,
+    });
+
+    return response.status(200).json({ company, users });
+  }
+
+  async listCompanyWithSearch(request: Request, response: Response) {
+    const { offset, limit } = request.params;
+    const query: ListCompanyWithSearchQueryProps = request.query;
+
+    const find = new ListCompanyWithSearchUseCase();
+
+    const result = await find.execute({
+      pagination: { limit, offset },
+      query,
+    });
+
+    response.status(200).json(result);
+  }
+
+  async updateCompany(request: Request, response: Response) {
+    const { email, industryId, statusId, limit, offset }: UpdateProps =
+      request.body;
+    const { id } = request["tokenPayload"];
+    const companyId = request.params.id;
+
+    const update = new UpdateCompanyUseCase();
     const find = new ListCompanyUseCase();
 
-    const result = await find.execute({
-      limit,
-      offset
+    const message = await update.execute({
+      email,
+      statusId,
+      industryId,
+      id,
+      companyId,
     });
 
-    response.status(201).json(result);
+    const companies = await find.execute({
+      limit,
+      offset,
+    });
+
+    response.status(200).json({ message, companies });
   }
 
-  async findCompany(request: Request, response: Response){
-    const {fantasyName, registeredNumber, status}  = request.query; 
+  async updateCustomFee(request: Request, response: Response) {
+    const { customIndustryFee, customIndustryFeeActive }: UpdateCustomFeeProps =
+      request.body;
+    const companyId = request.params.id;
 
-    const find = new FindCompanyUseCase();
+    const update = new UpdateCustomFeeUseCase();
+    const findUseCase = new FindOneCompanyUseCase();
 
-    const result = await find.execute({
-      fantasyName,
-      registeredNumber,
-      status
+    const message = await update.execute({
+      companyId,
+      customIndustryFee,
+      customIndustryFeeActive,
     });
 
-    response.status(201).json(result)
+    const companyData = await findUseCase.execute({ companyId });
 
+    response.status(200).json({ message, companyData });
+  }
+
+  async updatePaymentPlan(request: Request, response: Response) {
+    const { planId } = request.body;
+    const companyId = request.params.id;
+
+    const update = new UpdateCompanyMontlyPlanUseCase();
+    const findUseCase = new FindOneCompanyUseCase();
+
+    const message = await update.execute({ companyId, planId });
+    const companyData = await findUseCase.execute({ companyId });
+
+    response.status(200).json({ message, companyData });
+  }
+
+  async forgotPasswordToRootUser(request: Request, response: Response) {
+    const companyId = request.params.id;
+    const { userName, email } = request.body;
+
+    const forgot = new ForgotPasswordToRootUserUseCase();
+    const findUser = new FindCompanyUsersUseCase();
+
+    const message = await forgot.execute({ companyId, email, userName });
+    const users = await findUser.execute({ companyId });
+
+    response.status(200).json({ message, users });
   }
 }
 

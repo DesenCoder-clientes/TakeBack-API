@@ -1,47 +1,46 @@
 import { Request, response, Response } from "express";
-import { FindIndustryUseCase } from "./FindIndustryUseCase";
+import { FindIndustryUseCaseNotPaginated } from "./FindIndustryUseCaseNotPaginated";
 import { RegisterIndustryUseCase } from "./RegisterIndustryUseCase";
 import { UpdateIndustryUseCase } from "./UpdateIndustryUseCase";
 
 interface Props {
   description: string;
-  categoryFee: number;
+  industryFee: number;
 }
 
 class ManagerIndustryController {
   async registerIndustry(request: Request, response: Response) {
-    const { description, categoryFee }: Props = request.body;
+    const { description, industryFee }: Props = request.body;
 
     const registerIndustry = new RegisterIndustryUseCase();
 
-    const result = await registerIndustry.execute({ categoryFee, description });
+    const result = await registerIndustry.execute({ industryFee, description });
 
     response.status(201).json(result);
   }
 
   async updateIndustry(request: Request, response: Response) {
     const id = request.params.id;
-    const { description, categoryFee }: Props = request.body;
+    const { description, industryFee }: Props = request.body;
 
     const update = new UpdateIndustryUseCase();
+    const find = new FindIndustryUseCaseNotPaginated();
 
-    const result = await update.execute({
+    const message = await update.execute({
       description,
-      categoryFee,
+      industryFee,
       id,
     });
 
-    return response.status(200).json(result);
+    const industries = await find.execute();
+
+    return response.status(200).json({ message, industries });
   }
 
-  async findIndustry(request: Request, response: Response) {
-    const findIndustries = new FindIndustryUseCase();
-    const { offset, limit } = request.params;
+  async findAllIndustries(request: Request, response: Response) {
+    const findIndustries = new FindIndustryUseCaseNotPaginated();
 
-    const result = await findIndustries.execute({
-      offset,
-      limit,
-    });
+    const result = await findIndustries.execute();
 
     return response.status(200).json(result);
   }

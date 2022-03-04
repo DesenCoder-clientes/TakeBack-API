@@ -11,21 +11,22 @@ export const AuthCompanyMiddleware = async (
   const { companyId } = request["tokenPayload"];
 
   if (!companyId) {
-    throw new InternalError("Não autorizado", 401);
+    throw new InternalError("Não autorizado1", 401);
   }
 
   const company = await getRepository(Companies).findOne({
     select: ["id", "status"],
     relations: ["status"],
+    where: { id: companyId },
     cache: true,
   });
 
   if (!company) {
-    throw new InternalError("Não autorizado", 401);
+    throw new InternalError("Não autorizado2", 401);
   }
 
   if (company.status.blocked) {
-    throw new InternalError("Não autorizado", 401);
+    throw new InternalError("Não autorizado3", 401);
   }
 
   next();

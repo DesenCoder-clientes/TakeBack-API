@@ -4,12 +4,12 @@ import { Industries } from "../../../models/Industry";
 
 interface Props {
   description: string;
-  categoryFee: number;
+  industryFee: number;
 }
 
 class RegisterIndustryUseCase {
-  async execute({ description, categoryFee }: Props) {
-    if (!description || !categoryFee) {
+  async execute({ description, industryFee }: Props) {
+    if (!description || !industryFee) {
       throw new InternalError("Dados incompletos", 400);
     }
 
@@ -23,7 +23,7 @@ class RegisterIndustryUseCase {
 
     const registerIndustry = await getRepository(Industries).save({
       description,
-      categoryFee,
+      industryFee: industryFee / 100,
     });
 
     if (!registerIndustry) {

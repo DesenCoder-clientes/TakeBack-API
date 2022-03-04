@@ -1,11 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 import { TakeBackUsers } from "./TakeBackUsers";
 
@@ -21,16 +14,10 @@ export class TakeBackUserTypes {
 
   @Column({
     default: false,
-    nullable: false
+    nullable: false,
   })
   isRoot: boolean;
 
- @OneToMany(() => TakeBackUsers, takeBackUsers => takeBackUsers.userType)
- users: TakeBackUsers[]
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @OneToMany(() => TakeBackUsers, (takeBackUsers) => takeBackUsers.userType)
+  users: TakeBackUsers[];
 }
