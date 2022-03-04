@@ -99,7 +99,10 @@ routes.get(
   "/order/find/transactions/:id",
   managerPaymentOrder.findTransactionsInPaymentOrder
 );
-routes.put("/order/approve/:id", managerPaymentOrder.approveOrder);
+routes.put(
+  "/order/approve/:id",
+  managerPaymentOrder.approveOrderAndReleaseCashbacks
+);
 routes.put(
   "/order/update/status/:id",
   managerPaymentOrder.updatePaymentOrderStatus

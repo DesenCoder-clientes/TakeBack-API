@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 
 import { GenerateCashbackUseCase } from "./GenerateCashbackUseCase";
-import { GenerateCashbackWithTakebackPaymentMethodUseCase } from "./GenerateCashbackWithTakebackPaymentMethodUseCase";
 import { GetConsumerInfoUseCase } from "./GetConsumerInfoUseCase";
 import { CancelCashBackUseCase } from "./CancelCashBackUseCase";
 import { FindPendingCashbacksUseCase } from "./FindPendingCashbacksUseCase";

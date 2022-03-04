@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ApproveOrderUseCase } from "./ApproveOrderUseCase";
+import { ApproveOrderAndReleaseCashbacksUseCase } from "./ApproveOrderAndReleaseCashbacksUseCase";
 import { FindPaymentOrderUseCase } from "./FindPaymentOrderUseCase";
 import { FindFilterOptionsToPaymentOrderUseCase } from "./FindFilterOptionsToPaymentOrderUseCase";
 import { SendTicketToEmailUseCase } from "./SendTicketToEmailUseCase";
@@ -47,16 +47,16 @@ class PaymentOrderController {
     return response.status(200).json(transactions);
   }
 
-  async approveOrder(request: Request, response: Response) {
+  async approveOrderAndReleaseCashbacks(request: Request, response: Response) {
     const orderId = request.params.id;
 
-    const approve = new ApproveOrderUseCase();
+    const approve = new ApproveOrderAndReleaseCashbacksUseCase();
 
-    const result = await approve.excute({
-      orderId: parseInt(orderId),
+    const message = await approve.execute({
+      paymentOrderId: parseInt(orderId),
     });
 
-    return response.status(200).json(result);
+    return response.status(200).json({ message });
   }
 
   async sendPaymentInfoToEmail(request: Request, response: Response) {
