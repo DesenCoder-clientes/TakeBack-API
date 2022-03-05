@@ -46,10 +46,6 @@ class FindAllCashbacksUseCase {
       });
     }
 
-    // if (filters.typeId) {
-    //   query.andWhere("type.description = :typeId", { typeId: filters.typeId });
-    // }
-
     const cashbacks = query.getRawMany();
 
     return cashbacks;
