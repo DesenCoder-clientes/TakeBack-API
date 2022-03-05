@@ -5,7 +5,6 @@ import { Consumers } from "../../../models/Consumer";
 import { PaymentOrder } from "../../../models/PaymentOrder";
 import { Transactions } from "../../../models/Transaction";
 import { TransactionStatus } from "../../../models/TransactionStatus";
-import { TransactionTypes } from "../../../models/TransactionType";
 
 interface Props {
   paymentOrderId: number;
@@ -24,7 +23,7 @@ class FindTransactionsInPaymentOrderUseCase {
       .createQueryBuilder("transactionInPaymentOrder")
       .select([
         "transaction.id",
-        "transaction.value",
+        "transaction.totalAmount",
         "transaction.dateAt",
         "transaction.takebackFeeAmount",
         "transaction.cashbackAmount",
@@ -42,11 +41,11 @@ class FindTransactionsInPaymentOrderUseCase {
         "status",
         "status.id = transaction.transactionStatus"
       )
-      .leftJoin(
-        TransactionTypes,
-        "type",
-        "type.id = transaction.transactionTypes"
-      )
+      // .leftJoin(
+      //   TransactionTypes,
+      //   "type",
+      //   "type.id = transaction.transactionTypes"
+      // )
       .orderBy("transaction.id")
       .where("transactionInPaymentOrder.id = :paymentOrderId", {
         paymentOrderId,

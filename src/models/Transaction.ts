@@ -2,16 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Generated,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
-import { TransactionTypes } from "./TransactionType";
 import { TransactionStatus } from "./TransactionStatus";
 import { Consumers } from "./Consumer";
 import { Companies } from "./Company";
@@ -27,7 +23,19 @@ export class Transactions {
   @Column({
     type: "float",
   })
-  value: number;
+  totalAmount: number;
+
+  @Column({
+    default: 0,
+    type: "float",
+  })
+  amountPayWithOthersMethods: number;
+
+  @Column({
+    default: 0,
+    type: "float",
+  })
+  amountPayWithTakebackBalance: number;
 
   @Column({
     nullable: true,
@@ -63,12 +71,6 @@ export class Transactions {
     length: 180,
   })
   cancellationDescription: string;
-
-  @ManyToOne(
-    () => TransactionTypes,
-    (transactionTypes) => transactionTypes.transaction
-  )
-  transactionTypes: TransactionTypes;
 
   @ManyToOne(
     () => TransactionStatus,

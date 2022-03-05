@@ -2,7 +2,6 @@ import { getRepository, Not } from "typeorm";
 import { Companies } from "../../../models/Company";
 import { Transactions } from "../../../models/Transaction";
 import { TransactionStatus } from "../../../models/TransactionStatus";
-import { TransactionTypes } from "../../../models/TransactionType";
 
 interface FindTransactionProps {
   offset: string;
@@ -34,11 +33,11 @@ class CostumerFindTransactionUseCase {
         "ts.description",
         "ts.id",
         "ts.blocked",
-        "tt.isUp",
+        // "tt.isUp",
       ])
       .leftJoin(Companies, "c", "c.id = t.companies")
       .leftJoin(TransactionStatus, "ts", "ts.id = t.transactionStatus")
-      .leftJoin(TransactionTypes, "tt", "tt.id = t.transactionTypes")
+      // .leftJoin(TransactionTypes, "tt", "tt.id = t.transactionTypes")
       .limit(parseInt(limit))
       .offset(parseInt(offset) * parseInt(limit))
       .where("t.consumers = :consumerId", { consumerId: consumerID })

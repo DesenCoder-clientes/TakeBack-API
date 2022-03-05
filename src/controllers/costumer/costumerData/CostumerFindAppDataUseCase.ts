@@ -5,7 +5,6 @@ import { CompanyStatus } from "../../../models/CompanyStatus";
 import { Consumers } from "../../../models/Consumer";
 import { Transactions } from "../../../models/Transaction";
 import { TransactionStatus } from "../../../models/TransactionStatus";
-import { TransactionTypes } from "../../../models/TransactionType";
 
 interface FindAppProps {
   consumerID: string;
@@ -40,22 +39,29 @@ class CostumerFindAppDataUseCase {
     }
 
     const transactions = await getRepository(Transactions)
-      .createQueryBuilder("t")
-      .select(["t.id", "t.cashbackAmount", "t.createdAt", "t.value"])
-      .addSelect([
-        "c.fantasyName",
-        "ts.description",
-        "ts.id",
-        "ts.blocked",
-        "tt.isUp",
+      .createQueryBuilder("transaction")
+      .select([
+        "transaction.id",
+        "transaction.cashbackAmount",
+        "transaction.createdAt",
+        "transaction.totalAmount",
       ])
-      .leftJoin(Companies, "c", "c.id = t.companies")
-      .leftJoin(TransactionStatus, "ts", "ts.id = t.transactionStatus")
-      .leftJoin(TransactionTypes, "tt", "tt.id = t.transactionTypes")
+      .addSelect([
+        "company.fantasyName",
+        "status.description",
+        "status.id",
+        "status.blocked",
+      ])
+      .leftJoin(Companies, "company", "company.id = transaction.companies")
+      .leftJoin(
+        TransactionStatus,
+        "status",
+        "status.id = transaction.transactionStatus"
+      )
       .limit(20)
-      .where("t.consumers = :consumerId", { consumerId: consumerID })
-      .andWhere("ts.description <> :status", { status: "Aguardando" })
-      .orderBy("t.createdAt", "DESC")
+      .where("transaction.consumers = :consumerId", { consumerId: consumerID })
+      .andWhere("status.description <> :status", { status: "Aguardando" })
+      .orderBy("transaction.createdAt", "DESC")
       .getRawMany();
 
     return { consumer, companies, transactions };

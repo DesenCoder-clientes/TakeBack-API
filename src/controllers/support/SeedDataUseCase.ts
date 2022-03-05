@@ -4,7 +4,6 @@ import * as bcrypt from "bcrypt";
 
 import { State } from "../../models/State";
 import { City } from "../../models/City";
-import { TransactionTypes } from "../../models/TransactionType";
 import { TransactionStatus } from "../../models/TransactionStatus";
 import { CompanyUserTypes } from "../../models/CompanyUserTypes";
 import { CompanyStatus } from "../../models/CompanyStatus";
@@ -245,21 +244,6 @@ const TransactionStatusSeed = [
   },
 ];
 
-const TransactionTypesSeed = [
-  {
-    description: "Ganho",
-    isUp: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    description: "Abatimento",
-    isUp: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
-
 const CompanyUserTypesSeed = [
   {
     description: "Administrador",
@@ -422,15 +406,6 @@ class GenerateSeedData {
 
     if (!generatedCitiesData) {
       return new InternalError("Erro ao gerar a cidade", 400);
-    }
-
-    // Gerando os Tipos de Transações
-    const generatedTransactionTypes = await getRepository(
-      TransactionTypes
-    ).save(TransactionTypesSeed);
-
-    if (generatedTransactionTypes.length === 0) {
-      return new InternalError("Erro ao gerar os tipos de transações", 400);
     }
 
     // Gerando os Status das Transações

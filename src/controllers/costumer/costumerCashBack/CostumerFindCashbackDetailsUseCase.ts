@@ -7,7 +7,6 @@ import { PaymentMethods } from "../../../models/PaymentMethod";
 import { Transactions } from "../../../models/Transaction";
 import { TransactionPaymentMethods } from "../../../models/TransactionPaymentMethod";
 import { TransactionStatus } from "../../../models/TransactionStatus";
-import { TransactionTypes } from "../../../models/TransactionType";
 
 interface FindAppProps {
   transactionID: number;
@@ -19,7 +18,7 @@ class CostumerFindCashbackDetailsUseCase {
       .createQueryBuilder("t")
       .select([
         "t.id",
-        "t.value",
+        "t.totalAmount",
         "t.cashbackPercent",
         "t.cashbackAmount",
         "t.cancellationDescription",
@@ -33,13 +32,13 @@ class CostumerFindCashbackDetailsUseCase {
         "city.name",
         "ts.id",
         "ts.description",
-        "tt.isUp",
+        // "tt.isUp",
       ])
       .leftJoin(Companies, "c", "c.id = t.companies")
       .leftJoin(CompaniesAddress, "ca", "ca.id = c.address")
       .leftJoin(City, "city", "city.id = ca.city")
       .leftJoin(TransactionStatus, "ts", "ts.id = t.transactionStatus")
-      .leftJoin(TransactionTypes, "tt", "tt.id = t.transactionTypes")
+      // .leftJoin(TransactionTypes, "tt", "tt.id = t.transactionTypes")
       .where("t.id = :transactionID", { transactionID })
       .getRawOne();
 
@@ -62,7 +61,8 @@ class CostumerFindCashbackDetailsUseCase {
       }
     });
 
-    const valuePayWithBalance = transactions.t_value - valuePayNotWithBalance;
+    const valuePayWithBalance =
+      transactions.t_totalAmount - valuePayNotWithBalance;
 
     return { transactions, paymentMethods, valuePayWithBalance };
   }

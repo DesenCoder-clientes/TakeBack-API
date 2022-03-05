@@ -5,7 +5,6 @@ import { GetConsumerInfoUseCase } from "./GetConsumerInfoUseCase";
 import { CancelCashBackUseCase } from "./CancelCashBackUseCase";
 import { FindPendingCashbacksUseCase } from "./FindPendingCashbacksUseCase";
 import { FindCashbackStatusUseCase } from "./FindCashbackStatusUseCase";
-import { FindCashbackTypesUseCase } from "./FindCashbackTypesUseCase";
 import { FindAllCashbacksUseCase } from "./FindAllCashbacksUseCase";
 import { FindCashbackFiltersUseCase } from "./FindCashbackFiltersUseCase";
 import { ValidateUserPasswordUseCase } from "./ValidateUserPasswordUseCase";
@@ -100,7 +99,6 @@ class CashbackController {
 
     const findCashbacks = new FindAllCashbacksUseCase();
     const findStatus = new FindCashbackStatusUseCase();
-    const findTypes = new FindCashbackTypesUseCase();
 
     const cashbacks = await findCashbacks.execute({
       companyId,
@@ -109,9 +107,9 @@ class CashbackController {
       limit,
     });
     const status = await findStatus.execute();
-    const types = await findTypes.execute();
+    // const types = await findTypes.execute();
 
-    return response.status(200).json({ cashbacks, status, types });
+    return response.status(200).json({ cashbacks, status });
   }
 
   async cancelCashBack(request: Request, response: Response) {

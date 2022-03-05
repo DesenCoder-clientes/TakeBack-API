@@ -5,7 +5,6 @@ import { PaymentMethods } from "../../../models/PaymentMethod";
 import { Transactions } from "../../../models/Transaction";
 import { TransactionPaymentMethods } from "../../../models/TransactionPaymentMethod";
 import { TransactionStatus } from "../../../models/TransactionStatus";
-import { TransactionTypes } from "../../../models/TransactionType";
 
 interface Props {
   companyId: string;
@@ -40,12 +39,12 @@ class ReportCashbackByPaymentMethodUseCase {
       transactionStatusIds.push(item.id);
     });
 
-    // Buscando o tipo de transação válida
-    const transactionsTypes = await getRepository(TransactionTypes).findOne({
-      where: {
-        description: "Ganho",
-      },
-    });
+    // // Buscando o tipo de transação válida
+    // const transactionsTypes = await getRepository(TransactionTypes).findOne({
+    //   where: {
+    //     description: "Ganho",
+    //   },
+    // });
 
     // Buscando as transações realizadas no período
     const transactions = await getRepository(TransactionPaymentMethods)
@@ -80,9 +79,9 @@ class ReportCashbackByPaymentMethodUseCase {
       .andWhere("transaction.transactionStatus IN (:...transactionStatusId)", {
         transactionStatusId: [...transactionStatusIds],
       })
-      .andWhere("transaction.transactionTypes = :transactionsTypeId", {
-        transactionsTypeId: transactionsTypes.id,
-      })
+      // .andWhere("transaction.transactionTypes = :transactionsTypeId", {
+      //   transactionsTypeId: transactionsTypes.id,
+      // })
       .groupBy("transactionPaymentMethod.paymentMethod")
       .addGroupBy("companyPaymentMethod.id")
       .addGroupBy("paymentMethods.description")

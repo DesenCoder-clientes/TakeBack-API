@@ -3,7 +3,6 @@ import { CompanyUsers } from "../../../models/CompanyUsers";
 import { Consumers } from "../../../models/Consumer";
 import { Transactions } from "../../../models/Transaction";
 import { TransactionStatus } from "../../../models/TransactionStatus";
-import { TransactionTypes } from "../../../models/TransactionType";
 
 interface Props {
   companyId: string;
@@ -15,7 +14,7 @@ class FindPendingCashbacksUseCase {
       .createQueryBuilder("transaction")
       .select([
         "transaction.id",
-        "transaction.value",
+        "transaction.totalAmount",
         "transaction.dateAt",
         "transaction.takebackFeeAmount",
         "transaction.cashbackAmount",
@@ -28,14 +27,8 @@ class FindPendingCashbacksUseCase {
         "status",
         "status.id = transaction.transactionStatus"
       )
-      .leftJoin(
-        TransactionTypes,
-        "type",
-        "type.id = transaction.transactionTypes"
-      )
       .where("transaction.companies = :companyId", { companyId })
       .andWhere("status.description = :status", { status: "Pendente" })
-      .andWhere("type.description = :type", { type: "Ganho" })
       .orderBy("transaction.id")
       .getRawMany();
 
