@@ -1,5 +1,4 @@
 import * as bcrypt from "bcrypt";
-import { Console } from "console";
 import { getRepository, In } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 
@@ -160,12 +159,12 @@ class GenerateCashbackUseCase {
     const cashbackPercent =
       cashbackAmount / (parseFloat(costumer.value) - takebackMethodValue);
 
-    //Calculando o percentual da taxa da takeback
+    // Calculando o percentual da taxa da takeback
     const takebackFeePercent = company.customIndustryFeeActive
       ? company.customIndustryFee
       : company.industry.industryFee;
 
-    //Calculando o valor da taxa da takeback
+    // Calculando o valor da taxa da takeback
     const takebackFeeAmount = company.customIndustryFeeActive
       ? company.customIndustryFee * parseFloat(costumer.value)
       : company.industry.industryFee * parseFloat(costumer.value);
