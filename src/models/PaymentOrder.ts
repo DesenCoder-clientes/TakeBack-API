@@ -7,8 +7,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { ColumnNumericTransformer } from "../config/TransformerDecimal";
+
 import { Companies } from "./Company";
-import { PaymentMethodOfPaymentOrder } from "./PaymentMethodOfPaymentOrder";
+import { PaymentOrderMethods } from "./PaymentOrderMethods";
 import { PaymentOrderStatus } from "./PaymentOrderStatus";
 import { Transactions } from "./Transaction";
 
@@ -18,8 +20,11 @@ export class PaymentOrder {
   id: number;
 
   @Column({
-    default: 0,
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    transformer: new ColumnNumericTransformer(),
   })
   value: number;
 
@@ -56,10 +61,10 @@ export class PaymentOrder {
   transactions: Transactions[];
 
   @ManyToOne(
-    () => PaymentMethodOfPaymentOrder,
+    () => PaymentOrderMethods,
     (paymentMethod) => paymentMethod.paymentOrder
   )
-  paymentMethod: PaymentMethodOfPaymentOrder;
+  paymentMethod: PaymentOrderMethods;
 
   @CreateDateColumn()
   createdAt: Date;

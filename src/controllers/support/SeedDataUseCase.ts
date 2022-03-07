@@ -14,7 +14,7 @@ import { generateRandomNumber } from "../../utils/RandomValueGenerate";
 import { sendMail } from "../../utils/SendMail";
 import { PaymentPlans } from "../../models/PaymentPlans";
 import { PaymentOrderStatus } from "../../models/PaymentOrderStatus";
-import { PaymentMethodOfPaymentOrder } from "../../models/PaymentMethodOfPaymentOrder";
+import { PaymentOrderMethods } from "../../models/PaymentOrderMethods";
 
 const StatesSeed = [
   {
@@ -181,7 +181,7 @@ const StatesSeed = [
   },
 ];
 
-const PaymentMethodOfPaymentOrderSeed = [
+const PaymentOrderMethodsSeed = [
   {
     description: "Saldo Takeback",
     createdAt: new Date(),
@@ -419,8 +419,8 @@ class GenerateSeedData {
 
     // Gerando formas de pagamento para ordens de pagamento
     const generatePaymentMethodForPaymentOrder = await getRepository(
-      PaymentMethodOfPaymentOrder
-    ).save(PaymentMethodOfPaymentOrderSeed);
+      PaymentOrderMethods
+    ).save(PaymentOrderMethodsSeed);
 
     if (generatePaymentMethodForPaymentOrder.length === 0) {
       return new InternalError(

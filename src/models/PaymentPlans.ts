@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { ColumnNumericTransformer } from "../config/TransformerDecimal";
 
 import { Companies } from "./Company";
 
@@ -18,8 +19,11 @@ export class PaymentPlans {
   description: string;
 
   @Column({
-    default: 0,
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    transformer: new ColumnNumericTransformer(),
   })
   value: number;
 

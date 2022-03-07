@@ -14,6 +14,7 @@ import { Companies } from "./Company";
 import { CompanyUsers } from "./CompanyUsers";
 import { TransactionPaymentMethods } from "./TransactionPaymentMethod";
 import { PaymentOrder } from "./PaymentOrder";
+import { ColumnNumericTransformer } from "../config/TransformerDecimal";
 
 @Entity()
 export class Transactions {
@@ -21,43 +22,72 @@ export class Transactions {
   id: number;
 
   @Column({
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    nullable: true,
+    transformer: new ColumnNumericTransformer(),
   })
   totalAmount: number;
 
   @Column({
-    default: 0,
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    nullable: true,
+    transformer: new ColumnNumericTransformer(),
   })
   amountPayWithOthersMethods: number;
 
   @Column({
-    default: 0,
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    nullable: true,
+    transformer: new ColumnNumericTransformer(),
   })
   amountPayWithTakebackBalance: number;
 
   @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
     nullable: true,
-    type: "float",
+    transformer: new ColumnNumericTransformer(),
   })
   takebackFeePercent: number;
 
   @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
     nullable: true,
-    type: "float",
+    transformer: new ColumnNumericTransformer(),
   })
   takebackFeeAmount: number;
 
   @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
     nullable: true,
-    type: "float",
+    transformer: new ColumnNumericTransformer(),
   })
   cashbackPercent: number;
 
   @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
     nullable: true,
-    type: "float",
+    transformer: new ColumnNumericTransformer(),
   })
   cashbackAmount: number;
 

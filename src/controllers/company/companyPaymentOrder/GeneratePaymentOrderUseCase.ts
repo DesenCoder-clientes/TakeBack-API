@@ -1,7 +1,7 @@
 import { getRepository, In } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
-import { PaymentMethodOfPaymentOrder } from "../../../models/PaymentMethodOfPaymentOrder";
+import { PaymentOrderMethods } from "../../../models/PaymentOrderMethods";
 import { PaymentOrder } from "../../../models/PaymentOrder";
 import { PaymentOrderStatus } from "../../../models/PaymentOrderStatus";
 import { Transactions } from "../../../models/Transaction";
@@ -82,9 +82,7 @@ class GeneratePaymentOrderUseCase {
     });
 
     // Buscando a ordem de pagamento pelo ID
-    const paymentMethod = await getRepository(
-      PaymentMethodOfPaymentOrder
-    ).findOne({
+    const paymentMethod = await getRepository(PaymentOrderMethods).findOne({
       where: { id: paymentMethodId },
     });
 

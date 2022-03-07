@@ -1,7 +1,6 @@
 import { getRepository } from "typeorm";
-import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
-import { PaymentMethodOfPaymentOrder } from "../../../models/PaymentMethodOfPaymentOrder";
+import { PaymentOrderMethods } from "../../../models/PaymentOrderMethods";
 import { PaymentOrder } from "../../../models/PaymentOrder";
 import { PaymentOrderStatus } from "../../../models/PaymentOrderStatus";
 
@@ -34,7 +33,7 @@ class FindPaymentOrderUseCase {
       .leftJoin(Companies, "company", "company.id = order.company")
       .leftJoin(PaymentOrderStatus, "status", "status.id = order.status")
       .leftJoin(
-        PaymentMethodOfPaymentOrder,
+        PaymentOrderMethods,
         "paymentMethod",
         "paymentMethod.id = order.paymentMethod"
       )

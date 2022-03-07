@@ -2,7 +2,7 @@ import { getRepository, ObjectID } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
 import { Consumers } from "../../../models/Consumer";
-import { PaymentMethodOfPaymentOrder } from "../../../models/PaymentMethodOfPaymentOrder";
+import { PaymentOrderMethods } from "../../../models/PaymentOrderMethods";
 import { PaymentOrder } from "../../../models/PaymentOrder";
 import { PaymentOrderStatus } from "../../../models/PaymentOrderStatus";
 import { Transactions } from "../../../models/Transaction";
@@ -120,9 +120,7 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
     });
 
     // Buscando a ordem de pagamento pelo ID
-    const paymentMethod = await getRepository(
-      PaymentMethodOfPaymentOrder
-    ).findOne(1);
+    const paymentMethod = await getRepository(PaymentOrderMethods).findOne(1);
 
     if (company.positiveBalance < takebackFeeAmount + cashbackAmount) {
       throw new InternalError("Saldo Takeback insuficiente", 400);

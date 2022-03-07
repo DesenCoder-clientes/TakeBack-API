@@ -1,4 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ColumnNumericTransformer } from "../config/TransformerDecimal";
 
 import { CompanyPaymentMethods } from "./CompanyPaymentMethod";
 import { Transactions } from "./Transaction";
@@ -9,14 +10,20 @@ export class TransactionPaymentMethods {
   public id!: number;
 
   @Column({
-    default: 0,
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    transformer: new ColumnNumericTransformer(),
   })
   public cashbackPercentage!: number;
 
   @Column({
-    default: 0,
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    transformer: new ColumnNumericTransformer(),
   })
   public cashbackValue!: number;
 
