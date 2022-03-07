@@ -4,6 +4,7 @@ import { City } from "../../../models/City";
 import { Companies } from "../../../models/Company";
 import { CompaniesAddress } from "../../../models/CompanyAddress";
 import { CompanyPaymentMethods } from "../../../models/CompanyPaymentMethod";
+import { PaymentMethods } from "../../../models/PaymentMethod";
 import { State } from "../../../models/State";
 
 interface Props {
@@ -19,27 +20,31 @@ class CostumerFindOneCompany {
         "address.street",
         "address.district",
         "address.number",
-        "paymentMethod.cashbackPercentage",
         "city.name",
         "state.initials",
       ])
       .leftJoin(CompaniesAddress, "address", "company.address = address.id")
       .leftJoin(City, "city", "address.city = city.id")
-      .leftJoin(
-        CompanyPaymentMethods,
-        "paymentMethod",
-        "company.companyPaymentMethod = paymentMethod.id"
-      )
       .leftJoin(State, "state", "city.state = state.id")
-      .where("paymentMethod.companyId = :companyId", {
+      .where("company.id = :companyId", {
         companyId,
       })
-      .andWhere("company.id = :companyId", {
-        companyId,
-      })
+      .getRawOne();
+
+    const paymentMethod = await getRepository(CompanyPaymentMethods)
+      .createQueryBuilder("paymentMethod")
+      .select(["paymentMethod.cashbackPercentage"])
+      .addSelect(["method.description"])
+      .leftJoin(Companies, "company", "company.id = :companyId", { companyId })
+      .leftJoin(
+        PaymentMethods,
+        "method",
+        "method.id = paymentMethod.paymentMethod"
+      )
+      .where("method.isTakebackMethod = :type", { type: false })
       .getRawMany();
 
-    return company;
+    return { company, paymentMethod };
   }
 }
 
