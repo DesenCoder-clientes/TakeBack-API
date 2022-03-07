@@ -4,7 +4,6 @@ import { InternalError } from "../../../config/GenerateErros";
 import { Consumers } from "../../../models/Consumer";
 import { Transactions } from "../../../models/Transaction";
 import { TransactionStatus } from "../../../models/TransactionStatus";
-import { TransactionTypes } from "../../../models/TransactionType";
 import { generateRandomNumber } from "../../../utils/RandomValueGenerate";
 
 interface AuthorizePurchaseProps {
@@ -35,12 +34,6 @@ class CostumerAuthorizePurchaseUseCase {
       },
     });
 
-    const transactionTypes = await getRepository(TransactionTypes).findOne({
-      where: {
-        description: "Abatimento",
-      },
-    });
-
     getRepository(Transactions).delete({
       transactionStatus,
     }); // Adicionar um where para deletar apenas a transação do usuário correto
@@ -49,10 +42,9 @@ class CostumerAuthorizePurchaseUseCase {
 
     const transaction = await getRepository(Transactions).save({
       consumers,
-      value,
+      totalAmount: value,
       keyTransaction: newCode,
       transactionStatus,
-      transactionTypes,
     });
     return { code: newCode, transactionId: transaction.id };
   }

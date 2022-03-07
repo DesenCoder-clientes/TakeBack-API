@@ -19,6 +19,8 @@ import { CompanyPaymentMethods } from "./CompanyPaymentMethod";
 import { PaymentPlans } from "./PaymentPlans";
 import { PaymentOrder } from "./PaymentOrder";
 
+import { ColumnNumericTransformer } from "../config/TransformerDecimal";
+
 @Entity()
 export class Companies {
   @PrimaryGeneratedColumn("uuid")
@@ -40,18 +42,11 @@ export class Companies {
   phone: string;
 
   @Column({
-    nullable: true,
-  })
-  socialContract: string;
-
-  @Column({
-    nullable: true,
-  })
-  acceptanceTerm: string;
-
-  @Column({
-    default: 0,
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    transformer: new ColumnNumericTransformer(),
   })
   customIndustryFee: number;
 
@@ -61,20 +56,29 @@ export class Companies {
   customIndustryFeeActive: boolean;
 
   @Column({
-    default: 0,
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    transformer: new ColumnNumericTransformer(),
   })
   positiveBalance: number;
 
   @Column({
-    default: 0,
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    transformer: new ColumnNumericTransformer(),
   })
   negativeBalance: number;
 
   @Column({
-    default: 0,
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    transformer: new ColumnNumericTransformer(),
   })
   monthlyPayment: number;
 

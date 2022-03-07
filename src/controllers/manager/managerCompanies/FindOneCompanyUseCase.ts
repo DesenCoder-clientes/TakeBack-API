@@ -30,6 +30,7 @@ class FindOneCompanyUseCase {
         "company.customIndustryFeeActive",
       ])
       .addSelect([
+        "industry.id",
         "industry.description",
         "industry.industryFee",
         "status.description",
@@ -37,6 +38,7 @@ class FindOneCompanyUseCase {
         "address.street",
         "address.district",
         "address.number",
+        "city.id",
         "city.name",
         "plan.id",
         "plan.description",

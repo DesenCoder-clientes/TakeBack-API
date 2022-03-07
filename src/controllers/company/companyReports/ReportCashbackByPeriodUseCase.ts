@@ -1,7 +1,6 @@
 import { getRepository, In } from "typeorm";
 import { Transactions } from "../../../models/Transaction";
 import { TransactionStatus } from "../../../models/TransactionStatus";
-import { TransactionTypes } from "../../../models/TransactionType";
 
 interface Props {
   companyId: string;
@@ -32,12 +31,12 @@ class ReportCashbackByPeriodUseCase {
       transactionStatusIds.push(item.id);
     });
 
-    // Buscando o tipo de transação válida
-    const transactionsTypes = await getRepository(TransactionTypes).findOne({
-      where: {
-        description: "Ganho",
-      },
-    });
+    // // Buscando o tipo de transação válida
+    // const transactionsTypes = await getRepository(TransactionTypes).findOne({
+    //   where: {
+    //     description: "Ganho",
+    //   },
+    // });
 
     // Buscando as transações realizadas no período
     const transactions = await getRepository(Transactions)
@@ -49,15 +48,12 @@ class ReportCashbackByPeriodUseCase {
         "transactions.dateAt >= :sevenDaysAgo AND transactions.dateAt < :today",
         { sevenDaysAgo, today }
       )
-      .andWhere(
-        "transactions.transactionStatus IN (:...transactionStatusId)",
-        {
-          transactionStatusId: [...transactionStatusIds],
-        }
-      )
-      .andWhere("transactions.transactionTypes = :transactionsTypeId", {
-        transactionsTypeId: transactionsTypes.id,
+      .andWhere("transactions.transactionStatus IN (:...transactionStatusId)", {
+        transactionStatusId: [...transactionStatusIds],
       })
+      // .andWhere("transactions.transactionTypes = :transactionsTypeId", {
+      //   transactionsTypeId: transactionsTypes.id,
+      // })
       .groupBy("transactions.dateAt")
       .orderBy("transactions.dateAt", "DESC")
       .getRawMany();

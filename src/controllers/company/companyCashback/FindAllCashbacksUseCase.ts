@@ -3,7 +3,6 @@ import { CompanyUsers } from "../../../models/CompanyUsers";
 import { Consumers } from "../../../models/Consumer";
 import { Transactions } from "../../../models/Transaction";
 import { TransactionStatus } from "../../../models/TransactionStatus";
-import { TransactionTypes } from "../../../models/TransactionType";
 
 interface FilterProps {
   statusId?: string;
@@ -23,7 +22,7 @@ class FindAllCashbacksUseCase {
       .createQueryBuilder("transaction")
       .select([
         "transaction.id",
-        "transaction.value",
+        "transaction.totalAmount",
         "transaction.dateAt",
         "transaction.takebackFeeAmount",
         "transaction.cashbackAmount",
@@ -36,11 +35,6 @@ class FindAllCashbacksUseCase {
         "status",
         "status.id = transaction.transactionStatus"
       )
-      .leftJoin(
-        TransactionTypes,
-        "type",
-        "type.id = transaction.transactionTypes"
-      )
       .where("transaction.companies = :companyId", { companyId })
       .offset(parseInt(offset) * parseInt(limit))
       .limit(parseInt(limit))
@@ -50,10 +44,6 @@ class FindAllCashbacksUseCase {
       query.andWhere("status.id = :statusId", {
         statusId: parseInt(filters.statusId),
       });
-    }
-
-    if (filters.typeId) {
-      query.andWhere("type.description = :typeId", { typeId: filters.typeId });
     }
 
     const cashbacks = query.getRawMany();

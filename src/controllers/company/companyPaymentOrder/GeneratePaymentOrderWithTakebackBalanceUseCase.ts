@@ -2,7 +2,7 @@ import { getRepository, ObjectID } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
 import { Consumers } from "../../../models/Consumer";
-import { PaymentMethodOfPaymentOrder } from "../../../models/PaymentMethodOfPaymentOrder";
+import { PaymentOrderMethods } from "../../../models/PaymentOrderMethods";
 import { PaymentOrder } from "../../../models/PaymentOrder";
 import { PaymentOrderStatus } from "../../../models/PaymentOrderStatus";
 import { Transactions } from "../../../models/Transaction";
@@ -77,7 +77,7 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
     transactionGroupedPerConsumer.map((item) => {
       let value = 0;
       item.transactions.map((transaction) => {
-        value = value + transaction.transaction_cashbackAmount;
+        value = value + parseFloat(transaction.transaction_cashbackAmount);
       });
 
       consumerToChangeBalance.push({
@@ -99,10 +99,11 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
 
       // Inserindo valor da taxa takeback na transação
       takebackFeeAmount =
-        takebackFeeAmount + item.transaction_takebackFeeAmount;
+        takebackFeeAmount + parseFloat(item.transaction_takebackFeeAmount);
 
       // Inserindo valor do cashback na transação
-      cashbackAmount = cashbackAmount + item.transaction_cashbackAmount;
+      cashbackAmount =
+        cashbackAmount + parseFloat(item.transaction_cashbackAmount);
     });
 
     // Verificando se alguma transação selecionada
@@ -120,9 +121,7 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
     });
 
     // Buscando a ordem de pagamento pelo ID
-    const paymentMethod = await getRepository(
-      PaymentMethodOfPaymentOrder
-    ).findOne(1);
+    const paymentMethod = await getRepository(PaymentOrderMethods).findOne(1);
 
     if (company.positiveBalance < takebackFeeAmount + cashbackAmount) {
       throw new InternalError("Saldo Takeback insuficiente", 400);

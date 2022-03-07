@@ -1,10 +1,10 @@
 import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
-import { PaymentMethodOfPaymentOrder } from "../../../models/PaymentMethodOfPaymentOrder";
+import { PaymentOrderMethods } from "../../../models/PaymentOrderMethods";
 
 class FindaPaymentMethodUseCase {
   async execute() {
-    const methods = await getRepository(PaymentMethodOfPaymentOrder)
+    const methods = await getRepository(PaymentOrderMethods)
       .createQueryBuilder("methods")
       .select(["methods.id", "methods.description"])
       .getRawMany();

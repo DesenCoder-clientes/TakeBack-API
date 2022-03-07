@@ -15,6 +15,7 @@ import { DataController } from "../controllers/manager/managerData/DataControlle
 import { DashboardController } from "../controllers/manager/managerDashboard/ManagerDashboardController";
 import { PaymentPlanController } from "../controllers/manager/managerPaymentPlan/PaymentPlanController";
 import { PaymentOrderController } from "../controllers/manager/managerPaymentOrder/PaymentOrderController";
+import { ManagerCitiesController } from "../controllers/manager/managerCities/ManagerCitiesController";
 
 const paymentMethod = new PaymentMethodController();
 const managerAuth = new ManagerAuthController();
@@ -26,6 +27,7 @@ const managerData = new DataController();
 const managerDashboard = new DashboardController();
 const managerPaymentPlan = new PaymentPlanController();
 const managerPaymentOrder = new PaymentOrderController();
+const managerCities = new ManagerCitiesController();
 
 const routes = Router();
 
@@ -82,6 +84,7 @@ routes.put(
 );
 
 routes.get("/cities/findAll", managerConsumers.listCities);
+routes.get("/cities/find/all", managerCities.findAllCities);
 
 routes.get("/payment/find", paymentMethod.findAll);
 routes.post("/payment/register", paymentMethod.register);

@@ -2,22 +2,19 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Generated,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
-import { TransactionTypes } from "./TransactionType";
 import { TransactionStatus } from "./TransactionStatus";
 import { Consumers } from "./Consumer";
 import { Companies } from "./Company";
 import { CompanyUsers } from "./CompanyUsers";
 import { TransactionPaymentMethods } from "./TransactionPaymentMethod";
 import { PaymentOrder } from "./PaymentOrder";
+import { ColumnNumericTransformer } from "../config/TransformerDecimal";
 
 @Entity()
 export class Transactions {
@@ -25,31 +22,72 @@ export class Transactions {
   id: number;
 
   @Column({
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    nullable: true,
+    transformer: new ColumnNumericTransformer(),
   })
-  value: number;
+  totalAmount: number;
 
   @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
     nullable: true,
-    type: "float",
+    transformer: new ColumnNumericTransformer(),
+  })
+  amountPayWithOthersMethods: number;
+
+  @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    nullable: true,
+    transformer: new ColumnNumericTransformer(),
+  })
+  amountPayWithTakebackBalance: number;
+
+  @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    nullable: true,
+    transformer: new ColumnNumericTransformer(),
   })
   takebackFeePercent: number;
 
   @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
     nullable: true,
-    type: "float",
+    transformer: new ColumnNumericTransformer(),
   })
   takebackFeeAmount: number;
 
   @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
     nullable: true,
-    type: "float",
+    transformer: new ColumnNumericTransformer(),
   })
   cashbackPercent: number;
 
   @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
     nullable: true,
-    type: "float",
+    transformer: new ColumnNumericTransformer(),
   })
   cashbackAmount: number;
 
@@ -63,12 +101,6 @@ export class Transactions {
     length: 180,
   })
   cancellationDescription: string;
-
-  @ManyToOne(
-    () => TransactionTypes,
-    (transactionTypes) => transactionTypes.transaction
-  )
-  transactionTypes: TransactionTypes;
 
   @ManyToOne(
     () => TransactionStatus,

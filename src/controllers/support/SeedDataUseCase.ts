@@ -4,7 +4,6 @@ import * as bcrypt from "bcrypt";
 
 import { State } from "../../models/State";
 import { City } from "../../models/City";
-import { TransactionTypes } from "../../models/TransactionType";
 import { TransactionStatus } from "../../models/TransactionStatus";
 import { CompanyUserTypes } from "../../models/CompanyUserTypes";
 import { CompanyStatus } from "../../models/CompanyStatus";
@@ -15,7 +14,7 @@ import { generateRandomNumber } from "../../utils/RandomValueGenerate";
 import { sendMail } from "../../utils/SendMail";
 import { PaymentPlans } from "../../models/PaymentPlans";
 import { PaymentOrderStatus } from "../../models/PaymentOrderStatus";
-import { PaymentMethodOfPaymentOrder } from "../../models/PaymentMethodOfPaymentOrder";
+import { PaymentOrderMethods } from "../../models/PaymentOrderMethods";
 
 const StatesSeed = [
   {
@@ -182,7 +181,7 @@ const StatesSeed = [
   },
 ];
 
-const PaymentMethodOfPaymentOrderSeed = [
+const PaymentOrderMethodsSeed = [
   {
     description: "Saldo Takeback",
     createdAt: new Date(),
@@ -240,21 +239,6 @@ const TransactionStatusSeed = [
   {
     description: "Em processamento",
     blocked: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
-
-const TransactionTypesSeed = [
-  {
-    description: "Ganho",
-    isUp: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    description: "Abatimento",
-    isUp: false,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -424,15 +408,6 @@ class GenerateSeedData {
       return new InternalError("Erro ao gerar a cidade", 400);
     }
 
-    // Gerando os Tipos de Transações
-    const generatedTransactionTypes = await getRepository(
-      TransactionTypes
-    ).save(TransactionTypesSeed);
-
-    if (generatedTransactionTypes.length === 0) {
-      return new InternalError("Erro ao gerar os tipos de transações", 400);
-    }
-
     // Gerando os Status das Transações
     const generatedTransactionStatus = await getRepository(
       TransactionStatus
@@ -444,8 +419,8 @@ class GenerateSeedData {
 
     // Gerando formas de pagamento para ordens de pagamento
     const generatePaymentMethodForPaymentOrder = await getRepository(
-      PaymentMethodOfPaymentOrder
-    ).save(PaymentMethodOfPaymentOrderSeed);
+      PaymentOrderMethods
+    ).save(PaymentOrderMethodsSeed);
 
     if (generatePaymentMethodForPaymentOrder.length === 0) {
       return new InternalError(

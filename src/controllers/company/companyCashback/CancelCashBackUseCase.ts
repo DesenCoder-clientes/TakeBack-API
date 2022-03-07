@@ -41,6 +41,8 @@ class CancelCashBackUseCase {
         "transaction.takebackFeeAmount",
         "transaction.cashbackPercent",
         "transaction.cashbackAmount",
+        "transaction.amountPayWithOthersMethods",
+        "transaction.amountPayWithTakebackBalance",
       ])
       .addSelect(["consumer.id"])
       .where("transaction.id IN (:...transactionIDs)", {
@@ -70,17 +72,25 @@ class CancelCashBackUseCase {
       });
     }
 
-    const consumersAndValuesToSubtractBlockedBalances = [];
+    const consumersAndValuesToAdjustBalances = [];
     // Somando os valores das transações e agrupando por usuário
     transactionGroupedPerConsumer.map((item) => {
-      let value = 0;
+      let valueToSubtractBlockedBalance = 0;
+      let valueToAddInBalance = 0;
+
       item.transactions.map((transaction) => {
-        value = value + transaction.transaction_cashbackAmount;
+        valueToSubtractBlockedBalance =
+          valueToSubtractBlockedBalance +
+          parseFloat(transaction.transaction_cashbackAmount);
+        valueToAddInBalance =
+          valueToAddInBalance +
+          parseFloat(transaction.transaction_amountPayWithTakebackBalance);
       });
 
-      consumersAndValuesToSubtractBlockedBalances.push({
+      consumersAndValuesToAdjustBalances.push({
         consumerId: item.consumerId,
-        value: value,
+        valueToSubtractBlockedBalance,
+        valueToAddInBalance,
       });
     });
 
@@ -105,8 +115,12 @@ class CancelCashBackUseCase {
     });
 
     // Mapeando os usuários agrupados nas transações
-    consumersAndValuesToSubtractBlockedBalances.map(async (item) => {
-      const blockedBalanceOfConsumer = await getRepository(Consumers).findOne(
+    let valueToSubtractCompanyPositiveBalance = 0;
+    consumersAndValuesToAdjustBalances.map(async (item) => {
+      valueToSubtractCompanyPositiveBalance =
+        valueToSubtractCompanyPositiveBalance + item.valueToAddInBalance;
+
+      const balanceOfConsumer = await getRepository(Consumers).findOne(
         item.consumerId
       );
 
@@ -114,7 +128,10 @@ class CancelCashBackUseCase {
       const balanceConsumerUpdated = await getRepository(Consumers).update(
         item.consumerId,
         {
-          blockedBalance: blockedBalanceOfConsumer.blockedBalance - item.value,
+          blockedBalance:
+            balanceOfConsumer.blockedBalance -
+            item.valueToSubtractBlockedBalance,
+          balance: balanceOfConsumer.balance + item.valueToAddInBalance,
         }
       );
 
@@ -124,17 +141,15 @@ class CancelCashBackUseCase {
     });
 
     // Buscando a empresa para pegar o saldo da mesma
-    const negativeBalanceOfCompany = await getRepository(Companies).findOne(
-      companyId
-    );
+    const companyBalance = await getRepository(Companies).findOne(companyId);
 
     // Somando o valor total a ser descontado do saldo negativo da empresa
     let valueToUpdateCompanyBalance = 0;
     transactions.map((item) => {
       valueToUpdateCompanyBalance =
         valueToUpdateCompanyBalance +
-        item.transaction_takebackFeeAmount +
-        item.transaction_cashbackAmount;
+        parseFloat(item.transaction_takebackFeeAmount) +
+        parseFloat(item.transaction_cashbackAmount);
     });
 
     // Atualizando o saldo negativo da empresa
@@ -142,8 +157,10 @@ class CancelCashBackUseCase {
       companyId,
       {
         negativeBalance:
-          negativeBalanceOfCompany.negativeBalance -
-          valueToUpdateCompanyBalance,
+          companyBalance.negativeBalance - valueToUpdateCompanyBalance,
+        positiveBalance:
+          companyBalance.positiveBalance -
+          valueToSubtractCompanyPositiveBalance,
       }
     );
 

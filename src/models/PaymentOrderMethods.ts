@@ -10,7 +10,7 @@ import {
 import { PaymentOrder } from "./PaymentOrder";
 
 @Entity()
-export class PaymentMethodOfPaymentOrder {
+export class PaymentOrderMethods {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
