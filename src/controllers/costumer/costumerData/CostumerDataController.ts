@@ -1,6 +1,7 @@
 import { Response, Request } from "express";
 import { CostumerFindAppDataUseCase } from "./CostumerFindAppDataUseCase";
 import { CostumerFindCompaniesUseCase } from "./CostumerFindCompaniesUseCase";
+import { CostumerFindOneCompany } from "./CostumerFindOneCompany";
 import { CostumerRegisterSignatureUseCase } from "./CostumerRegisterSignatureUseCase";
 import { CostumerUpdateAddressUseCase } from "./CostumerUpdateAddressUseCase";
 import { CostumerUpdateDataUseCase } from "./CostumerUpdateDataUseCase";
@@ -160,6 +161,18 @@ class CostumerDataController {
     const result = await find.execute({
       limit,
       offset,
+    });
+
+    return response.status(200).json(result);
+  }
+
+  async findOneCompany(request: Request, response: Response) {
+    const companyId = request.params.id;
+
+    const find = new CostumerFindOneCompany();
+
+    const result = await find.execute({
+      companyId,
     });
 
     return response.status(200).json(result);
