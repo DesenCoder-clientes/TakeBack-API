@@ -114,7 +114,7 @@ class GenerateCashbackUseCase {
           cashbackAmount =
             cashbackAmount +
             localizedMethod.cashbackPercentage *
-              parseFloat(informedMethod.value);
+              parseFloat(informedMethod.value.replace(",", "."));
         }
 
         if (
@@ -122,7 +122,9 @@ class GenerateCashbackUseCase {
           localizedMethod.paymentMethod.isTakebackMethod
         ) {
           takebackMethodExist = true;
-          takebackMethodValue = parseFloat(informedMethod.value);
+          takebackMethodValue = parseFloat(
+            informedMethod.value.replace(",", ".")
+          );
         }
       });
     });
@@ -316,7 +318,7 @@ class GenerateCashbackUseCase {
               cashbackPercentage: databaseMethod.cashbackPercentage,
               cashbackValue:
                 databaseMethod.cashbackPercentage *
-                parseFloat(informedMethod.value),
+                parseFloat(informedMethod.value.replace(",", ".")),
             });
           }
         });
@@ -383,7 +385,7 @@ class GenerateCashbackUseCase {
               cashbackPercentage: databaseMethod.cashbackPercentage,
               cashbackValue:
                 databaseMethod.cashbackPercentage *
-                parseFloat(informedMethod.value),
+                parseFloat(informedMethod.value.replace(",", ".")),
             });
           }
         });
