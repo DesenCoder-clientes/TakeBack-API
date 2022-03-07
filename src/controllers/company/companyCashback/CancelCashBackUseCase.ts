@@ -81,10 +81,10 @@ class CancelCashBackUseCase {
       item.transactions.map((transaction) => {
         valueToSubtractBlockedBalance =
           valueToSubtractBlockedBalance +
-          transaction.transaction_cashbackAmount;
+          parseFloat(transaction.transaction_cashbackAmount);
         valueToAddInBalance =
           valueToAddInBalance +
-          transaction.transaction_amountPayWithTakebackBalance;
+          parseFloat(transaction.transaction_amountPayWithTakebackBalance);
       });
 
       consumersAndValuesToAdjustBalances.push({
@@ -148,8 +148,8 @@ class CancelCashBackUseCase {
     transactions.map((item) => {
       valueToUpdateCompanyBalance =
         valueToUpdateCompanyBalance +
-        item.transaction_takebackFeeAmount +
-        item.transaction_cashbackAmount;
+        parseFloat(item.transaction_takebackFeeAmount) +
+        parseFloat(item.transaction_cashbackAmount);
     });
 
     // Atualizando o saldo negativo da empresa

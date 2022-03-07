@@ -34,12 +34,6 @@ class CostumerAuthorizePurchaseUseCase {
       },
     });
 
-    // const transactionTypes = await getRepository(TransactionTypes).findOne({
-    //   where: {
-    //     description: "Abatimento",
-    //   },
-    // });
-
     getRepository(Transactions).delete({
       transactionStatus,
     }); // Adicionar um where para deletar apenas a transação do usuário correto
@@ -51,7 +45,6 @@ class CostumerAuthorizePurchaseUseCase {
       totalAmount: value,
       keyTransaction: newCode,
       transactionStatus,
-      // transactionTypes,
     });
     return { code: newCode, transactionId: transaction.id };
   }

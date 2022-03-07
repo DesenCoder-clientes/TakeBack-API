@@ -77,7 +77,7 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
     transactionGroupedPerConsumer.map((item) => {
       let value = 0;
       item.transactions.map((transaction) => {
-        value = value + transaction.transaction_cashbackAmount;
+        value = value + parseFloat(transaction.transaction_cashbackAmount);
       });
 
       consumerToChangeBalance.push({
@@ -99,10 +99,11 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
 
       // Inserindo valor da taxa takeback na transação
       takebackFeeAmount =
-        takebackFeeAmount + item.transaction_takebackFeeAmount;
+        takebackFeeAmount + parseFloat(item.transaction_takebackFeeAmount);
 
       // Inserindo valor do cashback na transação
-      cashbackAmount = cashbackAmount + item.transaction_cashbackAmount;
+      cashbackAmount =
+        cashbackAmount + parseFloat(item.transaction_cashbackAmount);
     });
 
     // Verificando se alguma transação selecionada
