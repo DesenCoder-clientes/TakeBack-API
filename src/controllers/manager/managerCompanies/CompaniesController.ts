@@ -21,10 +21,17 @@ interface Props {
 
 interface UpdateProps {
   email: string;
+  corporateName: string;
+  fantasyName: string;
+  phone: string;
+  registeredNumber: string;
   industryId: string;
-  statusId: string;
   limit: string;
   offset: string;
+  /* district: string;
+  number: number;
+  street: string;
+  cityId: string; */
 }
 
 interface FindCompaniesQueryProps {
@@ -110,8 +117,20 @@ class CompaniesController {
   }
 
   async updateCompany(request: Request, response: Response) {
-    const { email, industryId, statusId, limit, offset }: UpdateProps =
-      request.body;
+    const {
+      email,
+      industryId,
+      corporateName,
+      fantasyName,
+      phone,
+      registeredNumber,
+      limit,
+      offset,
+    }: /* district,
+      number,
+      cityId,
+      street, */
+    UpdateProps = request.body;
     const { id } = request["tokenPayload"];
     const companyId = request.params.id;
 
@@ -120,10 +139,17 @@ class CompaniesController {
 
     const message = await update.execute({
       email,
-      statusId,
+      corporateName,
+      fantasyName,
+      phone,
+      registeredNumber,
       industryId,
       id,
       companyId,
+      /* cityId,
+      district,
+      number,
+      street, */
     });
 
     const companies = await find.execute({
