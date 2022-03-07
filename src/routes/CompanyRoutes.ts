@@ -1,6 +1,8 @@
 import { Router } from "express";
 
-import { AuthMiddleware } from "../middlewares/companyMiddlewares/AuthMiddleware";
+import { DecodeTokenMiddleware } from "../middlewares/DecodeTokenMiddleware";
+import { AuthCompanyMiddleware } from "../middlewares/AuthCompanyMiddleware";
+import { VerifyIfIsAuthorizedToEmitCashbacks } from "../middlewares/VerifyIfIsAuthorizedToEmitCashbacks";
 
 import { AuthCompanyController } from "../controllers/company/companyAuth/AuthCompanyController";
 import { ReportsController } from "../controllers/company/companyReports/ReportsController";
@@ -8,6 +10,7 @@ import { CashbackController } from "../controllers/company/companyCashback/Cashb
 import { PaymentMethodsController } from "../controllers/company/companyMethods/PaymentMethodsController";
 import { CompanyUserController } from "../controllers/company/companyUser/CompanyUserController";
 import { CompanyDataController } from "../controllers/company/companyData/CompanyDataController";
+import { PaymentOrderController } from "../controllers/company/companyPaymentOrder/PaymentOrderController";
 
 const auth = new AuthCompanyController();
 const reports = new ReportsController();
@@ -15,6 +18,7 @@ const cashback = new CashbackController();
 const paymentMethod = new PaymentMethodsController();
 const companyUser = new CompanyUserController();
 const companyData = new CompanyDataController();
+const paymentOrder = new PaymentOrderController();
 
 const routes = Router();
 
@@ -22,28 +26,63 @@ routes.post("/sign-up", auth.registerNewCompany);
 routes.post("/sign-in", auth.signUserCompany);
 routes.get("/verify-token", auth.verifyToken);
 
-routes.use(AuthMiddleware);
+routes.use(DecodeTokenMiddleware, AuthCompanyMiddleware);
 
-routes.get("/find-app-data", reports.findAppData);
-routes.get("/find-dashboard-data/:filterByPeriod", reports.dashboardReports);
-routes.get("/find-costumer-data/:cpf", cashback.getConsumerInfo);
-routes.post("/generate-cashback", cashback.generateCashback);
-routes.post(
-  "/generate-cashback/:code",
-  cashback.generateCashbackWithTakebackPaymentMethod
-);
-routes.get("/find-payment-methods", paymentMethod.findCompanyMethods);
+routes.get("/data/dashboard", reports.dashboardReports);
+routes.get("/data/find", companyData.findCompanyData);
+routes.put("/data/update", companyData.updateCompanyData);
+
+routes.get("/payments-methods/find/system", paymentMethod.findPaymentMethods);
+routes.get("/payments-methods/find", paymentMethod.findCompanyPaymentMethods);
 routes.get(
-  "/find-payment-methods/cashier",
-  paymentMethod.findCompanyMethodsForCashier
+  "/payments-methods/find/cashier",
+  paymentMethod.findCompanyPaymentMethodsForCashier
 );
-routes.get("/find-company-users", companyUser.findCompanyUsers);
-routes.post("/register-company-user", companyUser.registerCompanyUser);
-routes.put("/update-company-user", companyUser.updateCompanyUser);
-routes.get("/find-company-data", companyData.findCompanyData);
-routes.put("/update-company-data", companyData.updateCompanyData);
-routes.put("/update-company-method", paymentMethod.updateCompanyMethod);
-routes.post("/register-company-method", paymentMethod.registerCompanyMethod);
-routes.get("/find-cashbacks", cashback.findCashbacks);
+routes.put(
+  "/payments-methods/update",
+  paymentMethod.updateCompanyPaymentMethod
+);
+routes.post(
+  "/payments-methods/register",
+  paymentMethod.registerCompanyPaymentMethod
+);
+
+routes.get("/user/find", companyUser.findCompanyUsers);
+routes.post("/user/register", companyUser.registerCompanyUser);
+routes.put("/user/update/:id", companyUser.updateCompanyUser);
+routes.put("/user/password/update", companyUser.updatePassword);
+routes.put(
+  "/user/password/update/root/:id",
+  companyUser.rootUserUpdateUserPassword
+);
+
+routes.post(
+  "/cashback/confirm-password",
+  VerifyIfIsAuthorizedToEmitCashbacks,
+  cashback.validateUserPasswordToGenerateCashback
+);
+routes.get(
+  "/cashback/costumer/:cpf",
+  VerifyIfIsAuthorizedToEmitCashbacks,
+  cashback.getConsumerInfo
+);
+routes.post(
+  "/cashback/generate",
+  VerifyIfIsAuthorizedToEmitCashbacks,
+  cashback.generateCashback
+);
+routes.put("/cashback/cancel", cashback.cancelCashBack);
+routes.get("/cashbacks/find/pending", cashback.findPendingCashbacks);
+routes.get("/cashbacks/find/all/:offset/:limit", cashback.findAllCashbacks);
+routes.get("/cashbacks/find/filters", cashback.findCashbackFilters);
+
+routes.post("/order/payment/generate", paymentOrder.generate);
+routes.put("/order/payment/cancel/:id", paymentOrder.cancel);
+routes.get("/order/payment/methods/findAll", paymentOrder.findPaymentMethod);
+routes.get("/order/find/all/:offset/:limit", paymentOrder.findOrders);
+routes.get(
+  "/order/find/transactions/:id",
+  paymentOrder.findTransactionsInPaymentOrder
+);
 
 export default routes;

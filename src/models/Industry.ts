@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { ColumnNumericTransformer } from "../config/TransformerDecimal";
 
 import { Companies } from "./Company";
 
@@ -18,16 +19,15 @@ export class Industries {
   description: string;
 
   @Column({
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    transformer: new ColumnNumericTransformer(),
   })
-  categoryFee: number;
+  industryFee: number;
 
-  @Column({
-    default: 1,
-  })
-  iconCategory: number;
-
-  @OneToMany(() => Industries, () => Companies)
+  @OneToMany(() => Companies, (company) => company.industry)
   companies: Companies[];
 
   @CreateDateColumn()

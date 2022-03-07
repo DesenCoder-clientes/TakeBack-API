@@ -16,6 +16,7 @@ class RegisterCompanyPaymentMethodsUseCase {
       !companyId ||
       cashbackPercentage === undefined ||
       cashbackPercentage === null ||
+      cashbackPercentage === 0 ||
       !paymentId
     ) {
       throw new InternalError("Dados incompletos", 400);
@@ -25,29 +26,28 @@ class RegisterCompanyPaymentMethodsUseCase {
       throw new InternalError("Percentual negativo informado", 400);
     }
 
-    if (cashbackPercentage > 1) {
+    if (cashbackPercentage > 100) {
       throw new InternalError(
         "Não é possível informar valores acima de 100%",
         400
       );
     }
 
+    const company = await getRepository(Companies).findOne(companyId);
+    const paymentMethod = await getRepository(PaymentMethods).findOne(
+      paymentId
+    );
+
     const existentMethod = await getRepository(CompanyPaymentMethods).findOne({
-      where: { paymentMethodId: paymentId },
+      where: { paymentMethod, company },
     });
 
     if (existentMethod) {
       throw new InternalError("Forma de pagamento já cadastrada", 400);
     }
 
-    const company = await getRepository(Companies).findOne(companyId);
-
-    const paymentMethod = await getRepository(PaymentMethods).findOne(
-      paymentId
-    );
-
     const newMethod = await getRepository(CompanyPaymentMethods).save({
-      cashbackPercentage,
+      cashbackPercentage: cashbackPercentage / 100,
       isActive: true,
       companyId,
       company,
@@ -55,11 +55,11 @@ class RegisterCompanyPaymentMethodsUseCase {
       paymentMethod,
     });
 
-    if (newMethod) {
-      return "Método de pagamento cadastrado";
+    if (!newMethod) {
+      throw new InternalError("Erro ao cadastrar forma de pagamento", 400);
     }
 
-    throw new InternalError("Houve um erro", 500);
+    return "Método de pagamento cadastrado";
   }
 }
 

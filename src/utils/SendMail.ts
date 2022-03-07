@@ -10,8 +10,6 @@ export function sendMail(to: string, subject: string, text: string) {
     },
     (error, info) => {
       if (error) {
-        console.log("Error occurred");
-        console.log(error.message);
         return process.exit(1);
       }
 

@@ -1,12 +1,13 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from "typeorm";
 
+import { CompaniesAddress } from "./CompanyAddress";
+import { ConsumerAddress } from "./ConsumerAddress";
 import { State } from "./State";
 
 @Entity()
@@ -20,12 +21,15 @@ export class City {
   @Column()
   zipCode: string;
 
-  @ManyToOne(() => State, () => City)
+  @ManyToOne(() => State, (state) => state.cities)
   state: State;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @OneToMany(
+    () => CompaniesAddress,
+    (companiesAddress) => companiesAddress.city
+  )
+  companiesAdress: CompaniesAddress[];
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @OneToMany(() => ConsumerAddress, (consumerAddress) => consumerAddress.city)
+  consumersAddress: ConsumerAddress[];
 }

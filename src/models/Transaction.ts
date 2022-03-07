@@ -2,47 +2,92 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Generated,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
-import { TransactionTypes } from "./TransactionType";
 import { TransactionStatus } from "./TransactionStatus";
 import { Consumers } from "./Consumer";
 import { Companies } from "./Company";
 import { CompanyUsers } from "./CompanyUsers";
 import { TransactionPaymentMethods } from "./TransactionPaymentMethod";
+import { PaymentOrder } from "./PaymentOrder";
+import { ColumnNumericTransformer } from "../config/TransformerDecimal";
 
 @Entity()
 export class Transactions {
   @PrimaryGeneratedColumn("increment")
-  id: string;
+  id: number;
 
   @Column({
-    type: "float",
-  })
-  value: number;
-
-  @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
     nullable: true,
-    type: "float",
+    transformer: new ColumnNumericTransformer(),
   })
-  salesFee: number;
+  totalAmount: number;
 
   @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
     nullable: true,
-    type: "float",
+    transformer: new ColumnNumericTransformer(),
+  })
+  amountPayWithOthersMethods: number;
+
+  @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    nullable: true,
+    transformer: new ColumnNumericTransformer(),
+  })
+  amountPayWithTakebackBalance: number;
+
+  @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    nullable: true,
+    transformer: new ColumnNumericTransformer(),
+  })
+  takebackFeePercent: number;
+
+  @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    nullable: true,
+    transformer: new ColumnNumericTransformer(),
+  })
+  takebackFeeAmount: number;
+
+  @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    nullable: true,
+    transformer: new ColumnNumericTransformer(),
   })
   cashbackPercent: number;
 
   @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
     nullable: true,
-    type: "float",
+    transformer: new ColumnNumericTransformer(),
   })
   cashbackAmount: number;
 
@@ -57,23 +102,29 @@ export class Transactions {
   })
   cancellationDescription: string;
 
-  @ManyToOne(() => TransactionTypes, () => Transactions)
-  transactionType: TransactionTypes;
-
-  @ManyToOne(() => TransactionStatus, () => Transactions)
+  @ManyToOne(
+    () => TransactionStatus,
+    (transactionStatus) => transactionStatus.transaction
+  )
   transactionStatus: TransactionStatus;
 
-  @ManyToOne(() => Consumers, () => Transactions)
-  consumer: Consumers;
+  @ManyToOne(() => Consumers, (consumers) => consumers.transaction)
+  consumers: Consumers;
 
-  @ManyToOne(() => Companies, () => Transactions)
-  company: Companies;
+  @ManyToOne(() => Companies, (companies) => companies.transaction)
+  companies: Companies;
 
-  @ManyToOne(() => CompanyUsers, () => Transactions)
-  companyUser: CompanyUsers;
+  @ManyToOne(() => PaymentOrder, (payment) => payment.transactions)
+  paymentOrder: PaymentOrder;
 
-  @OneToMany(() => TransactionPaymentMethods, () => Transactions)
-  transactionPaymentMethod: TransactionPaymentMethods;
+  @ManyToOne(() => CompanyUsers, (companyUsers) => companyUsers.transaction)
+  companyUsers: CompanyUsers;
+
+  @OneToMany(
+    () => TransactionPaymentMethods,
+    (transactionPaymentMethods) => transactionPaymentMethods.transactions
+  )
+  public transactionPaymentMethod!: TransactionPaymentMethods[];
 
   @Column({
     type: "date",

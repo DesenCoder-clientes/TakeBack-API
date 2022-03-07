@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { ColumnNumericTransformer } from "../config/TransformerDecimal";
 
 import { ConsumerAddress } from "./ConsumerAddress";
 import { Transactions } from "./Transaction";
@@ -51,14 +52,20 @@ export class Consumers {
   signatureRegistered: boolean;
 
   @Column({
-    default: 0,
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    transformer: new ColumnNumericTransformer(),
   })
   balance: number;
 
   @Column({
-    default: 0,
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    transformer: new ColumnNumericTransformer(),
   })
   blockedBalance: number;
 
@@ -86,8 +93,8 @@ export class Consumers {
   @JoinColumn()
   address: ConsumerAddress;
 
-  @OneToMany(() => Transactions, () => Consumers)
-  transactions: Transactions;
+  @OneToMany(() => Transactions, (transactions) => transactions.consumers)
+  transaction: Transactions[];
 
   @CreateDateColumn()
   createdAt: Date;

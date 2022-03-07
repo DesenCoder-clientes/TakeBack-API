@@ -1,11 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 import { City } from "./City";
 
@@ -34,12 +27,6 @@ export class ConsumerAddress {
   })
   complement: string;
 
-  @ManyToOne(() => City)
+  @ManyToOne(() => City, (city) => city.consumersAddress)
   city: City;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

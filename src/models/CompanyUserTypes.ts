@@ -1,11 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 import { CompanyUsers } from "./CompanyUsers";
 
@@ -25,12 +18,9 @@ export class CompanyUserTypes {
   })
   isManager: boolean;
 
-  @OneToMany(() => CompanyUsers, () => CompanyUserTypes)
-  users: CompanyUsers;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @OneToMany(
+    () => CompanyUsers,
+    (companyUsers) => companyUsers.companyUserTypes
+  )
+  users: CompanyUsers[];
 }

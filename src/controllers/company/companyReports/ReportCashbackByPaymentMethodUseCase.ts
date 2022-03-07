@@ -5,15 +5,13 @@ import { PaymentMethods } from "../../../models/PaymentMethod";
 import { Transactions } from "../../../models/Transaction";
 import { TransactionPaymentMethods } from "../../../models/TransactionPaymentMethod";
 import { TransactionStatus } from "../../../models/TransactionStatus";
-import { TransactionTypes } from "../../../models/TransactionType";
 
 interface Props {
   companyId: string;
-  filterByPeriod: string;
 }
 
 class ReportCashbackByPaymentMethodUseCase {
-  async execute({ companyId, filterByPeriod }: Props) {
+  async execute({ companyId }: Props) {
     const date = new Date();
     let today = date.toLocaleDateString();
     let sevenDaysAgo = new Date(
@@ -41,12 +39,12 @@ class ReportCashbackByPaymentMethodUseCase {
       transactionStatusIds.push(item.id);
     });
 
-    // Buscando o tipo de transação válida
-    const transactionsTypes = await getRepository(TransactionTypes).findOne({
-      where: {
-        description: "Ganho",
-      },
-    });
+    // // Buscando o tipo de transação válida
+    // const transactionsTypes = await getRepository(TransactionTypes).findOne({
+    //   where: {
+    //     description: "Ganho",
+    //   },
+    // });
 
     // Buscando as transações realizadas no período
     const transactions = await getRepository(TransactionPaymentMethods)
@@ -56,41 +54,38 @@ class ReportCashbackByPaymentMethodUseCase {
       .leftJoin(
         CompanyPaymentMethods,
         "companyPaymentMethod",
-        "companyPaymentMethod.id = transactionPaymentMethod.paymentMethodId"
+        "companyPaymentMethod.id = transactionPaymentMethod.paymentMethod"
       )
       .leftJoin(
         Companies,
         "company",
-        "company.id = companyPaymentMethod.companyId"
+        "company.id = companyPaymentMethod.company"
       )
       .leftJoin(
         Transactions,
         "transaction",
-        "transaction.id = transactionPaymentMethod.transactionId"
+        "transaction.id = transactionPaymentMethod.transactions"
       )
       .leftJoin(
         PaymentMethods,
         "paymentMethods",
-        "paymentMethods.id = companyPaymentMethod.paymentMethodId"
+        "paymentMethods.id = companyPaymentMethod.paymentMethod"
       )
       .where("company.id = :companyId", { companyId })
       .andWhere(
         "transaction.dateAt >= :sevenDaysAgo AND transaction.dateAt < :today",
         { sevenDaysAgo, today }
       )
-      .andWhere(
-        "transaction.transactionStatusId IN (:...transactionStatusId)",
-        {
-          transactionStatusId: [...transactionStatusIds],
-        }
-      )
-      .andWhere("transaction.transactionType = :transactionsTypeId", {
-        transactionsTypeId: transactionsTypes.id,
+      .andWhere("transaction.transactionStatus IN (:...transactionStatusId)", {
+        transactionStatusId: [...transactionStatusIds],
       })
-      .groupBy("transactionPaymentMethod.paymentMethodId")
+      // .andWhere("transaction.transactionTypes = :transactionsTypeId", {
+      //   transactionsTypeId: transactionsTypes.id,
+      // })
+      .groupBy("transactionPaymentMethod.paymentMethod")
       .addGroupBy("companyPaymentMethod.id")
       .addGroupBy("paymentMethods.description")
-      .orderBy("transactionPaymentMethod.paymentMethodId")
+      .orderBy("transactionPaymentMethod.paymentMethod")
       .getRawMany();
 
     // Formatando os dados para reposta

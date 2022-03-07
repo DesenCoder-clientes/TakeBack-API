@@ -1,11 +1,17 @@
 import { Request, Response } from "express";
 
 import { GenerateCashbackUseCase } from "./GenerateCashbackUseCase";
-import { GenerateCashbackWithTakebackPaymentMethodUseCase } from "./GenerateCashbackWithTakebackPaymentMethodUseCase";
 import { GetConsumerInfoUseCase } from "./GetConsumerInfoUseCase";
-import { FindCashbacksUseCase } from "./FindCashbacksUseCase";
+import { CancelCashBackUseCase } from "./CancelCashBackUseCase";
+import { FindPendingCashbacksUseCase } from "./FindPendingCashbacksUseCase";
+import { FindCashbackStatusUseCase } from "./FindCashbackStatusUseCase";
+import { FindAllCashbacksUseCase } from "./FindAllCashbacksUseCase";
+import { FindCashbackFiltersUseCase } from "./FindCashbackFiltersUseCase";
+import { ValidateUserPasswordUseCase } from "./ValidateUserPasswordUseCase";
 
 interface GenerateCashbackProps {
+  code?: string;
+  userPassword: string;
   cashbackData: {
     costumer: {
       cpf: string;
@@ -20,10 +26,30 @@ interface GenerateCashbackProps {
   };
 }
 
+interface CancelProps {
+  transactionIDs: number[];
+  cancellationDescription: string;
+}
+
 class CashbackController {
+  async validateUserPasswordToGenerateCashback(
+    request: Request,
+    response: Response
+  ) {
+    const { companyId, userId } = request["tokenPayload"];
+    const { password } = request.body;
+
+    const verify = new ValidateUserPasswordUseCase();
+
+    const result = await verify.execute({ companyId, password, userId });
+
+    return response.status(200).json(result);
+  }
+
   async generateCashback(request: Request, response: Response) {
     const { companyId, userId } = request["tokenPayload"];
-    const { cashbackData }: GenerateCashbackProps = request.body;
+    const { cashbackData, code, userPassword }: GenerateCashbackProps =
+      request.body;
 
     const cashback = new GenerateCashbackUseCase();
 
@@ -31,25 +57,7 @@ class CashbackController {
       cashbackData,
       companyId,
       userId,
-    });
-
-    return response.status(200).json(result);
-  }
-
-  async generateCashbackWithTakebackPaymentMethod(
-    request: Request,
-    response: Response
-  ) {
-    const { companyId, userId } = request["tokenPayload"];
-    const { cashbackData }: GenerateCashbackProps = request.body;
-    const code = request.params.code;
-
-    const cashback = new GenerateCashbackWithTakebackPaymentMethodUseCase();
-
-    const result = await cashback.execute({
-      cashbackData,
-      companyId,
-      userId,
+      userPassword,
       code,
     });
 
@@ -66,14 +74,65 @@ class CashbackController {
     return response.status(200).json(result);
   }
 
-  async findCashbacks(request: Request, response: Response) {
+  async findCashbackFilters(request: Request, response: Response) {
+    const find = new FindCashbackFiltersUseCase();
+
+    const status = await find.execute();
+
+    return response.status(200).json(status);
+  }
+
+  async findPendingCashbacks(request: Request, response: Response) {
     const { companyId } = request["tokenPayload"];
 
-    const cashbacks = new FindCashbacksUseCase();
+    const findCashbacks = new FindPendingCashbacksUseCase();
 
-    const result = await cashbacks.execute({ companyId });
+    const cashbacks = await findCashbacks.execute({ companyId });
 
-    return response.status(200).json(result);
+    return response.status(200).json(cashbacks);
+  }
+
+  async findAllCashbacks(request: Request, response: Response) {
+    const { companyId } = request["tokenPayload"];
+    const filters = request.query;
+    const { offset, limit } = request.params;
+
+    const findCashbacks = new FindAllCashbacksUseCase();
+    const findStatus = new FindCashbackStatusUseCase();
+
+    const cashbacks = await findCashbacks.execute({
+      companyId,
+      filters,
+      offset,
+      limit,
+    });
+    const status = await findStatus.execute();
+    // const types = await findTypes.execute();
+
+    return response.status(200).json({ cashbacks, status });
+  }
+
+  async cancelCashBack(request: Request, response: Response) {
+    const { companyId } = request["tokenPayload"];
+
+    const { cancellationDescription, transactionIDs }: CancelProps =
+      request.body;
+
+    const cancel = new CancelCashBackUseCase();
+
+    const sucess = await cancel.execute({
+      cancellationDescription,
+      transactionIDs,
+      companyId,
+    });
+
+    if (sucess) {
+      const cashbacks = new FindPendingCashbacksUseCase();
+
+      const result = await cashbacks.execute({ companyId });
+
+      return response.status(200).json(result);
+    }
   }
 }
 

@@ -1,6 +1,8 @@
 import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
+import { Companies } from "../../../models/Company";
 import { CompanyPaymentMethods } from "../../../models/CompanyPaymentMethod";
+import { CompanyStatus } from "../../../models/CompanyStatus";
 
 interface Props {
   companyId: string;
@@ -8,27 +10,34 @@ interface Props {
 
 class FindCompanyPaymentMethodsForCashierUseCase {
   async execute({ companyId }: Props) {
+    const companyIsAuthorized = await getRepository(Companies)
+      .createQueryBuilder("company")
+      .select("status.generateCashback")
+      .leftJoin(CompanyStatus, "status", "status.id = company.status")
+      .where("company.id = :companyId", { companyId })
+      .getRawOne();
+
     if (!companyId) {
       throw new InternalError("Id da empresa não informado", 400);
     }
 
-    const methods = await getRepository(CompanyPaymentMethods).find({
+    const methodsFinded = await getRepository(CompanyPaymentMethods).find({
       where: { companyId, isActive: true },
       relations: ["paymentMethod"],
       order: { createdAt: "DESC" },
     });
 
-    const result = [];
+    const methods = [];
 
-    methods.map((method) => {
-      result.push({
+    methodsFinded.map((method) => {
+      methods.push({
         id: method.id,
         description: method.paymentMethod.description,
         paymentMethodId: method.paymentMethodId,
       });
     });
 
-    return result;
+    return { methods, companyIsAuthorized };
   }
 }
 

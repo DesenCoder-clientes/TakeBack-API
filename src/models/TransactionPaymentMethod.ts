@@ -1,11 +1,5 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ColumnNumericTransformer } from "../config/TransformerDecimal";
 
 import { CompanyPaymentMethods } from "./CompanyPaymentMethod";
 import { Transactions } from "./Transaction";
@@ -13,35 +7,35 @@ import { Transactions } from "./Transaction";
 @Entity()
 export class TransactionPaymentMethods {
   @PrimaryGeneratedColumn("increment")
-  id: number;
-
-  @Column()
-  transactionId: string;
-
-  @Column()
-  paymentMethodId: number;
+  public id!: number;
 
   @Column({
-    default: 0,
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    transformer: new ColumnNumericTransformer(),
   })
-  cashbackPercentage: number;
+  public cashbackPercentage!: number;
 
   @Column({
-    default: 0,
-    type: "float",
+    type: "decimal",
+    precision: 10,
+    scale: 4,
+    default: 0.0,
+    transformer: new ColumnNumericTransformer(),
   })
-  cashbackValue: number;
+  public cashbackValue!: number;
 
-  @ManyToOne(() => Transactions, () => TransactionPaymentMethods)
-  transaction: Transactions;
+  @ManyToOne(
+    () => Transactions,
+    (transactions) => transactions.transactionPaymentMethod
+  )
+  public transactions!: Transactions;
 
-  @ManyToOne(() => CompanyPaymentMethods, () => TransactionPaymentMethods)
-  paymentMethod: CompanyPaymentMethods;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @ManyToOne(
+    () => CompanyPaymentMethods,
+    (companyPaymentMethods) => companyPaymentMethods.paymentMethod
+  )
+  public paymentMethod!: CompanyPaymentMethods;
 }

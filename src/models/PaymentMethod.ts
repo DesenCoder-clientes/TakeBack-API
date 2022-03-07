@@ -18,11 +18,22 @@ export class PaymentMethods {
   @Column()
   description: string;
 
-  @OneToMany(() => CompanyPaymentMethods, () => PaymentMethods)
-  companyPaymentMethod: CompanyPaymentMethods;
+  @Column({
+    default: false,
+  })
+  isTakebackMethod: boolean;
 
-  @OneToMany(() => TransactionPaymentMethods, () => PaymentMethods)
-  transactionPaymentMethod: TransactionPaymentMethods;
+  @OneToMany(
+    () => CompanyPaymentMethods,
+    (companyPaymentMethods) => companyPaymentMethods.paymentMethod
+  )
+  public companyPaymentMethod!: CompanyPaymentMethods[];
+
+  @OneToMany(
+    () => TransactionPaymentMethods,
+    (transactionPaymentMethods) => transactionPaymentMethods.paymentMethod
+  )
+  public transactionPaymentMethod!: TransactionPaymentMethods[];
 
   @CreateDateColumn()
   createdAt: Date;

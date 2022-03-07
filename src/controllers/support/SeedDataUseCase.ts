@@ -1,19 +1,20 @@
 import { getRepository } from "typeorm";
 import { InternalError } from "../../config/GenerateErros";
+import * as bcrypt from "bcrypt";
 
 import { State } from "../../models/State";
 import { City } from "../../models/City";
-import { TransactionTypes } from "../../models/TransactionType";
 import { TransactionStatus } from "../../models/TransactionStatus";
 import { CompanyUserTypes } from "../../models/CompanyUserTypes";
 import { CompanyStatus } from "../../models/CompanyStatus";
 import { PaymentMethods } from "../../models/PaymentMethod";
-
-// import { StatesSeed } from "../../database/seeds/statesSeed";
-// import { TransactionTypesSeed } from "../../database/seeds/transactionTypesSeed";
-// import { TransactionStatusSeed } from "../../database/seeds/transactionStatusSeed";
-// import { CompanyUserTypesSeed } from "../../database/seeds/companyUserTypesSeed";
-// import { CompanyStatusSeed } from "../../database/seeds/companyStatuSeed";
+import { TakeBackUserTypes } from "../../models/TakeBackUserTypes";
+import { TakeBackUsers } from "../../models/TakeBackUsers";
+import { generateRandomNumber } from "../../utils/RandomValueGenerate";
+import { sendMail } from "../../utils/SendMail";
+import { PaymentPlans } from "../../models/PaymentPlans";
+import { PaymentOrderStatus } from "../../models/PaymentOrderStatus";
+import { PaymentOrderMethods } from "../../models/PaymentOrderMethods";
 
 const StatesSeed = [
   {
@@ -180,6 +181,24 @@ const StatesSeed = [
   },
 ];
 
+const PaymentOrderMethodsSeed = [
+  {
+    description: "Saldo Takeback",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "PIX",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Boleto",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
 const TransactionStatusSeed = [
   {
     description: "Pendente",
@@ -189,6 +208,12 @@ const TransactionStatusSeed = [
   },
   {
     description: "Aprovada",
+    blocked: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Pago com takeback",
     blocked: false,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -211,18 +236,9 @@ const TransactionStatusSeed = [
     createdAt: new Date(),
     updatedAt: new Date(),
   },
-];
-
-const TransactionTypesSeed = [
   {
-    description: "Ganho",
-    isUp: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    description: "Abatimento",
-    isUp: false,
+    description: "Em processamento",
+    blocked: true,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -243,23 +259,125 @@ const CompanyUserTypesSeed = [
   },
 ];
 
+const PaymentPlanSeed = [
+  {
+    description: "Plano padrão",
+    value: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+const PaymentOrderStatusSeed = [
+  {
+    description: "Pagamento solicitado",
+  },
+  {
+    description: "Aguardando pagamento",
+  },
+  {
+    description: "Cancelada",
+  },
+  {
+    description: "Autorizada",
+  },
+];
+
 const CompanyStatusSeed = [
   {
     description: "Ativo",
     blocked: false,
+    generateCashback: true,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
     description: "Bloqueado",
     blocked: true,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Cadastro solicitado",
+    blocked: true,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Em análise",
+    blocked: true,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Documentação pendente",
+    blocked: true,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Inadimplente",
+    blocked: false,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Cadastro não aprovado",
+    blocked: true,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Pendente à aprovação",
+    blocked: true,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Demonstração",
+    blocked: false,
+    generateCashback: false,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
 ];
 
+const tbUserTypes = [
+  {
+    description: "Root",
+    isRoot: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Administrativo",
+    isRoot: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Colaborador",
+    isRoot: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+interface Props {
+  cpf: string;
+  email: string;
+  name: string;
+}
+
 class GenerateSeedData {
-  async execute() {
+  async execute({ cpf, email, name }: Props) {
     const [, count] = await getRepository(State).findAndCount();
 
     if (count > 0) {
@@ -290,15 +408,6 @@ class GenerateSeedData {
       return new InternalError("Erro ao gerar a cidade", 400);
     }
 
-    // Gerando os Tipos de Transações
-    const generatedTransactionTypes = await getRepository(
-      TransactionTypes
-    ).save(TransactionTypesSeed);
-
-    if (generatedTransactionTypes.length === 0) {
-      return new InternalError("Erro ao gerar os tipos de transações", 400);
-    }
-
     // Gerando os Status das Transações
     const generatedTransactionStatus = await getRepository(
       TransactionStatus
@@ -306,6 +415,30 @@ class GenerateSeedData {
 
     if (generatedTransactionStatus.length === 0) {
       return new InternalError("Erro ao gerar os status de transações", 400);
+    }
+
+    // Gerando formas de pagamento para ordens de pagamento
+    const generatePaymentMethodForPaymentOrder = await getRepository(
+      PaymentOrderMethods
+    ).save(PaymentOrderMethodsSeed);
+
+    if (generatePaymentMethodForPaymentOrder.length === 0) {
+      return new InternalError(
+        "Erro ao gerar formas de pagamento para ordens de pagamento",
+        400
+      );
+    }
+
+    // Gerando status das ordens de pagamento
+    const generatePaymentOrderStatus = await getRepository(
+      PaymentOrderStatus
+    ).save(PaymentOrderStatusSeed);
+
+    if (generatePaymentOrderStatus.length === 0) {
+      return new InternalError(
+        "Erro ao gerar os status das ordens de pagamento",
+        400
+      );
     }
 
     // Gerando os Tipos de Usuários
@@ -326,14 +459,60 @@ class GenerateSeedData {
       return new InternalError("Erro ao gerar os status das empresas", 400);
     }
 
+    // Gerando valor default para o Plano de Pagamento
+    const generatePaymentPlan = await getRepository(PaymentPlans).save(
+      PaymentPlanSeed
+    );
+
+    if (generatePaymentPlan.length === 0) {
+      return new InternalError(
+        "Erro ao gerar o plano padrão das empresas",
+        400
+      );
+    }
+
     // Gerando o método de pagamneto Takeback
     const generatedPaymentMethod = await getRepository(PaymentMethods).save({
       description: "Takeback",
+      isTakebackMethod: true,
     });
 
     if (!generatedPaymentMethod) {
       return new InternalError("Erro ao gerar método de pagamento", 400);
     }
+
+    // Gerando tipos de usuários take back
+    const takeBackUserTypes = await getRepository(TakeBackUserTypes).save(
+      tbUserTypes
+    );
+
+    if (!takeBackUserTypes) {
+      return new InternalError(
+        "Erro ao gerar tipo de usuário do take back",
+        400
+      );
+    }
+
+    const newPassword = generateRandomNumber(100000, 999999);
+    const sendedPasswordEncrypted = bcrypt.hashSync(newPassword.toString(), 10);
+
+    const takeBackUsers = await getRepository(TakeBackUsers).save({
+      cpf,
+      email,
+      name,
+      phone: "",
+      userType: takeBackUserTypes[0],
+      isActive: true,
+      password: sendedPasswordEncrypted,
+    });
+
+    if (!takeBackUsers) {
+      return new InternalError("Erro ao gerar usuário do take back", 400);
+    }
+
+    const message = `Bem vindo ${name}! CPF.: ${cpf}, Senha.: ${newPassword}`;
+
+    sendMail(email, "Usuário ROOT", message);
 
     return "Dados semeados";
   }
