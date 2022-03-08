@@ -28,10 +28,10 @@ interface UpdateProps {
   industryId: string;
   limit: string;
   offset: string;
-  /* district: string;
+  district: string;
   number: number;
   street: string;
-  cityId: string; */
+  cityId: string;
 }
 
 interface FindCompaniesQueryProps {
@@ -125,18 +125,18 @@ class CompaniesController {
     const find = new FindOneCompanyUseCase();
 
     const message = await update.execute({
+      id,
+      companyId,
       email: props.email,
       corporateName: props.corporateName,
       fantasyName: props.fantasyName,
       phone: props.phone,
       registeredNumber: props.registeredNumber,
       industryId: props.industryId,
-      id,
-      companyId,
-      /* cityId,
-      district,
-      number,
-      street, */
+      cityId: props.cityId,
+      district: props.district,
+      number: props.number,
+      street: props.street,
     });
 
     const companies = await find.execute({ companyId });
