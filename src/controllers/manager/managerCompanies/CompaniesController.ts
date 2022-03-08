@@ -28,10 +28,10 @@ interface UpdateProps {
   industryId: string;
   limit: string;
   offset: string;
-  /* district: string;
+  district: string;
   number: number;
   street: string;
-  cityId: string; */
+  cityId: string;
 }
 
 interface FindCompaniesQueryProps {
@@ -117,45 +117,29 @@ class CompaniesController {
   }
 
   async updateCompany(request: Request, response: Response) {
-    const {
-      email,
-      industryId,
-      corporateName,
-      fantasyName,
-      phone,
-      registeredNumber,
-      limit,
-      offset,
-    }: /* district,
-      number,
-      cityId,
-      street, */
-    UpdateProps = request.body;
+    const props: UpdateProps = request.body;
     const { id } = request["tokenPayload"];
     const companyId = request.params.id;
 
     const update = new UpdateCompanyUseCase();
-    const find = new ListCompanyUseCase();
+    const find = new FindOneCompanyUseCase();
 
     const message = await update.execute({
-      email,
-      corporateName,
-      fantasyName,
-      phone,
-      registeredNumber,
-      industryId,
       id,
       companyId,
-      /* cityId,
-      district,
-      number,
-      street, */
+      email: props.email,
+      corporateName: props.corporateName,
+      fantasyName: props.fantasyName,
+      phone: props.phone,
+      registeredNumber: props.registeredNumber,
+      industryId: props.industryId,
+      cityId: props.cityId,
+      district: props.district,
+      number: props.number,
+      street: props.street,
     });
 
-    const companies = await find.execute({
-      limit,
-      offset,
-    });
+    const companies = await find.execute({ companyId });
 
     response.status(200).json({ message, companies });
   }
