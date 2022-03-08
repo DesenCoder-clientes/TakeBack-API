@@ -36,6 +36,8 @@ routes.put("/update/address", costumerData.updateAddress);
 routes.post("/signature/register", costumerData.registerSignature);
 routes.put("/signature/update", costumerData.updateSignature);
 routes.get("/companies/find/:offset/:limit", costumerData.findCompanies);
+routes.get("/company/find/one/:id", costumerData.findOneCompany);
+routes.get("/company/filter", costumerData.filterCompanies);
 
 routes.put("/update/password", costumerAuth.updateCostumerPassword);
 routes.delete("/account/deactive", costumerAuth.desactiveCostumer);
