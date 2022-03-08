@@ -44,6 +44,11 @@ interface FindCompaniesQueryProps {
   cityId?: string;
 }
 
+interface FiltersToFindCompany {
+  city: string;
+  industry: string;
+}
+
 class CostumerDataController {
   async updateData(request: Request, response: Response) {
     const consumerID = request["tokenPayload"].id;
@@ -160,12 +165,14 @@ class CostumerDataController {
 
   async findCompanies(request: Request, response: Response) {
     const { offset, limit } = request.params;
+    const filters = request.query;
 
     const find = new CostumerFindCompaniesUseCase();
 
     const result = await find.execute({
       limit,
       offset,
+      filters,
     });
 
     return response.status(200).json(result);
