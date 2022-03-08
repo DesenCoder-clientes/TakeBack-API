@@ -1,35 +1,45 @@
-import { getRepository, In } from "typeorm";
+import { getRepository } from "typeorm";
+import { City } from "../../../models/City";
 import { Companies } from "../../../models/Company";
+import { CompaniesAddress } from "../../../models/CompanyAddress";
 import { CompanyStatus } from "../../../models/CompanyStatus";
+import { Industries } from "../../../models/Industry";
 
-interface FindCompaniesProps {
+interface Props {
   limit: string;
   offset: string;
+  filters?: {
+    cityId?: string;
+    industryId?: string;
+  };
 }
 
 class CostumerFindCompaniesUseCase {
-  async execute({ limit, offset }: FindCompaniesProps) {
-    const status = await getRepository(CompanyStatus).find({
-      where: { blocked: false },
-    });
+  async execute({ limit, offset, filters }: Props) {
+    const query = getRepository(Companies)
+      .createQueryBuilder("company")
+      .select(["company.id", "company.fantasyName", "company.createdAt"])
+      .addSelect(["industry.id", "industry.description"])
+      .leftJoin(Industries, "industry", "industry.id = company.industry")
+      .leftJoin(CompanyStatus, "status", "status.id = company.status")
+      .leftJoin(CompaniesAddress, "address", "address.id = company.address")
+      .leftJoin(City, "city", "city.id = address.city")
+      .where("status.blocked = :bloqued", { bloqued: false })
+      .limit(parseInt(limit))
+      .offset(parseInt(offset) * parseInt(limit))
+      .orderBy("company.fantasyName", "ASC");
 
-    const statusIDs = [];
-    status.map((item) => {
-      statusIDs.push(item.id);
-    });
-
-    const companies = await getRepository(Companies).find({
-      select: ["id", "fantasyName", "createdAt"],
-      where: { status: In([...statusIDs]) },
-      relations: ["industry"],
-      take: parseInt(limit),
-      skip: parseInt(offset) * parseInt(limit),
-      order: { createdAt: "ASC" },
-    });
-
-    if (companies.length === 0) {
-      return false;
+    if (filters.cityId) {
+      query.andWhere("city.id = :cityId", { cityId: parseInt(filters.cityId) });
     }
+
+    if (filters.industryId) {
+      query.andWhere("industry.id = :industryId", {
+        industryId: parseInt(filters.industryId),
+      });
+    }
+
+    const companies = query.getRawMany();
 
     return companies;
   }

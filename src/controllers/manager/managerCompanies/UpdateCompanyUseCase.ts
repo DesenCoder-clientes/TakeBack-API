@@ -15,10 +15,10 @@ interface UpdateProps {
   industryId: string;
   id: string;
   companyId: string;
-  /*  cityId: string;
+  cityId: string;
   street: string;
   number: number;
-  district: string; */
+  district: string;
 }
 
 class UpdateCompanyUseCase {
@@ -35,13 +35,13 @@ class UpdateCompanyUseCase {
       throw new InternalError("Empresa não encontrada", 400);
     }
 
-    /* const city = await getRepository(City).findOne({
-      where: { id: cityId },
+    const city = await getRepository(City).findOne({
+      where: { id: props.cityId },
     });
 
     if (!city) {
       throw new InternalError("Cidade não encontrada", 400);
-    } */
+    }
 
     const industry = await getRepository(Industries).findOne(props.industryId);
 
@@ -49,19 +49,19 @@ class UpdateCompanyUseCase {
       throw new InternalError("Ramo de Atividade inexistente", 401);
     }
 
-    /* const updateCompanyAddress = await getRepository(CompaniesAddress).update(
-      companyId,
+    const updateCompanyAddress = await getRepository(CompaniesAddress).update(
+      props.cityId,
       {
         city,
-        district,
-        number,
-        street,
+        district: props.district,
+        number: props.number,
+        street: props.street,
       }
     );
 
     if (updateCompanyAddress.affected === 0) {
       throw new InternalError("Erro ao atualizar endereço da empresa", 500);
-    } */
+    }
 
     const updateCompany = await getRepository(Companies).update(
       props.companyId,
