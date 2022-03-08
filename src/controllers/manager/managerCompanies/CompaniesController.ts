@@ -117,33 +117,20 @@ class CompaniesController {
   }
 
   async updateCompany(request: Request, response: Response) {
-    const {
-      email,
-      industryId,
-      corporateName,
-      fantasyName,
-      phone,
-      registeredNumber,
-      limit,
-      offset,
-    }: /* district,
-      number,
-      cityId,
-      street, */
-    UpdateProps = request.body;
+    const props: UpdateProps = request.body;
     const { id } = request["tokenPayload"];
     const companyId = request.params.id;
 
     const update = new UpdateCompanyUseCase();
-    const find = new ListCompanyUseCase();
+    const find = new FindOneCompanyUseCase();
 
     const message = await update.execute({
-      email,
-      corporateName,
-      fantasyName,
-      phone,
-      registeredNumber,
-      industryId,
+      email: props.email,
+      corporateName: props.corporateName,
+      fantasyName: props.fantasyName,
+      phone: props.phone,
+      registeredNumber: props.registeredNumber,
+      industryId: props.industryId,
       id,
       companyId,
       /* cityId,
@@ -152,10 +139,7 @@ class CompaniesController {
       street, */
     });
 
-    const companies = await find.execute({
-      limit,
-      offset,
-    });
+    const companies = await find.execute({ companyId });
 
     response.status(200).json({ message, companies });
   }

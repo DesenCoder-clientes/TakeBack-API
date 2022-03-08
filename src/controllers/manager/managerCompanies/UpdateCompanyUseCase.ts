@@ -22,25 +22,13 @@ interface UpdateProps {
 }
 
 class UpdateCompanyUseCase {
-  async execute({
-    email,
-    industryId,
-    companyId,
-    corporateName,
-    registeredNumber,
-    fantasyName,
-    phone,
-  }: /*  district,
-    cityId,
-    number,
-    street, */
-  UpdateProps) {
-    if (!email || !corporateName || !fantasyName) {
+  async execute(props: UpdateProps) {
+    if (!props.email || !props.corporateName || !props.fantasyName) {
       throw new InternalError("Dados imcompletos", 400);
     }
 
     const company = await getRepository(Companies).findOne({
-      where: { id: companyId },
+      where: { id: props.companyId },
     });
 
     if (!company) {
@@ -55,7 +43,7 @@ class UpdateCompanyUseCase {
       throw new InternalError("Cidade não encontrada", 400);
     } */
 
-    const industry = await getRepository(Industries).findOne(industryId);
+    const industry = await getRepository(Industries).findOne(props.industryId);
 
     if (!industry) {
       throw new InternalError("Ramo de Atividade inexistente", 401);
@@ -75,14 +63,17 @@ class UpdateCompanyUseCase {
       throw new InternalError("Erro ao atualizar endereço da empresa", 500);
     } */
 
-    const updateCompany = await getRepository(Companies).update(companyId, {
-      email,
-      industry,
-      registeredNumber,
-      fantasyName,
-      corporateName,
-      phone,
-    });
+    const updateCompany = await getRepository(Companies).update(
+      props.companyId,
+      {
+        email: props.email,
+        industry,
+        registeredNumber: props.registeredNumber,
+        fantasyName: props.fantasyName,
+        corporateName: props.corporateName,
+        phone: props.phone,
+      }
+    );
 
     if (updateCompany.affected === 0) {
       throw new InternalError("Erro ao atualizar dados da empresa", 500);
