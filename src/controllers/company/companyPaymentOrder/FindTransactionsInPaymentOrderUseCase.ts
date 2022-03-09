@@ -27,6 +27,7 @@ class FindTransactionsInPaymentOrderUseCase {
         "transaction.id",
         "transaction.totalAmount",
         "transaction.dateAt",
+        "transaction.createdAt",
         "transaction.takebackFeeAmount",
         "transaction.cashbackAmount",
       ])

@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 
 import { RegisterCompanyUseCase } from "./RegisterCompanyUseCase";
 import { SignInCompanyUseCase } from "./SignInCompanyUseCase";
-import { UpdateCompanyPasswordUseCase } from "../companyUser/UpdateCompanyUserPasswordUseCase";
 import { VerifyTokenUseCase } from "./VerifyTokenUseCase";
+import { VerifyCashbacksExpired } from "./VerifyCashbacksExpired";
 
 interface RegisterCompanyDataProps {
   corporateName: string;
@@ -52,11 +52,16 @@ class AuthCompanyController {
     const { password, registeredNumber, user }: LoginProps = request.body;
 
     const signInCompany = new SignInCompanyUseCase();
+    const verifyCashbacksExpired = new VerifyCashbacksExpired();
 
     const result = await signInCompany.execute({
       password,
       registeredNumber,
       user,
+    });
+
+    const cashbacks = await verifyCashbacksExpired.execute({
+      companyId: result.companyId,
     });
 
     return response.status(200).json(result);

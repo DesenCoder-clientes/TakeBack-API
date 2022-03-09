@@ -69,6 +69,7 @@ class SignInCompanyUseCase {
       isManager: companyUser.companyUserTypes.isManager,
       name: companyUser.name,
       office: companyUser.companyUserTypes.description,
+      companyId: company.id,
     };
   }
 }
