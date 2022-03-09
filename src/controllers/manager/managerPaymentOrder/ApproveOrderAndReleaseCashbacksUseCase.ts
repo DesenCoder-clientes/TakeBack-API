@@ -1,6 +1,7 @@
 import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
+import { CompanyStatus } from "../../../models/CompanyStatus";
 import { Consumers } from "../../../models/Consumer";
 import { PaymentOrder } from "../../../models/PaymentOrder";
 import { PaymentOrderStatus } from "../../../models/PaymentOrderStatus";
@@ -190,6 +191,48 @@ class ApproveOrderAndReleaseCashbacksUseCase {
 
     if (paymentOrderUpdated.affected === 0) {
       throw new InternalError("Erro ao atualizar o status da transação", 400);
+    }
+
+    const verifyTransactions = await getRepository(Transactions)
+      .createQueryBuilder("transaction")
+      .select(["transaction.id", "transaction.createdAt"])
+      .addSelect(["status.description", "company.id"])
+      .leftJoin(Companies, "company", "company.id = transaction.companies")
+      .leftJoin(
+        TransactionStatus,
+        "status",
+        "status.id = transaction.transactionStatus"
+      )
+      .where("company.id = :companyId", { companyId: paymentOrder.company.id })
+      .andWhere("status.description IN (:...status)", { status: ["Em atraso"] })
+      .getRawMany();
+
+    const today = new Date();
+
+    const overStatus = await getRepository(CompanyStatus).findOne({
+      where: { description: "Inadimplente" },
+    });
+
+    const activeStatus = await getRepository(CompanyStatus).findOne({
+      where: { description: "Ativo" },
+    });
+
+    if (verifyTransactions.length > 0) {
+      verifyTransactions.map(async (item) => {
+        const transactionCreatedAt = new Date(item.transaction_createdAt);
+
+        const diff = Math.abs(+today - +transactionCreatedAt);
+
+        if (diff / (1000 * 3600 * 24) >= 10) {
+          await getRepository(Companies).update(item.company_id, {
+            status: overStatus,
+          });
+        }
+      });
+    } else {
+      await getRepository(Companies).update(paymentOrder.company.id, {
+        status: activeStatus,
+      });
     }
 
     return "Ordem de Pagamento aprovada!";
