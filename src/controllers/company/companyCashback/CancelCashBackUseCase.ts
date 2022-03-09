@@ -1,4 +1,4 @@
-import { getRepository, In } from "typeorm";
+import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
 import { Consumers } from "../../../models/Consumer";
@@ -44,13 +44,25 @@ class CancelCashBackUseCase {
         "transaction.amountPayWithOthersMethods",
         "transaction.amountPayWithTakebackBalance",
       ])
-      .addSelect(["consumer.id"])
+      .addSelect(["consumer.id", "status.description"])
       .where("transaction.id IN (:...transactionIDs)", {
         transactionIDs: [...transactionIDs],
       })
       .leftJoin(Consumers, "consumer", "consumer.id = transaction.consumers")
       .leftJoin(Companies, "company", "company.id = transaction.companies")
+      .leftJoin(
+        TransactionStatus,
+        "status",
+        "status.id = transaction.transactionStatus"
+      )
       .getRawMany();
+
+    // Verificando se há transações em atraso
+    transactions.map((item) => {
+      if (item.status_description === "Em atraso") {
+        throw new InternalError("Há cashbacks em atraso selecionados", 400);
+      }
+    });
 
     // Agrupando as transações por usuário
     const transactionsReduced = transactions.reduce(
