@@ -93,13 +93,15 @@ class ApproveOrderAndReleaseCashbacksUseCase {
       where: { description: "Aprovada" },
     });
 
-    // Pegando os IDs das transações da ordem de pagamento
+    // Aprovando as transações da ordem de pagamento
     let transactionsUpdatedError = false;
+    const date = new Date();
     transactions.map(async (item) => {
       const transactionUpdated = await getRepository(Transactions).update(
         item.transaction_id,
         {
           transactionStatus: approvedStatusTransaction,
+          aprovedAt: date.toLocaleDateString(),
         }
       );
 
@@ -193,6 +195,8 @@ class ApproveOrderAndReleaseCashbacksUseCase {
       throw new InternalError("Erro ao atualizar o status da transação", 400);
     }
 
+    // VERIFICANDO SE HÁ TRANSAÇẼOS PENDENTES PARA ATUALIZAR O STATUS DA EMPRESA
+    // Buscando as transações
     const verifyTransactions = await getRepository(Transactions)
       .createQueryBuilder("transaction")
       .select(["transaction.id", "transaction.createdAt"])
@@ -204,11 +208,10 @@ class ApproveOrderAndReleaseCashbacksUseCase {
         "status.id = transaction.transactionStatus"
       )
       .where("company.id = :companyId", { companyId: paymentOrder.company.id })
-      .andWhere("status.description IN (:...status)", { status: ["Em atraso"] })
+      .andWhere("status.description = :status", { status: "Em atraso" })
       .getRawMany();
 
-    const today = new Date();
-
+    // Buscando os status necessários
     const overStatus = await getRepository(CompanyStatus).findOne({
       where: { description: "Inadimplente" },
     });
@@ -217,19 +220,14 @@ class ApproveOrderAndReleaseCashbacksUseCase {
       where: { description: "Ativo" },
     });
 
+    // Verificando se há alguma transação em atraso
     if (verifyTransactions.length > 0) {
-      verifyTransactions.map(async (item) => {
-        const transactionCreatedAt = new Date(item.transaction_createdAt);
-
-        const diff = Math.abs(+today - +transactionCreatedAt);
-
-        if (diff / (1000 * 3600 * 24) >= 10) {
-          await getRepository(Companies).update(item.company_id, {
-            status: overStatus,
-          });
-        }
+      // Bloqueando a empresa caso tenha pelo menos uma transação em atraso
+      await getRepository(Companies).update(paymentOrder.company.id, {
+        status: overStatus,
       });
     } else {
+      // Desbloqueando a empresa caso não haja mais cashbacks pendentes
       await getRepository(Companies).update(paymentOrder.company.id, {
         status: activeStatus,
       });
