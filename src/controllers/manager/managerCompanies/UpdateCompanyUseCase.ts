@@ -3,7 +3,6 @@ import { InternalError } from "../../../config/GenerateErros";
 import { City } from "../../../models/City";
 import { Companies } from "../../../models/Company";
 import { CompaniesAddress } from "../../../models/CompanyAddress";
-import { CompanyStatus } from "../../../models/CompanyStatus";
 import { Industries } from "../../../models/Industry";
 
 interface UpdateProps {
@@ -17,7 +16,7 @@ interface UpdateProps {
   companyId: string;
   cityId: string;
   street: string;
-  number: number;
+  number: string;
   district: string;
 }
 

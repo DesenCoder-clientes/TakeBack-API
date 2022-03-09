@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { AllowCompanyFirstAccessUseCase } from "./AllowCompanyFirstAccessUseCase";
 import { RegisterCompanyTakebackPaymentMethodsUseCase } from "./RegisterCompanyTakebackPaymentMethodsUseCase";
-import { ListCompanyUseCase } from "./ListCompanyUseCase";
 import { UpdateCompanyUseCase } from "./UpdateCompanyUseCase";
 import { FindAllCompaniesUseCase } from "./FindAllCompaniesUseCase";
 import { ListCompanyWithSearchUseCase } from "./ListCompanyWithSearchUseCase";
@@ -29,7 +28,7 @@ interface UpdateProps {
   limit: string;
   offset: string;
   district: string;
-  number: number;
+  number: string;
   street: string;
   cityId: string;
 }
