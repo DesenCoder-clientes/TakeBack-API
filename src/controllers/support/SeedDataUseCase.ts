@@ -242,6 +242,12 @@ const TransactionStatusSeed = [
     createdAt: new Date(),
     updatedAt: new Date(),
   },
+  {
+    description: "Em atraso",
+    blocked: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
 ];
 
 const CompanyUserTypesSeed = [

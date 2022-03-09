@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { RegisterCompanyUseCase } from "./RegisterCompanyUseCase";
 import { SignInCompanyUseCase } from "./SignInCompanyUseCase";
 import { VerifyTokenUseCase } from "./VerifyTokenUseCase";
-import { VerifyCashbacksExpired } from "./VerifyCashbacksExpired";
+import { VerifyCashbacksExpired } from "../companyCashback/VerifyCashbacksExpired";
 
 interface RegisterCompanyDataProps {
   corporateName: string;

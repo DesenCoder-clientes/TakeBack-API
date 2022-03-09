@@ -4,24 +4,19 @@ import { CompanyStatus } from "../../../models/CompanyStatus";
 import { Transactions } from "../../../models/Transaction";
 import { TransactionStatus } from "../../../models/TransactionStatus";
 
-interface Props {
-  companyId: string;
-}
-
 class VerifyCashbacksExpired {
-  async execute({ companyId }: Props) {
+  async execute() {
     const transactions = await getRepository(Transactions)
       .createQueryBuilder("transaction")
       .select(["transaction.id", "transaction.createdAt"])
-      .addSelect(["status.description"])
+      .addSelect(["status.description", "company.id"])
       .leftJoin(Companies, "company", "company.id = transaction.companies")
       .leftJoin(
         TransactionStatus,
         "status",
         "status.id = transaction.transactionStatus"
       )
-      .where("company.id = :companyId", { companyId })
-      .andWhere("status.description IN (:...status)", {
+      .where("status.description IN (:...status)", {
         status: ["Pendente", "Em processamento"],
       })
       .getRawMany();
@@ -29,7 +24,11 @@ class VerifyCashbacksExpired {
     const today = new Date();
     const expiredTransactions = [];
 
-    transactions.map((item) => {
+    const status = await getRepository(CompanyStatus).findOne({
+      where: { description: "Inadimplente" },
+    });
+
+    transactions.map(async (item) => {
       const transactionCreatedAt = new Date(item.transaction_createdAt);
 
       const diff = Math.abs(+today - +transactionCreatedAt);
@@ -37,19 +36,14 @@ class VerifyCashbacksExpired {
       if (diff / (1000 * 3600 * 24) >= 10) {
         expiredTransactions.push({
           id: item.transaction_id,
+          companyId: item.company_id,
+        });
+
+        await getRepository(Companies).update(item.company_id, {
+          status,
         });
       }
     });
-
-    if (expiredTransactions.length > 0) {
-      const status = await getRepository(CompanyStatus).findOne({
-        where: { description: "Inadimplente" },
-      });
-
-      await getRepository(Companies).update(companyId, {
-        status,
-      });
-    }
 
     return { expiredTransactions };
   }
