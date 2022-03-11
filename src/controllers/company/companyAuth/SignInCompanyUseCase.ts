@@ -60,6 +60,9 @@ class SignInCompanyUseCase {
     }
 
     // VERIFICANDO INADIMPLÊNCIA DA EMPRESA
+    const bloquedStatus = await getRepository(CompanyStatus).findOne({
+      where: { description: "Inadimplente" },
+    });
     // Verificando se o dia atual é o dia do pagamento
     const today = new Date();
     if (today.getDate() > 10) {
@@ -76,16 +79,17 @@ class SignInCompanyUseCase {
         companyMonthlyPayment.length > 0 &&
         !companyMonthlyPayment[0].isPaid
       ) {
-        // Bloqueando a empresa e retornabndo erro
-        const bloquedStatus = await getRepository(CompanyStatus).findOne({
-          where: { description: "Bloqueado" },
-        });
+        // Alterando o status da empresa para inadimplente
+        const companyUpdated = await getRepository(Companies).update(
+          company.id,
+          {
+            status: bloquedStatus,
+          }
+        );
 
-        await getRepository(Companies).update(company.id, {
-          status: bloquedStatus,
-        });
-
-        throw new InternalError("Empresa inadimplente", 400);
+        if (companyUpdated.affected === 0) {
+          throw new InternalError("Erro ao realizar login", 400);
+        }
       }
 
       // Verificando se a empresa está no periodo de primeiro pagamento
@@ -109,7 +113,17 @@ class SignInCompanyUseCase {
 
           // Verificando se a data do primeiro pagamento já passou
           if (today > payDate) {
-            throw new InternalError("Empresa inadimplente", 400);
+            // Alterando o status da empresa para inadimplente
+            const companyUpdated = await getRepository(Companies).update(
+              company.id,
+              {
+                status: bloquedStatus,
+              }
+            );
+
+            if (companyUpdated.affected === 0) {
+              throw new InternalError("Erro ao realizar login", 400);
+            }
           }
         } else {
           // Calculando a data do primeiro pagamento da empresa no mês atual
@@ -121,16 +135,32 @@ class SignInCompanyUseCase {
 
           // Verificando se a data do primeiro pagamento já passou
           if (today > payDate) {
-            throw new InternalError("Empresa inadimplente", 400);
+            // Alterando o status da empresa para inadimplente
+            const companyUpdated = await getRepository(Companies).update(
+              company.id,
+              {
+                status: bloquedStatus,
+              }
+            );
+
+            if (companyUpdated.affected === 0) {
+              throw new InternalError("Erro ao realizar login", 400);
+            }
           }
         }
       }
     }
 
+    // Buscando a empresa
+    const companyData = await getRepository(Companies).findOne({
+      where: { registeredNumber },
+      relations: ["status", "companyMonthlyPayment"],
+    });
+
     const token = generateToken(
       {
-        companyId: company.id,
-        generateCashback: company.status.generateCashback,
+        companyId: companyData.id,
+        generateCashback: companyData.status.generateCashback,
         userId: companyUser.id,
         isManager: companyUser.companyUserTypes.isManager,
         name: companyUser.name,
@@ -142,11 +172,11 @@ class SignInCompanyUseCase {
 
     return {
       token,
-      generateCashback: company.status.generateCashback,
+      generateCashback: companyData.status.generateCashback,
       isManager: companyUser.companyUserTypes.isManager,
       name: companyUser.name,
       office: companyUser.companyUserTypes.description,
-      companyId: company.id,
+      companyId: companyData.id,
     };
   }
 }
