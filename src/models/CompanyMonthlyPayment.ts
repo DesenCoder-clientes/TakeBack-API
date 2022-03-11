@@ -26,6 +26,11 @@ export class CompanyMonthlyPayment {
   })
   amountPaid: number;
 
+  @Column({
+    default: false,
+  })
+  isPaid: boolean;
+
   @ManyToOne(() => Companies, (companies) => companies.companyMonthlyPayment)
   company: Companies;
 
