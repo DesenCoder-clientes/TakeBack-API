@@ -4,6 +4,7 @@ import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
 import { CompanyUsers } from "../../../models/CompanyUsers";
 import { generateToken } from "../../../config/JWT";
+import { CompanyMonthlyPayment } from "../../../models/CompanyMonthlyPayment";
 
 interface Props {
   registeredNumber: string;
@@ -50,6 +51,25 @@ class SignInCompanyUseCase {
       throw new InternalError("Erro ao realizar login", 400);
     }
 
+    // VERIFICANDO SE A EMPRESA PAGOU A MENSALIDADE CORRETAMENTE
+    let isActive = false;
+    const todayDate = new Date();
+    const companyMonthlyPayment = await getRepository(
+      CompanyMonthlyPayment
+    ).findOne({
+      where: { company },
+    });
+
+    const paidDate = new Date(companyMonthlyPayment.paidDate);
+    const nextMounth = new Date(paidDate.getMonth() + 2);
+
+    if (todayDate < nextMounth && todayDate.getDate() <= 10) {
+      isActive = true;
+    } else {
+      isActive = false;
+      throw new InternalError("Empresa inadimplente", 400);
+    }
+
     // VERIFICANDO SE A EMPRESA ESTÁ INADIMPLENTE
     // Calculando o próximo dia de pagamento
     const today = new Date();
@@ -67,29 +87,10 @@ class SignInCompanyUseCase {
       );
 
       if (today > payDate) {
+        isActive = false;
         throw new InternalError("Empresa inadimplente", 400);
       } else {
-        const token = generateToken(
-          {
-            companyId: company.id,
-            generateCashback: company.status.generateCashback,
-            userId: companyUser.id,
-            isManager: companyUser.companyUserTypes.isManager,
-            name: companyUser.name,
-            office: companyUser.companyUserTypes.description,
-          },
-          process.env.JWT_PRIVATE_KEY,
-          parseInt(process.env.JWT_EXPIRES_IN)
-        );
-
-        return {
-          token,
-          generateCashback: company.status.generateCashback,
-          isManager: companyUser.companyUserTypes.isManager,
-          name: companyUser.name,
-          office: companyUser.companyUserTypes.description,
-          companyId: company.id,
-        };
+        isActive = true;
       }
     } else {
       const payDate = new Date(
@@ -99,30 +100,35 @@ class SignInCompanyUseCase {
       );
 
       if (today > payDate) {
+        isActive = false;
         throw new InternalError("Empresa inadimplente", 400);
       } else {
-        const token = generateToken(
-          {
-            companyId: company.id,
-            generateCashback: company.status.generateCashback,
-            userId: companyUser.id,
-            isManager: companyUser.companyUserTypes.isManager,
-            name: companyUser.name,
-            office: companyUser.companyUserTypes.description,
-          },
-          process.env.JWT_PRIVATE_KEY,
-          parseInt(process.env.JWT_EXPIRES_IN)
-        );
+        isActive = true;
+      }
+    }
 
-        return {
-          token,
+    if (isActive) {
+      const token = generateToken(
+        {
+          companyId: company.id,
           generateCashback: company.status.generateCashback,
+          userId: companyUser.id,
           isManager: companyUser.companyUserTypes.isManager,
           name: companyUser.name,
           office: companyUser.companyUserTypes.description,
-          companyId: company.id,
-        };
-      }
+        },
+        process.env.JWT_PRIVATE_KEY,
+        parseInt(process.env.JWT_EXPIRES_IN)
+      );
+
+      return {
+        token,
+        generateCashback: company.status.generateCashback,
+        isManager: companyUser.companyUserTypes.isManager,
+        name: companyUser.name,
+        office: companyUser.companyUserTypes.description,
+        companyId: company.id,
+      };
     }
   }
 }
