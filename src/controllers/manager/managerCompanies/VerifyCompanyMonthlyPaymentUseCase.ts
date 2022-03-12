@@ -18,12 +18,24 @@ class VerifyCompanyMonthlyPaymentUseCase {
       statusIds.push(item.id);
     });
 
+    const companyAux = await getRepository(Companies).find({
+      where: { status: In([...statusIds]) },
+    });
+
+    if (today.getDate() === 12) {
+      companyAux.map(async (item) => {
+        await getRepository(Companies).update(item.id, {
+          currentMonthlyPaymentPaid: false,
+        });
+      });
+    }
+
     const company = await getRepository(Companies).find({
       relations: ["companyMonthlyPayment"],
       where: { status: In([...statusIds]) },
     });
 
-    if (today.getDate() >= 10) {
+    if (today.getDate() >= 15) {
       const bloquedStatus = await getRepository(CompanyStatus).findOne({
         where: { description: "Inadimplente" },
       });
@@ -58,12 +70,12 @@ class VerifyCompanyMonthlyPaymentUseCase {
           );
 
           // Verificando se o dia atual é o dia do pagamento da empresa
-          if (paPlus.getDate() > 10) {
+          if (paPlus.getDate() > 15) {
             // Calculando a data do primeiro pagamento da empresa no mês seguinte ao atual
             const payDate = new Date(
               `${
                 companyAllowedDate.getMonth() + 2
-              }/10/${companyAllowedDate.getFullYear()}`
+              }/15/${companyAllowedDate.getFullYear()}`
             );
 
             // Verificando se a data do primeiro pagamento já passou
@@ -89,7 +101,7 @@ class VerifyCompanyMonthlyPaymentUseCase {
             const payDate = new Date(
               `${
                 companyAllowedDate.getMonth() + 1
-              }/10/${companyAllowedDate.getFullYear()}`
+              }/15/${companyAllowedDate.getFullYear()}`
             );
 
             // Verificando se a data do primeiro pagamento já passou

@@ -1,5 +1,5 @@
-import { getRepository } from "typeorm";
 import * as bcrypt from "bcrypt";
+import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
 import { CompanyUsers } from "../../../models/CompanyUsers";
@@ -21,24 +21,24 @@ class SignInCompanyUseCase {
     }
 
     // Buscando a empresa
-    const company = await getRepository(Companies).findOne({
+    const companyAux = await getRepository(Companies).findOne({
       where: { registeredNumber },
       relations: ["status", "companyMonthlyPayment"],
     });
 
     // Verificando se a emrpesa foi localizada
-    if (!company) {
+    if (!companyAux) {
       throw new InternalError("Erro ao realizar login", 400);
     }
 
     // Verificando se a empresa está bloqueada
-    if (company.status.blocked) {
+    if (companyAux.status.blocked) {
       throw new InternalError("Erro ao realizar login", 400);
     }
 
     // Buscando o usuário da empresa
     const companyUser = await getRepository(CompanyUsers).findOne({
-      where: { company, name: user },
+      where: { company: companyAux, name: user },
       select: ["id", "password", "companyUserTypes", "isActive", "name"],
       relations: ["companyUserTypes"],
     });
@@ -62,6 +62,18 @@ class SignInCompanyUseCase {
     // VERIFICANDO INADIMPLÊNCIA DA EMPRESA
     const today = new Date();
 
+    // Verificando se é o primeiro dia do mês
+    if (today.getDate() === 1) {
+      await getRepository(Companies).update(companyAux.id, {
+        currentMonthlyPaymentPaid: false,
+      });
+    }
+
+    const updatedCompany = await getRepository(Companies).findOne({
+      where: { registeredNumber },
+      relations: ["status", "companyMonthlyPayment"],
+    });
+
     const bloquedStatus = await getRepository(CompanyStatus).findOne({
       where: { description: "Inadimplente" },
     });
@@ -70,14 +82,14 @@ class SignInCompanyUseCase {
     const companyMonthlyPayment = await getRepository(
       CompanyMonthlyPayment
     ).find({
-      where: { company },
+      where: { company: updatedCompany },
       order: { id: "DESC" },
     });
 
     // Verificando se a empresa está no periodo de primeiro pagamento
     if (companyMonthlyPayment.length === 0) {
       // Buscando a data do primeiro acesso da empresa
-      const companyAllowedDate = new Date(company.firstAccessAllowedAt);
+      const companyAllowedDate = new Date(updatedCompany.firstAccessAllowedAt);
 
       // Somando mais 30 dias a data do primeiro acesso da empresa
       const paPlus = new Date(
@@ -97,7 +109,7 @@ class SignInCompanyUseCase {
         if (today > payDate) {
           // Alterando o status da empresa para inadimplente
           const companyUpdated = await getRepository(Companies).update(
-            company.id,
+            updatedCompany.id,
             {
               status: bloquedStatus,
             }
@@ -119,7 +131,7 @@ class SignInCompanyUseCase {
         if (today > payDate) {
           // Alterando o status da empresa para inadimplente
           const companyUpdated = await getRepository(Companies).update(
-            company.id,
+            updatedCompany.id,
             {
               status: bloquedStatus,
             }
@@ -131,11 +143,17 @@ class SignInCompanyUseCase {
         }
       }
     } // Verificando se o dia atual é o dia do pagamento
-    else if (today.getDate() >= 15 && !company.currentMonthlyPaymentPaid) {
+    else if (
+      today.getDate() >= 15 &&
+      !updatedCompany.currentMonthlyPaymentPaid
+    ) {
       // Alterando o status da empresa para inadimplente
-      const companyUpdated = await getRepository(Companies).update(company.id, {
-        status: bloquedStatus,
-      });
+      const companyUpdated = await getRepository(Companies).update(
+        updatedCompany.id,
+        {
+          status: bloquedStatus,
+        }
+      );
 
       if (companyUpdated.affected === 0) {
         throw new InternalError("Erro ao realizar login", 400);
