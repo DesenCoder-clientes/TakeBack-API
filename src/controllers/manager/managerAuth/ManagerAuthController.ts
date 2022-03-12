@@ -8,6 +8,7 @@ import { VerifyTokenUseCase } from "./VerifyTokenUseCase";
 import { UpdateUserPasswordUseCase } from "./UpdateUserPasswordUseCase";
 import { ForgotPasswordUseCase } from "./ForgotPasswordUseCase";
 import { VerifyCashbacksExpired } from "../managerCompanies/VerifyCashbacksExpired";
+import { VerifyCompanyMonthlyPaymentUseCase } from "../managerCompanies/VerifyCompanyMonthlyPaymentUseCase";
 
 interface RegisterProps {
   name: string;
@@ -62,13 +63,13 @@ class ManagerAuthController {
 
     const userLogin = new SignInUserUseCase();
     const verifyCashbacksExpired = new VerifyCashbacksExpired();
+    const verifyPaymentMonthly = new VerifyCompanyMonthlyPaymentUseCase();
 
     const result = await userLogin.execute({ cpf, password });
-    const expired = await verifyCashbacksExpired.execute();
+    await verifyCashbacksExpired.execute();
+    const companiesBlocked = await verifyPaymentMonthly.execute();
 
-    console.log({ EXPIRED: expired });
-
-    response.status(200).json(result);
+    response.status(200).json({ result, companiesBlocked });
   }
 
   async updateUser(request: Request, response: Response) {

@@ -60,7 +60,7 @@ class AuthCompanyController {
       user,
     });
 
-    const cashbacks = await verifyCashbacksExpired.execute({
+    await verifyCashbacksExpired.execute({
       companyId: result.companyId,
     });
 

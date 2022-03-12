@@ -60,101 +60,92 @@ class SignInCompanyUseCase {
     }
 
     // VERIFICANDO INADIMPLÊNCIA DA EMPRESA
+    const today = new Date();
+
     const bloquedStatus = await getRepository(CompanyStatus).findOne({
       where: { description: "Inadimplente" },
     });
-    // Verificando se o dia atual é o dia do pagamento
-    const today = new Date();
-    if (today.getDate() > 10) {
-      // Buscando os pagamentos feitos pela empresa
-      const companyMonthlyPayment = await getRepository(
-        CompanyMonthlyPayment
-      ).find({
-        where: { company },
-        order: { id: "DESC" },
-      });
 
-      // Verificando se existem pagamentos e se o último está pago
-      if (
-        companyMonthlyPayment.length > 0 &&
-        !companyMonthlyPayment[0].isPaid
-      ) {
-        // Alterando o status da empresa para inadimplente
-        const companyUpdated = await getRepository(Companies).update(
-          company.id,
-          {
-            status: bloquedStatus,
-          }
+    // Buscando os pagamentos feitos pela empresa
+    const companyMonthlyPayment = await getRepository(
+      CompanyMonthlyPayment
+    ).find({
+      where: { company },
+      order: { id: "DESC" },
+    });
+
+    // Verificando se a empresa está no periodo de primeiro pagamento
+    if (companyMonthlyPayment.length === 0) {
+      // Buscando a data do primeiro acesso da empresa
+      const companyAllowedDate = new Date(company.firstAccessAllowedAt);
+
+      // Somando mais 30 dias a data do primeiro acesso da empresa
+      const paPlus = new Date(
+        companyAllowedDate.setDate(companyAllowedDate.getDate() + 30)
+      );
+
+      // Verificando se o dia atual é o dia do pagamento da empresa
+      if (paPlus.getDate() > 15) {
+        // Calculando a data do primeiro pagamento da empresa no mês seguinte ao atual
+        const payDate = new Date(
+          `${
+            companyAllowedDate.getMonth() + 2
+          }/15/${companyAllowedDate.getFullYear()}`
         );
 
-        if (companyUpdated.affected === 0) {
-          throw new InternalError("Erro ao realizar login", 400);
+        // Verificando se a data do primeiro pagamento já passou
+        if (today > payDate) {
+          // Alterando o status da empresa para inadimplente
+          const companyUpdated = await getRepository(Companies).update(
+            company.id,
+            {
+              status: bloquedStatus,
+            }
+          );
+
+          if (companyUpdated.affected === 0) {
+            throw new InternalError("Erro ao realizar login", 400);
+          }
+        }
+      } else {
+        // Calculando a data do primeiro pagamento da empresa no mês atual
+        const payDate = new Date(
+          `${
+            companyAllowedDate.getMonth() + 1
+          }/15/${companyAllowedDate.getFullYear()}`
+        );
+
+        // Verificando se a data do primeiro pagamento já passou
+        if (today > payDate) {
+          // Alterando o status da empresa para inadimplente
+          const companyUpdated = await getRepository(Companies).update(
+            company.id,
+            {
+              status: bloquedStatus,
+            }
+          );
+
+          if (companyUpdated.affected === 0) {
+            throw new InternalError("Erro ao realizar login", 400);
+          }
         }
       }
+    } // Verificando se o dia atual é o dia do pagamento
+    else if (today.getDate() >= 15 && !company.currentMonthlyPaymentPaid) {
+      // Alterando o status da empresa para inadimplente
+      const companyUpdated = await getRepository(Companies).update(company.id, {
+        status: bloquedStatus,
+      });
 
-      // Verificando se a empresa está no periodo de primeiro pagamento
-      if (companyMonthlyPayment.length === 0) {
-        // Buscando a data do primeiro acesso da empresa
-        const companyAllowedDate = new Date(company.firstAccessAllowedAt);
-
-        // Somando mais 30 dias a data do primeiro acesso da empresa
-        const paPlus = new Date(
-          companyAllowedDate.setDate(companyAllowedDate.getDate() + 30)
-        );
-
-        // Verificando se o dia atual é o dia do pagamento da empresa
-        if (paPlus.getDate() > 10) {
-          // Calculando a data do primeiro pagamento da empresa no mês seguinte ao atual
-          const payDate = new Date(
-            `${
-              companyAllowedDate.getMonth() + 2
-            }/10/${companyAllowedDate.getFullYear()}`
-          );
-
-          // Verificando se a data do primeiro pagamento já passou
-          if (today > payDate) {
-            // Alterando o status da empresa para inadimplente
-            const companyUpdated = await getRepository(Companies).update(
-              company.id,
-              {
-                status: bloquedStatus,
-              }
-            );
-
-            if (companyUpdated.affected === 0) {
-              throw new InternalError("Erro ao realizar login", 400);
-            }
-          }
-        } else {
-          // Calculando a data do primeiro pagamento da empresa no mês atual
-          const payDate = new Date(
-            `${
-              companyAllowedDate.getMonth() + 1
-            }/10/${companyAllowedDate.getFullYear()}`
-          );
-
-          // Verificando se a data do primeiro pagamento já passou
-          if (today > payDate) {
-            // Alterando o status da empresa para inadimplente
-            const companyUpdated = await getRepository(Companies).update(
-              company.id,
-              {
-                status: bloquedStatus,
-              }
-            );
-
-            if (companyUpdated.affected === 0) {
-              throw new InternalError("Erro ao realizar login", 400);
-            }
-          }
-        }
+      if (companyUpdated.affected === 0) {
+        throw new InternalError("Erro ao realizar login", 400);
       }
     }
 
     // Buscando a empresa
     const companyData = await getRepository(Companies).findOne({
       where: { registeredNumber },
-      relations: ["status", "companyMonthlyPayment"],
+      relations: ["status"],
     });
 
     const token = generateToken(

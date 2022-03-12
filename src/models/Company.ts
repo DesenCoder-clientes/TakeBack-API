@@ -89,6 +89,11 @@ export class Companies {
   customMonthlyPayment: boolean;
 
   @Column({
+    default: false,
+  })
+  currentMonthlyPaymentPaid: boolean;
+
+  @Column({
     type: "date",
     nullable: true,
   })
