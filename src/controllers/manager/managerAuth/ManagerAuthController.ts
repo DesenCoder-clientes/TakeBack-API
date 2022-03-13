@@ -67,9 +67,9 @@ class ManagerAuthController {
 
     const result = await userLogin.execute({ cpf, password });
     await verifyCashbacksExpired.execute();
-    const companiesBlocked = await verifyPaymentMonthly.execute();
+    await verifyPaymentMonthly.execute();
 
-    response.status(200).json({ result, companiesBlocked });
+    response.status(200).json(result);
   }
 
   async updateUser(request: Request, response: Response) {
