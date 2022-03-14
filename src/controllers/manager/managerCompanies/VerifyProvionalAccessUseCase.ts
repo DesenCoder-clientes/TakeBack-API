@@ -14,7 +14,11 @@ class VerifyProvionalAccessUseCase {
     });
 
     const today = new Date();
-    companiesInProvisionalAccess.map((item) => {
+    const blockedStatus = await getRepository(CompanyStatus).findOne({
+      where: { description: "Bloqueado" },
+    });
+
+    companiesInProvisionalAccess.map(async (item) => {
       let provisionalAccessDate = new Date(item.provisionalAccessAllowedAt);
 
       let expirateDate = new Date(
@@ -22,7 +26,9 @@ class VerifyProvionalAccessUseCase {
       );
 
       if (today > expirateDate) {
-        console.log("EMPRESA BLOQUEADA");
+        await getRepository(Companies).update(item.id, {
+          status: blockedStatus,
+        });
       }
     });
 

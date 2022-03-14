@@ -9,7 +9,7 @@ class VerifyCompanyMonthlyPaymentUseCase {
     const today = new Date();
     const companiesBlocked = [];
 
-    const status = await getRepository(CompanyStatus).find({
+    const status = await getRepository(CompanyStatus).findOne({
       where: { description: "Ativo" },
     });
 
