@@ -18,6 +18,8 @@ import SupportRoutes from "./src/routes/SupportRoutes";
 import CostumerRoutes from "./src/routes/CostumerRoutes";
 import CompanyRoutes from "./src/routes/CompanyRoutes";
 import ManagerRoutes from "./src/routes/ManagerRoutes";
+import TestRoutes from "./src/routes/TestRoutes";
+
 import { InternalError } from "./src/config/GenerateErros";
 import { sendMail } from "./src/utils/SendMail";
 
@@ -34,6 +36,7 @@ app.use("/magic", SupportRoutes);
 app.use("/costumer", CostumerRoutes);
 app.use("/company", CompanyRoutes);
 app.use("/manager", ManagerRoutes);
+app.use("/test", TestRoutes);
 
 var mailList = ["wesleyleandro.dev@gmail.com", "izaquenunes560@gmail.com"];
 

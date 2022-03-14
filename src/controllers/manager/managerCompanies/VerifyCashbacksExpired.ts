@@ -43,7 +43,7 @@ class VerifyCashbacksExpired {
           companyId: item.company_id,
         });
 
-        await getRepository(Transactions).update(item.id, {
+        await getRepository(Transactions).update(item.transaction_id, {
           transactionStatus,
         });
       }
