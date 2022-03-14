@@ -37,7 +37,7 @@ app.use("/magic", SupportRoutes);
 app.use("/costumer", CostumerRoutes);
 app.use("/company", CompanyRoutes);
 app.use("/manager", ManagerRoutes);
-app.use("/test", TestRoutes);
+// app.use("/test", TestRoutes);
 
 var mailList = ["wesleyleandro.dev@gmail.com", "izaquenunes560@gmail.com"];
 
