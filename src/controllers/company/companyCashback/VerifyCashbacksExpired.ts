@@ -42,7 +42,7 @@ class VerifyCashbacksExpired {
     });
 
     const status = await getRepository(CompanyStatus).findOne({
-      where: { description: "Inadimplente" },
+      where: { description: "Inadimplente por cashbacks" },
     });
 
     const transactionStatus = await getRepository(TransactionStatus).findOne({

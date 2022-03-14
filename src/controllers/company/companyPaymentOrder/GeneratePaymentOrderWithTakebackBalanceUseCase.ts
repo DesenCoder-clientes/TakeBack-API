@@ -200,7 +200,7 @@ class GeneratePaymentOrderWithTakebackBalanceUseCase {
 
     // Buscando os status necessários
     const overStatus = await getRepository(CompanyStatus).findOne({
-      where: { description: "Inadimplente" },
+      where: { description: "Inadimplente por cashbacks" },
     });
 
     const activeStatus = await getRepository(CompanyStatus).findOne({

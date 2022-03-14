@@ -18,18 +18,6 @@ class VerifyCompanyMonthlyPaymentUseCase {
       statusIds.push(item.id);
     });
 
-    const companyAux = await getRepository(Companies).find({
-      where: { status: In([...statusIds]) },
-    });
-
-    if (today.getDate() === 12) {
-      companyAux.map(async (item) => {
-        await getRepository(Companies).update(item.id, {
-          currentMonthlyPaymentPaid: false,
-        });
-      });
-    }
-
     const company = await getRepository(Companies).find({
       relations: ["companyMonthlyPayment"],
       where: { status: In([...statusIds]) },
@@ -37,7 +25,7 @@ class VerifyCompanyMonthlyPaymentUseCase {
 
     if (today.getDate() >= 15) {
       const bloquedStatus = await getRepository(CompanyStatus).findOne({
-        where: { description: "Inadimplente" },
+        where: { description: "Inadimplente por mensalidade" },
       });
 
       company.map(async (item) => {

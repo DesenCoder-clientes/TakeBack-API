@@ -326,7 +326,14 @@ const CompanyStatusSeed = [
     updatedAt: new Date(),
   },
   {
-    description: "Inadimplente",
+    description: "Inadimplente por cashbacks",
+    blocked: false,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Inadimplente por mensalidade",
     blocked: false,
     generateCashback: false,
     createdAt: new Date(),
@@ -334,13 +341,6 @@ const CompanyStatusSeed = [
   },
   {
     description: "Cadastro não aprovado",
-    blocked: true,
-    generateCashback: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    description: "Pendente à aprovação",
     blocked: true,
     generateCashback: false,
     createdAt: new Date(),
