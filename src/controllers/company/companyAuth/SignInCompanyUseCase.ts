@@ -62,13 +62,6 @@ class SignInCompanyUseCase {
     // VERIFICANDO INADIMPLÊNCIA DA EMPRESA
     const today = new Date();
 
-    // Verificando se é o primeiro dia do mês
-    if (today.getDate() === 1) {
-      await getRepository(Companies).update(companyAux.id, {
-        currentMonthlyPaymentPaid: false,
-      });
-    }
-
     const updatedCompany = await getRepository(Companies).findOne({
       where: { registeredNumber },
       relations: ["status", "companyMonthlyPayment"],

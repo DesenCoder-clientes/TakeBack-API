@@ -22,7 +22,7 @@ class VerifyCashbacksExpired {
       )
       .where("company.id = :companyId", { companyId })
       .andWhere("status.description IN (:...status)", {
-        status: ["Pendente", "Em processamento"],
+        status: ["Em atraso"],
       })
       .getRawMany();
 

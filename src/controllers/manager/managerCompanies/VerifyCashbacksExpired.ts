@@ -28,6 +28,10 @@ class VerifyCashbacksExpired {
       where: { description: "Inadimplente" },
     });
 
+    const transactionStatus = await getRepository(TransactionStatus).findOne({
+      where: { description: "Em atraso" },
+    });
+
     transactions.map(async (item) => {
       const transactionCreatedAt = new Date(item.transaction_createdAt);
 
@@ -39,10 +43,34 @@ class VerifyCashbacksExpired {
           companyId: item.company_id,
         });
 
-        await getRepository(Companies).update(item.company_id, {
-          status,
+        await getRepository(Transactions).update(item.id, {
+          transactionStatus,
         });
       }
+    });
+
+    const transactionsReduced = expiredTransactions.reduce(
+      (previousValue, currentValue) => {
+        previousValue[currentValue.companyId] =
+          previousValue[currentValue.companyId] || [];
+        previousValue[currentValue.companyId].push(currentValue);
+        return previousValue;
+      },
+      Object.create(null)
+    );
+
+    const transactionGroupedPerCompany = [];
+    for (const [key, values] of Object.entries(transactionsReduced)) {
+      transactionGroupedPerCompany.push({
+        companyId: key,
+        transactions: values,
+      });
+    }
+
+    transactionGroupedPerCompany.map(async (item) => {
+      await getRepository(Companies).update(item.companyId, {
+        status,
+      });
     });
 
     return { expiredTransactions };
