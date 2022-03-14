@@ -22,6 +22,7 @@ import TestRoutes from "./src/routes/TestRoutes";
 
 import { InternalError } from "./src/config/GenerateErros";
 import { sendMail } from "./src/utils/SendMail";
+import { VerifyProvionalAccessUseCase } from "./src/controllers/manager/managerCompanies/VerifyProvionalAccessUseCase";
 
 const app = express();
 
@@ -63,11 +64,13 @@ cron
   .schedule(
     "0 0 * * *",
     () => {
-      const verifyPaymentMonthly = new VerifyCompanyMonthlyPaymentUseCase();
       const verifyCashbacksExpired = new VerifyCashbacksExpired();
+      const verifyPaymentMonthly = new VerifyCompanyMonthlyPaymentUseCase();
+      const VerifyProvionalAccess = new VerifyProvionalAccessUseCase();
 
-      verifyPaymentMonthly.execute();
       verifyCashbacksExpired.execute();
+      verifyPaymentMonthly.execute();
+      VerifyProvionalAccess.execute();
 
       sendMail(
         mailList.toString(),

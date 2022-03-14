@@ -298,9 +298,9 @@ const CompanyStatusSeed = [
     updatedAt: new Date(),
   },
   {
-    description: "Bloqueado",
-    blocked: true,
-    generateCashback: false,
+    description: "Liberação provisória",
+    blocked: false,
+    generateCashback: true,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -321,6 +321,13 @@ const CompanyStatusSeed = [
   {
     description: "Documentação pendente",
     blocked: true,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Demonstração",
+    blocked: false,
     generateCashback: false,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -347,8 +354,8 @@ const CompanyStatusSeed = [
     updatedAt: new Date(),
   },
   {
-    description: "Demonstração",
-    blocked: false,
+    description: "Bloqueado",
+    blocked: true,
     generateCashback: false,
     createdAt: new Date(),
     updatedAt: new Date(),

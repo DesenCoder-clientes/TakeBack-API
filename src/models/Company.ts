@@ -99,6 +99,12 @@ export class Companies {
   })
   firstAccessAllowedAt: Date;
 
+  @Column({
+    type: "date",
+    nullable: true,
+  })
+  provisionalAccessAllowedAt: Date;
+
   @OneToOne(() => CompaniesAddress)
   @JoinColumn()
   address: CompaniesAddress;

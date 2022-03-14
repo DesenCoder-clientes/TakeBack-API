@@ -1,4 +1,4 @@
-import { getRepository, In } from "typeorm";
+import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
 import { CompanyStatus } from "../../../models/CompanyStatus";
@@ -9,18 +9,13 @@ class VerifyCompanyMonthlyPaymentUseCase {
     const today = new Date();
     const companiesBlocked = [];
 
-    let statusIds = [];
     const status = await getRepository(CompanyStatus).find({
-      where: { blocked: false },
-    });
-
-    status.map((item) => {
-      statusIds.push(item.id);
+      where: { description: "Ativo" },
     });
 
     const company = await getRepository(Companies).find({
       relations: ["companyMonthlyPayment"],
-      where: { status: In([...statusIds]) },
+      where: { status },
     });
 
     if (today.getDate() >= 15) {
