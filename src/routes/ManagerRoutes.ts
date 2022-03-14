@@ -75,6 +75,10 @@ routes.put(
   "/company/many-status/update/",
   managerCompanies.updateManyCompanyStatus
 );
+routes.post(
+  "/company/provisional-access/generate/:id",
+  managerCompanyStatus.generateProvisionalAccess
+);
 
 routes.get(
   "/consumers/find/all/:offset/:limit",
