@@ -22,7 +22,7 @@ import TestRoutes from "./src/routes/TestRoutes";
 
 import { InternalError } from "./src/config/GenerateErros";
 import { sendMail } from "./src/utils/SendMail";
-import { VerifyProvionalAccessUseCase } from "./src/controllers/manager/managerCompanies/VerifyProvionalAccessUseCase";
+import { VerifyProvisionalAccessUseCase } from "./src/controllers/manager/managerCompanies/VerifyProvisionalAccessUseCase";
 
 const app = express();
 
@@ -66,7 +66,7 @@ cron
     () => {
       const verifyCashbacksExpired = new VerifyCashbacksExpired();
       const verifyPaymentMonthly = new VerifyCompanyMonthlyPaymentUseCase();
-      const VerifyProvionalAccess = new VerifyProvionalAccessUseCase();
+      const VerifyProvionalAccess = new VerifyProvisionalAccessUseCase();
 
       verifyCashbacksExpired.execute();
       verifyPaymentMonthly.execute();

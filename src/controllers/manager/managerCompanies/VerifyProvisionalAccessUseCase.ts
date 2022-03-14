@@ -2,7 +2,7 @@ import { getRepository } from "typeorm";
 import { Companies } from "../../../models/Company";
 import { CompanyStatus } from "../../../models/CompanyStatus";
 
-class VerifyProvionalAccessUseCase {
+class VerifyProvisionalAccessUseCase {
   async execute() {
     const provisonalAccess = await getRepository(CompanyStatus).findOne({
       where: { description: "Liberação provisória" },
@@ -36,4 +36,4 @@ class VerifyProvionalAccessUseCase {
   }
 }
 
-export { VerifyProvionalAccessUseCase };
+export { VerifyProvisionalAccessUseCase };

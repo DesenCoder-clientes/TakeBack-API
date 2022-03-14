@@ -72,7 +72,7 @@ routes.put(
   managerCompanies.forgotPasswordToRootUser
 );
 routes.put(
-  "/company/many-status/update",
+  "/company/many-status/update/",
   managerCompanies.updateManyCompanyStatus
 );
 

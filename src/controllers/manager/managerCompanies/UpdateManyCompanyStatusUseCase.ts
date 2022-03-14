@@ -17,16 +17,13 @@ class UpdateManyCompanyStatusUseCase {
     const status = await getRepository(CompanyStatus).findOne(statusId);
     const companies = await getRepository(Companies).find({
       where: { id: In([...companyIds]) },
-      relations: ["status"],
+      relations: ["status", "companies"],
     });
 
     companies.map((item) => {
-      if (
-        status.description === "Ativo" &&
-        item.status.description === "Cadastro solicitado"
-      ) {
+      if (!status.blocked && item.companies.length === 0) {
         throw new InternalError(
-          "Não é permitido ativar empresas com status 'Cadastro solicitado'",
+          `O status '${status.description}' não é permitido para empresas que não possuem usuários`,
           400
         );
       }
