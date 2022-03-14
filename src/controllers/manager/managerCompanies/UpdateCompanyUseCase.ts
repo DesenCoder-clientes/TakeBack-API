@@ -23,7 +23,7 @@ interface UpdateProps {
 class UpdateCompanyUseCase {
   async execute(props: UpdateProps) {
     if (!props.email || !props.corporateName || !props.fantasyName) {
-      throw new InternalError("Dados imcompletos", 400);
+      throw new InternalError("Dados incompletos", 400);
     }
 
     const company = await getRepository(Companies).findOne({

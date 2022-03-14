@@ -9,6 +9,7 @@ import { FindCompanyUsersUseCase } from "./FindCompanyUsersUseCase";
 import { UpdateCustomFeeUseCase } from "./UpdateCustomFeeUseCase";
 import { UpdateCompanyMontlyPlanUseCase } from "./UpdateCompanyMontlyPlanUseCase";
 import { ForgotPasswordToRootUserUseCase } from "./ForgotPasswordToRootUserUseCase";
+import { UpdateManyCompanyStatusUseCase } from "./UpdateManyCompanyStatusUseCase";
 
 interface Props {
   companyId: string;
@@ -186,6 +187,23 @@ class CompaniesController {
     const users = await findUser.execute({ companyId });
 
     response.status(200).json({ message, users });
+  }
+
+  async updateManyCompanyStatus(request: Request, response: Response) {
+    const { statusId, companyIds } = request.body;
+    const { offset, limit } = request.params;
+    const filters: FindCompaniesQueryProps = request.query;
+
+    const updated = new UpdateManyCompanyStatusUseCase();
+    const findUseCase = new FindAllCompaniesUseCase();
+
+    const message = await updated.execute({ companyIds, statusId });
+    const companies = await findUseCase.execute({
+      pagination: { limit, offset },
+      filters,
+    });
+
+    response.status(200).json({ message, companies });
   }
 }
 

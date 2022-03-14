@@ -71,6 +71,10 @@ routes.put(
   "/company/forgot-password/:id",
   managerCompanies.forgotPasswordToRootUser
 );
+routes.put(
+  "/company/many-status/update",
+  managerCompanies.updateManyCompanyStatus
+);
 
 routes.get(
   "/consumers/find/all/:offset/:limit",
