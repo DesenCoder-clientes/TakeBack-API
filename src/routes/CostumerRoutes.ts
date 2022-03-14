@@ -33,8 +33,10 @@ routes.put("/update/data", costumerData.updateData);
 routes.put("/update/phone", costumerData.updatePhone);
 routes.put("/update/email", costumerData.updateEmail);
 routes.put("/update/address", costumerData.updateAddress);
+
 routes.post("/signature/register", costumerData.registerSignature);
 routes.put("/signature/update", costumerData.updateSignature);
+
 routes.get("/companies/find/:offset/:limit", costumerData.findCompanies);
 routes.get("/company/find/one/:id", costumerData.findOneCompany);
 routes.get("/company/filter", costumerData.filterCompanies);

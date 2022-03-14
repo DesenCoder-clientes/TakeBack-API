@@ -9,7 +9,7 @@ interface FilterProps {
 
 class CostumerFilterCompany {
   async execute({ cityId }: FilterProps) {
-    const query = await getRepository(Companies)
+    const query = getRepository(Companies)
       .createQueryBuilder("companies")
       .select(["company.id", "company.fantasyName", "company.createdAt"])
       .leftJoin(CompaniesAddress, "address", "address.id = company.address")

@@ -42,6 +42,7 @@ class CostumerFindOneCompany {
         "method.id = paymentMethod.paymentMethod"
       )
       .where("method.isTakebackMethod = :type", { type: false })
+      .andWhere("paymentMethod.company.id = :companyId", { companyId })
       .getRawMany();
 
     return { company, paymentMethod };
