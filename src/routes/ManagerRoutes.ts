@@ -102,7 +102,7 @@ routes.get("/plan/find", managerPaymentPlan.findAll);
 routes.post("/plan/register", managerPaymentPlan.register);
 routes.put("/plan/update/:id", managerPaymentPlan.update);
 
-routes.get("/dashboard", managerDashboard.dashboardReport);
+routes.get("/dashboard/find", managerDashboard.dashboardReport);
 
 routes.get("/order/find/all/:offset/:limit", managerPaymentOrder.findOrder);
 routes.get("/order/find/filters", managerPaymentOrder.findFilterOptions);
