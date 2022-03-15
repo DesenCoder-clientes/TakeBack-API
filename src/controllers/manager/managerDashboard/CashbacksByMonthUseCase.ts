@@ -5,11 +5,12 @@ import { Transactions } from "../../../models/Transaction";
 import { TransactionPaymentMethods } from "../../../models/TransactionPaymentMethod";
 import { TransactionStatus } from "../../../models/TransactionStatus";
 
-class CashbacksByMonthlyUseCase {
+class CashbacksByMonthUseCase {
   async execute() {
     const transactions = await getRepository(TransactionPaymentMethods)
       .createQueryBuilder("paymentMethod")
-      .select("SUM(paymentMethod.cashbackValue)", "valor")
+      .select("SUM(paymentMethod.cashbackValue)", "billing")
+      .addSelect("SUM(transaction.takebackFeeAmount)", "takebackBilling")
       .addSelect("DATE_TRUNC('month', transaction.createdAt)", "datada")
       .leftJoin(
         Transactions,
@@ -40,4 +41,4 @@ class CashbacksByMonthlyUseCase {
   }
 }
 
-export { CashbacksByMonthlyUseCase };
+export { CashbacksByMonthUseCase };
