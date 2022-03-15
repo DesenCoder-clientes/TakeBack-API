@@ -1,5 +1,6 @@
 import { getRepository, In } from "typeorm";
 import { Companies } from "../../../models/Company";
+import { CompanyMonthlyPayment } from "../../../models/CompanyMonthlyPayment";
 import { CompanyStatus } from "../../../models/CompanyStatus";
 
 class UpdateCompanyPaymentMonthlyToFalseUseCase {
