@@ -1,5 +1,4 @@
 import { getRepository } from "typeorm";
-import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
 import { CompanyStatus } from "../../../models/CompanyStatus";
 import { PaymentOrder } from "../../../models/PaymentOrder";
@@ -42,12 +41,30 @@ class PaymentOrderReportUseCase {
         "companyStatus.id = company.status"
       );
 
+    const query2 = getRepository(PaymentOrder)
+      .createQueryBuilder("paymentOrder")
+      .select("SUM(paymentOrder.value)", "amount")
+      .leftJoin(
+        PaymentOrderMethods,
+        "method",
+        "method.id = paymentOrder.paymentMethod"
+      )
+      .leftJoin(PaymentOrderStatus, "status", "status.id = paymentOrder.status")
+      .leftJoin(Companies, "company", "company.id = paymentOrder.company")
+      .leftJoin(
+        CompanyStatus,
+        "companyStatus",
+        "companyStatus.id = company.status"
+      );
+
     if (filters.companyId) {
       query.where("company.id = :companyId", { companyId: filters.companyId });
+      query2.where("company.id = :companyId", { companyId: filters.companyId });
     }
 
     if (filters.statusId) {
       query.andWhere("status.id = :statusId", { statusId: filters.statusId });
+      query2.andWhere("status.id = :statusId", { statusId: filters.statusId });
     }
 
     if (filters.startDate) {
@@ -55,6 +72,7 @@ class PaymentOrderReportUseCase {
       date.setDate(date.getDate());
 
       query.andWhere(`paymentOrder.createdAt >= '${date.toISOString()}'`);
+      query2.andWhere(`paymentOrder.createdAt >= '${date.toISOString()}'`);
     }
 
     if (filters.endDate) {
@@ -62,11 +80,13 @@ class PaymentOrderReportUseCase {
       date.setDate(date.getDate() + 1);
 
       query.andWhere(`paymentOrder.createdAt <= '${date.toISOString()}'`);
+      query2.andWhere(`paymentOrder.createdAt <= '${date.toISOString()}'`);
     }
 
-    const result = await query.getRawMany();
+    const report = await query.getRawMany();
+    const amount = await query2.getRawOne();
 
-    return result;
+    return { report, amount: parseFloat(amount.amount) };
   }
 }
 
