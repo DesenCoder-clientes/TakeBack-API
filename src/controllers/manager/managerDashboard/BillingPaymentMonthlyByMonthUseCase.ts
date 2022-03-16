@@ -3,15 +3,38 @@ import { CompanyMonthlyPayment } from "../../../models/CompanyMonthlyPayment";
 
 class BillingPaymentMonthlyByMonthUseCase {
   async execute() {
-    const monthlyPaiments = await getRepository(CompanyMonthlyPayment)
+    const monthlyPayments = await getRepository(CompanyMonthlyPayment)
       .createQueryBuilder("companyMonthly")
       .select("SUM(companyMonthly.amountPaid)", "value")
-      .addSelect("DATE_TRUNC('month', companyMonthly.createdAt)", "datada")
+      .addSelect("DATE_TRUNC('month', companyMonthly.createdAt)", "date")
       .where("companyMonthly.isPaid = :status", { status: true })
       .groupBy("DATE_TRUNC('month', companyMonthly.createdAt)")
       .getRawMany();
 
-    return monthlyPaiments;
+    const labels = [];
+    const values = [];
+
+    const months = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Agosto",
+      "Setembro",
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+    ];
+
+    monthlyPayments.map((item) => {
+      labels.push(months[new Date(item.date).getMonth()]);
+      values.push(parseFloat(item.value));
+    });
+
+    return { labels, values };
   }
 }
 

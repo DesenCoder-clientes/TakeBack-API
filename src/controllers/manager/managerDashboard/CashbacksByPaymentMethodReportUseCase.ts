@@ -9,7 +9,7 @@ class CashbacksByPaymentMethodReportUseCase {
   async execute() {
     const transactions = await getRepository(TransactionPaymentMethods)
       .createQueryBuilder("paymentMethod")
-      .select("SUM(paymentMethod.cashbackValue)", "valor")
+      .select("SUM(paymentMethod.cashbackValue)", "value")
       .addSelect(["method.description"])
       .leftJoin(
         Transactions,
@@ -36,7 +36,15 @@ class CashbacksByPaymentMethodReportUseCase {
       .groupBy("method.description")
       .getRawMany();
 
-    return transactions;
+    const labels = [];
+    const values = [];
+
+    transactions.map((item) => {
+      labels.push(item.method_description);
+      values.push(parseFloat(item.value));
+    });
+
+    return { labels, values };
   }
 }
 

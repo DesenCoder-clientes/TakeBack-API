@@ -11,7 +11,7 @@ class CashbacksByMonthUseCase {
       .createQueryBuilder("paymentMethod")
       .select("SUM(paymentMethod.cashbackValue)", "billing")
       .addSelect("SUM(transaction.takebackFeeAmount)", "takebackBilling")
-      .addSelect("DATE_TRUNC('month', transaction.createdAt)", "datada")
+      .addSelect("DATE_TRUNC('month', transaction.createdAt)", "date")
       .leftJoin(
         Transactions,
         "transaction",
@@ -37,7 +37,38 @@ class CashbacksByMonthUseCase {
       .groupBy("DATE_TRUNC('month', transaction.createdAt)")
       .getRawMany();
 
-    return transactions;
+    const labels1 = [];
+    const values1 = [];
+    const labels2 = [];
+    const values2 = [];
+
+    const months = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Agosto",
+      "Setembro",
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+    ];
+
+    transactions.map((item) => {
+      labels1.push(months[new Date(item.date).getMonth()]);
+      values1.push(parseFloat(item.billing));
+
+      labels2.push(months[new Date(item.date).getMonth()]);
+      values2.push(parseFloat(item.takebackBilling));
+    });
+
+    const companyBilling = { labels1, values1 };
+    const takebackBilling = { labels2, values2 };
+
+    return { companyBilling, takebackBilling };
   }
 }
 

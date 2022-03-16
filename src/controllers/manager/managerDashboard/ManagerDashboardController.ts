@@ -12,11 +12,18 @@ class DashboardController {
     const billingReport = new BillingPaymentMonthlyByMonthUseCase();
 
     const totalizers = await totalizersReport.execute();
-    const transactions = await transactionsReport.execute();
-    const cashbacksMonthly = await cashbackMonthly.execute();
+    const cashbacksPerMethods = await transactionsReport.execute();
+    const cashbacksPerMonth = await cashbackMonthly.execute();
     const billinPaymentMonthlyByMonth = await billingReport.execute();
 
-    return response.status(200).json({ billinPaymentMonthlyByMonth });
+    return response
+      .status(200)
+      .json({
+        totalizers,
+        cashbacksPerMethods,
+        cashbacksPerMonth,
+        billinPaymentMonthlyByMonth,
+      });
   }
 }
 
