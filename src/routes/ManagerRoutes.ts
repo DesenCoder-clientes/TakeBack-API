@@ -16,6 +16,7 @@ import { DashboardController } from "../controllers/manager/managerDashboard/Man
 import { PaymentPlanController } from "../controllers/manager/managerPaymentPlan/PaymentPlanController";
 import { PaymentOrderController } from "../controllers/manager/managerPaymentOrder/PaymentOrderController";
 import { ManagerCitiesController } from "../controllers/manager/managerCities/ManagerCitiesController";
+import { ReportsController } from "../controllers/manager/managerReports/ReportsController";
 
 const paymentMethod = new PaymentMethodController();
 const managerAuth = new ManagerAuthController();
@@ -28,6 +29,7 @@ const managerDashboard = new DashboardController();
 const managerPaymentPlan = new PaymentPlanController();
 const managerPaymentOrder = new PaymentOrderController();
 const managerCities = new ManagerCitiesController();
+const managerReports = new ReportsController();
 
 const routes = Router();
 
@@ -123,5 +125,7 @@ routes.post(
   multer(TicketMiddleware).single("Boleto"),
   managerPaymentOrder.sendPaymentInfoToEmail
 );
+
+routes.get("/report/payment-order", managerReports.paymentOrderReport);
 
 export default routes;
