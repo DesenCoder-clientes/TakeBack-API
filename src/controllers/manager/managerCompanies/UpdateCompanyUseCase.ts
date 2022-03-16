@@ -67,10 +67,10 @@ class UpdateCompanyUseCase {
       {
         email: props.email,
         industry,
-        registeredNumber: props.registeredNumber,
+        registeredNumber: props.registeredNumber.replace(/[^\d]/g, ""),
         fantasyName: props.fantasyName,
         corporateName: props.corporateName,
-        phone: props.phone,
+        phone: props.phone.replace(/[^\d]/g, ""),
       }
     );
 
