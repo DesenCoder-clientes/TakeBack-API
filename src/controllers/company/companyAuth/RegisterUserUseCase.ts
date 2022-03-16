@@ -17,7 +17,7 @@ interface Props {
 class RegisterUserUseCase {
   async execute({ companyId, name, userTypeId, password }: Props) {
     if (!userTypeId || !name || !password) {
-      return new InternalError("Dados imcompletos", 400);
+      return new InternalError("Dados incompletos", 400);
     }
 
     const company = await getRepository(Companies).findOne(companyId);
@@ -34,7 +34,9 @@ class RegisterUserUseCase {
       return new InternalError("Usuário já cadastrado", 400);
     }
 
-    const companyUserTypes = await getRepository(CompanyUserTypes).findOne(userTypeId);
+    const companyUserTypes = await getRepository(CompanyUserTypes).findOne(
+      userTypeId
+    );
 
     const passwordEncrypted = bcrypt.hashSync(password, 10);
 

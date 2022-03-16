@@ -20,6 +20,7 @@ import { PaymentPlans } from "./PaymentPlans";
 import { PaymentOrder } from "./PaymentOrder";
 
 import { ColumnNumericTransformer } from "../config/TransformerDecimal";
+import { CompanyMonthlyPayment } from "./CompanyMonthlyPayment";
 
 @Entity()
 export class Companies {
@@ -82,6 +83,28 @@ export class Companies {
   })
   monthlyPayment: number;
 
+  @Column({
+    default: false,
+  })
+  customMonthlyPayment: boolean;
+
+  @Column({
+    default: false,
+  })
+  currentMonthlyPaymentPaid: boolean;
+
+  @Column({
+    type: "date",
+    nullable: true,
+  })
+  firstAccessAllowedAt: Date;
+
+  @Column({
+    type: "date",
+    nullable: true,
+  })
+  provisionalAccessAllowedAt: Date;
+
   @OneToOne(() => CompaniesAddress)
   @JoinColumn()
   address: CompaniesAddress;
@@ -91,6 +114,12 @@ export class Companies {
 
   @OneToMany(() => Transactions, (transactions) => transactions.companies)
   transaction: Transactions[];
+
+  @OneToMany(
+    () => CompanyMonthlyPayment,
+    (monthlyPayment) => monthlyPayment.company
+  )
+  companyMonthlyPayment: CompanyMonthlyPayment[];
 
   @ManyToOne(() => Industries, (industry) => industry.companies)
   industry: Industries;

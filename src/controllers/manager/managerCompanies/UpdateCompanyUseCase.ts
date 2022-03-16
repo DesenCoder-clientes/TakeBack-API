@@ -23,7 +23,7 @@ interface UpdateProps {
 class UpdateCompanyUseCase {
   async execute(props: UpdateProps) {
     if (!props.email || !props.corporateName || !props.fantasyName) {
-      throw new InternalError("Dados imcompletos", 400);
+      throw new InternalError("Dados incompletos", 400);
     }
 
     const company = await getRepository(Companies).findOne({
@@ -67,10 +67,10 @@ class UpdateCompanyUseCase {
       {
         email: props.email,
         industry,
-        registeredNumber: props.registeredNumber,
+        registeredNumber: props.registeredNumber.replace(/[^\d]/g, ""),
         fantasyName: props.fantasyName,
         corporateName: props.corporateName,
-        phone: props.phone,
+        phone: props.phone.replace(/[^\d]/g, ""),
       }
     );
 

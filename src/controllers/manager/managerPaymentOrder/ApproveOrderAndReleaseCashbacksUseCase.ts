@@ -1,6 +1,7 @@
 import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
 import { Companies } from "../../../models/Company";
+import { CompanyStatus } from "../../../models/CompanyStatus";
 import { Consumers } from "../../../models/Consumer";
 import { PaymentOrder } from "../../../models/PaymentOrder";
 import { PaymentOrderStatus } from "../../../models/PaymentOrderStatus";
@@ -92,13 +93,15 @@ class ApproveOrderAndReleaseCashbacksUseCase {
       where: { description: "Aprovada" },
     });
 
-    // Pegando os IDs das transações da ordem de pagamento
+    // Aprovando as transações da ordem de pagamento
     let transactionsUpdatedError = false;
+    const date = new Date();
     transactions.map(async (item) => {
       const transactionUpdated = await getRepository(Transactions).update(
         item.transaction_id,
         {
           transactionStatus: approvedStatusTransaction,
+          aprovedAt: date.toLocaleDateString(),
         }
       );
 
@@ -190,6 +193,44 @@ class ApproveOrderAndReleaseCashbacksUseCase {
 
     if (paymentOrderUpdated.affected === 0) {
       throw new InternalError("Erro ao atualizar o status da transação", 400);
+    }
+
+    // VERIFICANDO SE HÁ TRANSAÇẼOS PENDENTES PARA ATUALIZAR O STATUS DA EMPRESA
+    // Buscando as transações
+    const verifyTransactions = await getRepository(Transactions)
+      .createQueryBuilder("transaction")
+      .select(["transaction.id", "transaction.createdAt"])
+      .addSelect(["status.description", "company.id"])
+      .leftJoin(Companies, "company", "company.id = transaction.companies")
+      .leftJoin(
+        TransactionStatus,
+        "status",
+        "status.id = transaction.transactionStatus"
+      )
+      .where("company.id = :companyId", { companyId: paymentOrder.company.id })
+      .andWhere("status.description = :status", { status: "Em atraso" })
+      .getRawMany();
+
+    // Buscando os status necessários
+    const overStatus = await getRepository(CompanyStatus).findOne({
+      where: { description: "Inadimplente por cashbacks" },
+    });
+
+    const activeStatus = await getRepository(CompanyStatus).findOne({
+      where: { description: "Ativo" },
+    });
+
+    // Verificando se há alguma transação em atraso
+    if (verifyTransactions.length > 0) {
+      // Bloqueando a empresa caso tenha pelo menos uma transação em atraso
+      await getRepository(Companies).update(paymentOrder.company.id, {
+        status: overStatus,
+      });
+    } else {
+      // Desbloqueando a empresa caso não haja mais cashbacks pendentes
+      await getRepository(Companies).update(paymentOrder.company.id, {
+        status: activeStatus,
+      });
     }
 
     return "Ordem de Pagamento aprovada!";

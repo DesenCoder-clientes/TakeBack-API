@@ -9,6 +9,7 @@ import { FindCompanyUsersUseCase } from "./FindCompanyUsersUseCase";
 import { UpdateCustomFeeUseCase } from "./UpdateCustomFeeUseCase";
 import { UpdateCompanyMontlyPlanUseCase } from "./UpdateCompanyMontlyPlanUseCase";
 import { ForgotPasswordToRootUserUseCase } from "./ForgotPasswordToRootUserUseCase";
+import { UpdateManyCompanyStatusUseCase } from "./UpdateManyCompanyStatusUseCase";
 
 interface Props {
   companyId: string;
@@ -67,7 +68,7 @@ class CompaniesController {
     });
     const companyUsers = await findUser.execute({ companyId: data.companyId });
 
-    response.status(200).json({ message, companyData, companyUsers });
+    return response.status(200).json({ message, companyData, companyUsers });
   }
 
   async findAllCompanies(request: Request, response: Response) {
@@ -112,7 +113,7 @@ class CompaniesController {
       query,
     });
 
-    response.status(200).json(result);
+    return response.status(200).json(result);
   }
 
   async updateCompany(request: Request, response: Response) {
@@ -140,7 +141,7 @@ class CompaniesController {
 
     const companies = await find.execute({ companyId });
 
-    response.status(200).json({ message, companies });
+    return response.status(200).json({ message, companies });
   }
 
   async updateCustomFee(request: Request, response: Response) {
@@ -159,7 +160,7 @@ class CompaniesController {
 
     const companyData = await findUseCase.execute({ companyId });
 
-    response.status(200).json({ message, companyData });
+    return response.status(200).json({ message, companyData });
   }
 
   async updatePaymentPlan(request: Request, response: Response) {
@@ -172,7 +173,7 @@ class CompaniesController {
     const message = await update.execute({ companyId, planId });
     const companyData = await findUseCase.execute({ companyId });
 
-    response.status(200).json({ message, companyData });
+    return response.status(200).json({ message, companyData });
   }
 
   async forgotPasswordToRootUser(request: Request, response: Response) {
@@ -185,7 +186,17 @@ class CompaniesController {
     const message = await forgot.execute({ companyId, email, userName });
     const users = await findUser.execute({ companyId });
 
-    response.status(200).json({ message, users });
+    return response.status(200).json({ message, users });
+  }
+
+  async updateManyCompanyStatus(request: Request, response: Response) {
+    const { statusId, companyIds } = request.body;
+
+    const updated = new UpdateManyCompanyStatusUseCase();
+
+    const message = await updated.execute({ companyIds, statusId });
+
+    return response.status(200).json({ message });
   }
 }
 

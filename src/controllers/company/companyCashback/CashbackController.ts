@@ -8,7 +8,7 @@ import { FindCashbackStatusUseCase } from "./FindCashbackStatusUseCase";
 import { FindAllCashbacksUseCase } from "./FindAllCashbacksUseCase";
 import { FindCashbackFiltersUseCase } from "./FindCashbackFiltersUseCase";
 import { ValidateUserPasswordUseCase } from "./ValidateUserPasswordUseCase";
-import { VerifyCashbacksExpired } from "../companyAuth/VerifyCashbacksExpired";
+import { VerifyCashbacksExpired } from "./VerifyCashbacksExpired";
 
 interface GenerateCashbackProps {
   code?: string;

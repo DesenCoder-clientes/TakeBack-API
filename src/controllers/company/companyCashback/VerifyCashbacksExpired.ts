@@ -22,7 +22,7 @@ class VerifyCashbacksExpired {
       )
       .where("company.id = :companyId", { companyId })
       .andWhere("status.description IN (:...status)", {
-        status: ["Pendente", "Em processamento"],
+        status: ["Em atraso"],
       })
       .getRawMany();
 
@@ -41,9 +41,19 @@ class VerifyCashbacksExpired {
       }
     });
 
+    const status = await getRepository(CompanyStatus).findOne({
+      where: { description: "Inadimplente por cashbacks" },
+    });
+
+    const transactionStatus = await getRepository(TransactionStatus).findOne({
+      where: { description: "Em atraso" },
+    });
+
     if (expiredTransactions.length > 0) {
-      const status = await getRepository(CompanyStatus).findOne({
-        where: { description: "Inadimplente" },
+      expiredTransactions.map(async (item) => {
+        await getRepository(Transactions).update(item.id, {
+          transactionStatus,
+        });
       });
 
       await getRepository(Companies).update(companyId, {

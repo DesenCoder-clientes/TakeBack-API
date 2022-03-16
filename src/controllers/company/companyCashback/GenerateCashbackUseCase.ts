@@ -282,19 +282,6 @@ class GenerateCashbackUseCase {
         throw new InternalError("Houve um erro ao emitir o cashback", 400);
       }
 
-      const value =
-        company.negativeBalance + takebackFeeAmount + cashbackAmount;
-
-      console.log("-------------------------------------------------");
-      console.log({
-        COMPANY_NEGATIVE_BALANCE: company.negativeBalance,
-        TAKEBACK_FEE_AMOUNT: takebackFeeAmount,
-        CASHBACK_AMOUNT: cashbackAmount,
-        VALUE: value,
-        VALUE_TYPE: typeof value,
-      });
-      console.log("-------------------------------------------------");
-
       // Atualizando saldo negativo da empresa
       const updatedNegativeBalance = await getRepository(Companies).update(
         company.id,

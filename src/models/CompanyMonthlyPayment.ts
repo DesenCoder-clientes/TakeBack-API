@@ -2,40 +2,46 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { ColumnNumericTransformer } from "../config/TransformerDecimal";
 
 import { Companies } from "./Company";
-import { CompanyMonthlyPayment } from "./CompanyMonthlyPayment";
+import { PaymentPlans } from "./PaymentPlans";
 
 @Entity()
-export class PaymentPlans {
+export class CompanyMonthlyPayment {
   @PrimaryGeneratedColumn("increment")
   id: number;
-
-  @Column()
-  description: string;
 
   @Column({
     type: "decimal",
     precision: 10,
     scale: 4,
     default: 0.0,
+    nullable: true,
     transformer: new ColumnNumericTransformer(),
   })
-  value: number;
+  amountPaid: number;
 
-  @OneToMany(() => Companies, (companies) => companies.paymentPlan)
-  company: Companies[];
+  @Column({
+    default: false,
+  })
+  isPaid: boolean;
 
-  @OneToMany(
-    () => CompanyMonthlyPayment,
-    (monthlyPayment) => monthlyPayment.plan
-  )
-  companyMonthlyPayment: CompanyMonthlyPayment[];
+  @ManyToOne(() => Companies, (companies) => companies.companyMonthlyPayment)
+  company: Companies;
+
+  @ManyToOne(() => PaymentPlans, (plans) => plans.companyMonthlyPayment)
+  plan: PaymentPlans;
+
+  @Column({
+    type: "date",
+    nullable: true,
+  })
+  paidDate: Date;
 
   @CreateDateColumn()
   createdAt: Date;

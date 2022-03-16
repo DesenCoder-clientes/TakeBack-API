@@ -39,7 +39,8 @@ class FindPaymentOrderUseCase {
       )
       .where("company.id = :companyId", { companyId })
       .limit(parseInt(pagination.limit))
-      .offset(parseInt(pagination.offset) * parseInt(pagination.limit));
+      .offset(parseInt(pagination.offset) * parseInt(pagination.limit))
+      .orderBy("order.id", "DESC");
 
     if (filters.statusId) {
       findOrder.andWhere("status.id = :statusId", {

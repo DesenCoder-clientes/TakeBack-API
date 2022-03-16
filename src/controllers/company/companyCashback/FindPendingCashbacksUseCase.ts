@@ -29,7 +29,9 @@ class FindPendingCashbacksUseCase {
         "status.id = transaction.transactionStatus"
       )
       .where("transaction.companies = :companyId", { companyId })
-      .andWhere("status.description = :status", { status: "Pendente" })
+      .andWhere("status.description IN (:...status)", {
+        status: ["Pendente", "Em atraso"],
+      })
       .orderBy("transaction.id")
       .getRawMany();
 
