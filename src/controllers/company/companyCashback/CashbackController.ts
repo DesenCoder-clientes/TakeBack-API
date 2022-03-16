@@ -8,6 +8,7 @@ import { FindCashbackStatusUseCase } from "./FindCashbackStatusUseCase";
 import { FindAllCashbacksUseCase } from "./FindAllCashbacksUseCase";
 import { FindCashbackFiltersUseCase } from "./FindCashbackFiltersUseCase";
 import { ValidateUserPasswordUseCase } from "./ValidateUserPasswordUseCase";
+import { VerifyCashbacksExpired } from "./VerifyCashbacksExpired";
 
 interface GenerateCashbackProps {
   code?: string;
@@ -133,6 +134,16 @@ class CashbackController {
 
       return response.status(200).json(result);
     }
+  }
+
+  async verifyCashbacksExpired(request: Request, response: Response) {
+    const { companyId } = request["tokenPayload"];
+
+    const verify = new VerifyCashbacksExpired();
+
+    const transactions = await verify.execute({ companyId });
+
+    return response.status(200).json(transactions);
   }
 }
 

@@ -1,6 +1,5 @@
 import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
-import { Companies } from "../../../models/Company";
 import { CompanyUsers } from "../../../models/CompanyUsers";
 import { Consumers } from "../../../models/Consumer";
 import { PaymentOrder } from "../../../models/PaymentOrder";
@@ -27,6 +26,7 @@ class FindTransactionsInPaymentOrderUseCase {
         "transaction.id",
         "transaction.totalAmount",
         "transaction.dateAt",
+        "transaction.createdAt",
         "transaction.takebackFeeAmount",
         "transaction.cashbackAmount",
       ])
@@ -43,11 +43,6 @@ class FindTransactionsInPaymentOrderUseCase {
         "status",
         "status.id = transaction.transactionStatus"
       )
-      // .leftJoin(
-      //   TransactionTypes,
-      //   "type",
-      //   "type.id = transaction.transactionTypes"
-      // )
       .where("transactionInPaymentOrder.id = :paymentOrderId", {
         paymentOrderId,
       })

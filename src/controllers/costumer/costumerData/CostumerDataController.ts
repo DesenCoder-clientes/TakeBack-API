@@ -1,6 +1,8 @@
 import { Response, Request } from "express";
+import { CostumerFilterCompany } from "./CostumerFilterCompany";
 import { CostumerFindAppDataUseCase } from "./CostumerFindAppDataUseCase";
 import { CostumerFindCompaniesUseCase } from "./CostumerFindCompaniesUseCase";
+import { CostumerFindOneCompany } from "./CostumerFindOneCompany";
 import { CostumerRegisterSignatureUseCase } from "./CostumerRegisterSignatureUseCase";
 import { CostumerUpdateAddressUseCase } from "./CostumerUpdateAddressUseCase";
 import { CostumerUpdateDataUseCase } from "./CostumerUpdateDataUseCase";
@@ -36,6 +38,15 @@ interface ConsumerRequestToRegisterSignature {
 interface ConsumerRequestToUpdateSignature {
   signature: string;
   newSignature: string;
+}
+
+interface FindCompaniesQueryProps {
+  cityId?: string;
+}
+
+interface FiltersToFindCompany {
+  city: string;
+  industry: string;
 }
 
 class CostumerDataController {
@@ -154,12 +165,38 @@ class CostumerDataController {
 
   async findCompanies(request: Request, response: Response) {
     const { offset, limit } = request.params;
+    const filters = request.query;
 
     const find = new CostumerFindCompaniesUseCase();
 
     const result = await find.execute({
       limit,
       offset,
+      filters,
+    });
+
+    return response.status(200).json(result);
+  }
+
+  async findOneCompany(request: Request, response: Response) {
+    const companyId = request.params.id;
+
+    const find = new CostumerFindOneCompany();
+
+    const result = await find.execute({
+      companyId,
+    });
+
+    return response.status(200).json(result);
+  }
+
+  async filterCompanies(request: Request, response: Response) {
+    const { cityId }: FindCompaniesQueryProps = request.query;
+
+    const filter = new CostumerFilterCompany();
+
+    const result = await filter.execute({
+      cityId,
     });
 
     return response.status(200).json(result);

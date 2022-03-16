@@ -24,7 +24,7 @@ class FindTransactionsInPaymentOrderUseCase {
       .select([
         "transaction.id",
         "transaction.totalAmount",
-        "transaction.dateAt",
+        "transaction.createdAt",
         "transaction.takebackFeeAmount",
         "transaction.cashbackAmount",
       ])
@@ -41,11 +41,7 @@ class FindTransactionsInPaymentOrderUseCase {
         "status",
         "status.id = transaction.transactionStatus"
       )
-      // .leftJoin(
-      //   TransactionTypes,
-      //   "type",
-      //   "type.id = transaction.transactionTypes"
-      // )
+
       .orderBy("transaction.id")
       .where("transactionInPaymentOrder.id = :paymentOrderId", {
         paymentOrderId,

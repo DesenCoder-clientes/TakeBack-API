@@ -20,7 +20,7 @@ export class CompaniesAddress {
   @Column({
     nullable: true,
   })
-  number: number;
+  number: string;
 
   @Column({
     nullable: true,

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { FindCompanyStatusUseCase } from "./FindCompanyStatusUseCase";
 import { UpdadeCompanyStatusUseCase } from "./UpdateCompanyStatusUseCase";
 import { FindOneCompanyUseCase } from "../managerCompanies/FindOneCompanyUseCase";
+import { GenerateProvisionalAccessUseCase } from "./GenerateProvisionalAccessUseCase";
 
 interface UpdateProps {
   statusId: number;
@@ -30,6 +31,16 @@ class ManagerCompanyStatusController {
     const companyData = await findCompanyData.execute({ companyId });
 
     return response.status(200).json({ message, companyData });
+  }
+
+  async generateProvisionalAccess(request: Request, response: Response) {
+    const companyId = request.params.id;
+
+    const generate = new GenerateProvisionalAccessUseCase();
+
+    const message = await generate.execute({ companyId });
+
+    return response.status(200).json({ message });
   }
 }
 

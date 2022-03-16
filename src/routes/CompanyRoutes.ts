@@ -56,6 +56,7 @@ routes.put(
   companyUser.rootUserUpdateUserPassword
 );
 
+routes.get("/cashbacks/expired", cashback.verifyCashbacksExpired);
 routes.post(
   "/cashback/confirm-password",
   VerifyIfIsAuthorizedToEmitCashbacks,

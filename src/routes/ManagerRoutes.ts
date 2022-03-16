@@ -16,6 +16,7 @@ import { DashboardController } from "../controllers/manager/managerDashboard/Man
 import { PaymentPlanController } from "../controllers/manager/managerPaymentPlan/PaymentPlanController";
 import { PaymentOrderController } from "../controllers/manager/managerPaymentOrder/PaymentOrderController";
 import { ManagerCitiesController } from "../controllers/manager/managerCities/ManagerCitiesController";
+import { ReportsController } from "../controllers/manager/managerReports/ReportsController";
 
 const paymentMethod = new PaymentMethodController();
 const managerAuth = new ManagerAuthController();
@@ -28,6 +29,7 @@ const managerDashboard = new DashboardController();
 const managerPaymentPlan = new PaymentPlanController();
 const managerPaymentOrder = new PaymentOrderController();
 const managerCities = new ManagerCitiesController();
+const managerReports = new ReportsController();
 
 const routes = Router();
 
@@ -71,6 +73,14 @@ routes.put(
   "/company/forgot-password/:id",
   managerCompanies.forgotPasswordToRootUser
 );
+routes.put(
+  "/company/many-status/update/",
+  managerCompanies.updateManyCompanyStatus
+);
+routes.post(
+  "/company/provisional-access/generate/:id",
+  managerCompanyStatus.generateProvisionalAccess
+);
 
 routes.get(
   "/consumers/find/all/:offset/:limit",
@@ -94,7 +104,7 @@ routes.get("/plan/find", managerPaymentPlan.findAll);
 routes.post("/plan/register", managerPaymentPlan.register);
 routes.put("/plan/update/:id", managerPaymentPlan.update);
 
-routes.get("/dashboard", managerDashboard.dashboardReport);
+routes.get("/dashboard/find", managerDashboard.dashboardReport);
 
 routes.get("/order/find/all/:offset/:limit", managerPaymentOrder.findOrder);
 routes.get("/order/find/filters", managerPaymentOrder.findFilterOptions);
@@ -115,5 +125,8 @@ routes.post(
   multer(TicketMiddleware).single("Boleto"),
   managerPaymentOrder.sendPaymentInfoToEmail
 );
+
+routes.get("/report/payment-order", managerReports.paymentOrderReport);
+routes.get("/report/monthly-payment", managerReports.monthlyReport);
 
 export default routes;

@@ -11,9 +11,24 @@ interface Props {
 class UpdadeCompanyStatusUseCase {
   async execute({ statusId, companyId }: Props) {
     const status = await getRepository(CompanyStatus).findOne(statusId);
+    const company = await getRepository(Companies).findOne({
+      where: { id: companyId },
+      relations: ["status", "companies"],
+    });
 
-    if (!status) {
-      throw new InternalError("Status inexistente", 401);
+    if (!status || !company) {
+      throw new InternalError("Status inexistente", 404);
+    }
+
+    if (status.description === "Liberação provisória") {
+      throw new InternalError("Operação não permitida", 400);
+    }
+
+    if (!status.blocked && company.companies.length === 0) {
+      throw new InternalError(
+        `O status '${status.description}' não é permitido para empresas que não possuem usuários`,
+        400
+      );
     }
 
     const updateStatus = await getRepository(Companies).update(companyId, {

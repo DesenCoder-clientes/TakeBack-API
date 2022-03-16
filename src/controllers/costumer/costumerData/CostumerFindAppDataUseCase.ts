@@ -1,8 +1,11 @@
-import { getRepository, In } from "typeorm";
+import { getRepository } from "typeorm";
 import { InternalError } from "../../../config/GenerateErros";
+import { City } from "../../../models/City";
 import { Companies } from "../../../models/Company";
+import { CompaniesAddress } from "../../../models/CompanyAddress";
 import { CompanyStatus } from "../../../models/CompanyStatus";
 import { Consumers } from "../../../models/Consumer";
+import { Industries } from "../../../models/Industry";
 import { Transactions } from "../../../models/Transaction";
 import { TransactionStatus } from "../../../models/TransactionStatus";
 
@@ -12,22 +15,19 @@ interface FindAppProps {
 
 class CostumerFindAppDataUseCase {
   async execute({ consumerID }: FindAppProps) {
-    const status = await getRepository(CompanyStatus).find({
-      where: { blocked: false },
-    });
-
-    const statusIds = [];
-    status.map((item) => {
-      statusIds.push(item.id);
-    });
-
-    const companies = await getRepository(Companies).find({
-      select: ["id", "fantasyName", "createdAt"],
-      where: { status: In([...statusIds]) },
-      relations: ["industry"],
-      take: 20,
-      order: { createdAt: "ASC" },
-    });
+    const companies = await getRepository(Companies)
+      .createQueryBuilder("company")
+      .select(["company.id", "company.fantasyName", "company.createdAt"])
+      .addSelect(["industry.id", "industry.description"])
+      .leftJoin(Industries, "industry", "industry.id = company.industry")
+      .leftJoin(CompanyStatus, "status", "status.id = company.status")
+      .leftJoin(CompaniesAddress, "address", "address.id = company.address")
+      .leftJoin(City, "city", "city.id = address.city")
+      .where("status.blocked = :bloqued", { bloqued: false })
+      .limit(4)
+      .offset(0)
+      .orderBy("company.fantasyName", "ASC")
+      .getRawMany();
 
     const consumer = await getRepository(Consumers).findOne({
       where: { id: consumerID },
@@ -64,7 +64,10 @@ class CostumerFindAppDataUseCase {
       .orderBy("transaction.createdAt", "DESC")
       .getRawMany();
 
-    return { consumer, companies, transactions };
+    const cities = await getRepository(City).find();
+    const industries = await getRepository(Industries).find();
+
+    return { consumer, companies, transactions, cities, industries };
   }
 }
 

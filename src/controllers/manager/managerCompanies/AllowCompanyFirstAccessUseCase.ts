@@ -72,6 +72,7 @@ class AllowCompanyFirstAccessUseCase {
       status,
       customIndustryFee: data.useCustomFee ? data.customFee / 100 : 0,
       customIndustryFeeActive: data.useCustomFee,
+      firstAccessAllowedAt: new Date(),
     });
 
     const newMessage = `O cadastro da empresa ${

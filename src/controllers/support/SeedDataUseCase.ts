@@ -242,6 +242,12 @@ const TransactionStatusSeed = [
     createdAt: new Date(),
     updatedAt: new Date(),
   },
+  {
+    description: "Em atraso",
+    blocked: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
 ];
 
 const CompanyUserTypesSeed = [
@@ -292,9 +298,9 @@ const CompanyStatusSeed = [
     updatedAt: new Date(),
   },
   {
-    description: "Bloqueado",
-    blocked: true,
-    generateCashback: false,
+    description: "Liberação provisória",
+    blocked: false,
+    generateCashback: true,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -320,7 +326,21 @@ const CompanyStatusSeed = [
     updatedAt: new Date(),
   },
   {
-    description: "Inadimplente",
+    description: "Demonstração",
+    blocked: false,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Inadimplente por cashbacks",
+    blocked: false,
+    generateCashback: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    description: "Inadimplente por mensalidade",
     blocked: false,
     generateCashback: false,
     createdAt: new Date(),
@@ -334,15 +354,8 @@ const CompanyStatusSeed = [
     updatedAt: new Date(),
   },
   {
-    description: "Pendente à aprovação",
+    description: "Bloqueado",
     blocked: true,
-    generateCashback: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    description: "Demonstração",
-    blocked: false,
     generateCashback: false,
     createdAt: new Date(),
     updatedAt: new Date(),

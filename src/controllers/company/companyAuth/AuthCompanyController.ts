@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 
 import { RegisterCompanyUseCase } from "./RegisterCompanyUseCase";
 import { SignInCompanyUseCase } from "./SignInCompanyUseCase";
-import { UpdateCompanyPasswordUseCase } from "../companyUser/UpdateCompanyUserPasswordUseCase";
 import { VerifyTokenUseCase } from "./VerifyTokenUseCase";
 
 interface RegisterCompanyDataProps {

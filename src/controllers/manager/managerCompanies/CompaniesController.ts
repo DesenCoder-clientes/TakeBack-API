@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { AllowCompanyFirstAccessUseCase } from "./AllowCompanyFirstAccessUseCase";
 import { RegisterCompanyTakebackPaymentMethodsUseCase } from "./RegisterCompanyTakebackPaymentMethodsUseCase";
-import { ListCompanyUseCase } from "./ListCompanyUseCase";
 import { UpdateCompanyUseCase } from "./UpdateCompanyUseCase";
 import { FindAllCompaniesUseCase } from "./FindAllCompaniesUseCase";
 import { ListCompanyWithSearchUseCase } from "./ListCompanyWithSearchUseCase";
@@ -10,6 +9,7 @@ import { FindCompanyUsersUseCase } from "./FindCompanyUsersUseCase";
 import { UpdateCustomFeeUseCase } from "./UpdateCustomFeeUseCase";
 import { UpdateCompanyMontlyPlanUseCase } from "./UpdateCompanyMontlyPlanUseCase";
 import { ForgotPasswordToRootUserUseCase } from "./ForgotPasswordToRootUserUseCase";
+import { UpdateManyCompanyStatusUseCase } from "./UpdateManyCompanyStatusUseCase";
 
 interface Props {
   companyId: string;
@@ -21,10 +21,17 @@ interface Props {
 
 interface UpdateProps {
   email: string;
+  corporateName: string;
+  fantasyName: string;
+  phone: string;
+  registeredNumber: string;
   industryId: string;
-  statusId: string;
   limit: string;
   offset: string;
+  district: string;
+  number: string;
+  street: string;
+  cityId: string;
 }
 
 interface FindCompaniesQueryProps {
@@ -61,7 +68,7 @@ class CompaniesController {
     });
     const companyUsers = await findUser.execute({ companyId: data.companyId });
 
-    response.status(200).json({ message, companyData, companyUsers });
+    return response.status(200).json({ message, companyData, companyUsers });
   }
 
   async findAllCompanies(request: Request, response: Response) {
@@ -106,32 +113,35 @@ class CompaniesController {
       query,
     });
 
-    response.status(200).json(result);
+    return response.status(200).json(result);
   }
 
   async updateCompany(request: Request, response: Response) {
-    const { email, industryId, statusId, limit, offset }: UpdateProps =
-      request.body;
+    const props: UpdateProps = request.body;
     const { id } = request["tokenPayload"];
     const companyId = request.params.id;
 
     const update = new UpdateCompanyUseCase();
-    const find = new ListCompanyUseCase();
+    const find = new FindOneCompanyUseCase();
 
     const message = await update.execute({
-      email,
-      statusId,
-      industryId,
       id,
       companyId,
+      email: props.email,
+      corporateName: props.corporateName,
+      fantasyName: props.fantasyName,
+      phone: props.phone,
+      registeredNumber: props.registeredNumber,
+      industryId: props.industryId,
+      cityId: props.cityId,
+      district: props.district,
+      number: props.number,
+      street: props.street,
     });
 
-    const companies = await find.execute({
-      limit,
-      offset,
-    });
+    const companies = await find.execute({ companyId });
 
-    response.status(200).json({ message, companies });
+    return response.status(200).json({ message, companies });
   }
 
   async updateCustomFee(request: Request, response: Response) {
@@ -150,7 +160,7 @@ class CompaniesController {
 
     const companyData = await findUseCase.execute({ companyId });
 
-    response.status(200).json({ message, companyData });
+    return response.status(200).json({ message, companyData });
   }
 
   async updatePaymentPlan(request: Request, response: Response) {
@@ -163,7 +173,7 @@ class CompaniesController {
     const message = await update.execute({ companyId, planId });
     const companyData = await findUseCase.execute({ companyId });
 
-    response.status(200).json({ message, companyData });
+    return response.status(200).json({ message, companyData });
   }
 
   async forgotPasswordToRootUser(request: Request, response: Response) {
@@ -176,7 +186,17 @@ class CompaniesController {
     const message = await forgot.execute({ companyId, email, userName });
     const users = await findUser.execute({ companyId });
 
-    response.status(200).json({ message, users });
+    return response.status(200).json({ message, users });
+  }
+
+  async updateManyCompanyStatus(request: Request, response: Response) {
+    const { statusId, companyIds } = request.body;
+
+    const updated = new UpdateManyCompanyStatusUseCase();
+
+    const message = await updated.execute({ companyIds, statusId });
+
+    return response.status(200).json({ message });
   }
 }
 
