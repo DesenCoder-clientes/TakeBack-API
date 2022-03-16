@@ -127,5 +127,6 @@ routes.post(
 );
 
 routes.get("/report/payment-order", managerReports.paymentOrderReport);
+routes.get("/report/monthly-payment", managerReports.monthlyReport);
 
 export default routes;
