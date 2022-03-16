@@ -35,7 +35,8 @@ class MonthlyPaymentReportUseCase {
         CompanyStatus,
         "companyStatus",
         "companyStatus.id = company.status"
-      );
+      )
+      .orderBy("monthlyPayment.id", "ASC");
 
     if (filters.companyId) {
       query.where("company.id = :companyId", { companyId: filters.companyId });
