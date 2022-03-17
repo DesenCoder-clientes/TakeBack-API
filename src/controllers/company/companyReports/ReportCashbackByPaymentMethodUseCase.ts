@@ -18,13 +18,6 @@ class ReportCashbackByPaymentMethodUseCase {
       date.setDate(date.getDate() - 7)
     ).toLocaleDateString();
 
-    // switch (filterByPeriod) {
-    //   case "1":
-    //     sevenDaysAgo = new Date(
-    //       date.setDate(date.getDate() - 7)
-    //     ).toLocaleDateString();
-    // }
-
     // Buscando os status de transações válidos
     const transactionStatus = await getRepository(TransactionStatus).find({
       select: ["id"],
@@ -38,13 +31,6 @@ class ReportCashbackByPaymentMethodUseCase {
     transactionStatus.map((item) => {
       transactionStatusIds.push(item.id);
     });
-
-    // // Buscando o tipo de transação válida
-    // const transactionsTypes = await getRepository(TransactionTypes).findOne({
-    //   where: {
-    //     description: "Ganho",
-    //   },
-    // });
 
     // Buscando as transações realizadas no período
     const transactions = await getRepository(TransactionPaymentMethods)
@@ -79,9 +65,6 @@ class ReportCashbackByPaymentMethodUseCase {
       .andWhere("transaction.transactionStatus IN (:...transactionStatusId)", {
         transactionStatusId: [...transactionStatusIds],
       })
-      // .andWhere("transaction.transactionTypes = :transactionsTypeId", {
-      //   transactionsTypeId: transactionsTypes.id,
-      // })
       .groupBy("transactionPaymentMethod.paymentMethod")
       .addGroupBy("companyPaymentMethod.id")
       .addGroupBy("paymentMethods.description")

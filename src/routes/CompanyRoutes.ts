@@ -25,6 +25,7 @@ const routes = Router();
 routes.post("/sign-up", auth.registerNewCompany);
 routes.post("/sign-in", auth.signUserCompany);
 routes.get("/verify-token", auth.verifyToken);
+routes.get("/industries/find", companyData.findIndustries);
 
 routes.use(DecodeTokenMiddleware, AuthCompanyMiddleware);
 

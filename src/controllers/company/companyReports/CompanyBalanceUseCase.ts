@@ -29,13 +29,6 @@ class CompanyBalanceUseCase {
       transactionStatusIds.push(item.id);
     });
 
-    // // Buscando o tipo de transação válida
-    // const transactionsTypes = await getRepository(TransactionTypes).findOne({
-    //   where: {
-    //     description: "Ganho",
-    //   },
-    // });
-
     // Buscando as transações realizadas no período
     const transactions = await getRepository(Transactions)
       .createQueryBuilder("transactions")
@@ -48,9 +41,6 @@ class CompanyBalanceUseCase {
       .andWhere("transactions.transactionStatus IN (:...transactionStatusId)", {
         transactionStatusId: [...transactionStatusIds],
       })
-      // .andWhere("transactions.transactionTypes = :transactionsTypeId", {
-      //   transactionsTypeId: transactionsTypes.id,
-      // })
       .getRawMany();
 
     const company = await getRepository(Companies).findOne(companyId);

@@ -31,13 +31,6 @@ class ReportCashbackByPeriodUseCase {
       transactionStatusIds.push(item.id);
     });
 
-    // // Buscando o tipo de transação válida
-    // const transactionsTypes = await getRepository(TransactionTypes).findOne({
-    //   where: {
-    //     description: "Ganho",
-    //   },
-    // });
-
     // Buscando as transações realizadas no período
     const transactions = await getRepository(Transactions)
       .createQueryBuilder("transactions")
@@ -51,9 +44,6 @@ class ReportCashbackByPeriodUseCase {
       .andWhere("transactions.transactionStatus IN (:...transactionStatusId)", {
         transactionStatusId: [...transactionStatusIds],
       })
-      // .andWhere("transactions.transactionTypes = :transactionsTypeId", {
-      //   transactionsTypeId: transactionsTypes.id,
-      // })
       .groupBy("transactions.dateAt")
       .orderBy("transactions.dateAt", "DESC")
       .getRawMany();
