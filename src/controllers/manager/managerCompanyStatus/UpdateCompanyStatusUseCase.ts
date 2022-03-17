@@ -24,7 +24,7 @@ class UpdadeCompanyStatusUseCase {
       throw new InternalError("Operação não permitida", 400);
     }
 
-    if (!status.blocked && company.companies.length === 0) {
+    if (!status.blocked && company.users.length === 0) {
       throw new InternalError(
         `O status '${status.description}' não é permitido para empresas que não possuem usuários`,
         400
