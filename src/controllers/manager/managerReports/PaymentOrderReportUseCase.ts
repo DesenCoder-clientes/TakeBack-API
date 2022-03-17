@@ -39,7 +39,8 @@ class PaymentOrderReportUseCase {
         CompanyStatus,
         "companyStatus",
         "companyStatus.id = company.status"
-      );
+      )
+      .orderBy("paymentOrder.id", "ASC");
 
     const query2 = getRepository(PaymentOrder)
       .createQueryBuilder("paymentOrder")
