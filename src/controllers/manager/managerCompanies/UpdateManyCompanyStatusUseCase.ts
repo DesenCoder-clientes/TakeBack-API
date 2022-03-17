@@ -17,11 +17,11 @@ class UpdateManyCompanyStatusUseCase {
     const status = await getRepository(CompanyStatus).findOne(statusId);
     const companies = await getRepository(Companies).find({
       where: { id: In([...companyIds]) },
-      relations: ["status", "companies"],
+      relations: ["status", "users"],
     });
 
     companies.map((item) => {
-      if (!status.blocked && item.companies.length === 0) {
+      if (!status.blocked && item.users.length === 0) {
         throw new InternalError(
           `O status '${status.description}' não é permitido para empresas que não possuem usuários`,
           400

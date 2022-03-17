@@ -4,8 +4,6 @@ import { getRepository } from "typeorm";
 import { Companies } from "../../../models/Company";
 import { CompanyUsers } from "../../../models/CompanyUsers";
 import { CompanyUserTypes } from "../../../models/CompanyUserTypes";
-import { generateRandomNumber } from "../../../utils/RandomValueGenerate";
-import { sendMail } from "../../../utils/SendMail";
 
 interface Props {
   name?: string;

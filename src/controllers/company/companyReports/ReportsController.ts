@@ -27,16 +27,6 @@ class ReportsController {
 
     return response.status(200).json({ report1, report2, report3 });
   }
-
-  // async findAppData(request: Request, response: Response) {
-  //   const { userId } = request["tokenPayload"];
-
-  //   const appData = new FindAppDataUseCase();
-
-  //   const result = await appData.execute({ userId });
-
-  //   return response.status(200).json(result);
-  // }
 }
 
 export { ReportsController };
