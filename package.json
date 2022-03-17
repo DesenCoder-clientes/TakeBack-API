@@ -1,7 +1,7 @@
 {
   "name": "take-back-api",
-  "version": "1.0",
-  "description": "Default api of the takeback application",
+  "version": "0.0.1",
+  "description": "Take Back API",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.23.0",
