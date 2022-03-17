@@ -48,8 +48,8 @@
     "build": "tsc --target ES6 --experimentalDecorators --emitDecoratorMetadata",
     "dev": "nodemon Server.ts",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
-    "generate-migration": "npm run typeorm migration:generate -- -n",
-    "execute-migration": "npm run typeorm migration:run",
+    "generate-mi": "npm run typeorm migration:generate -- -n",
+    "execute-mi": "npm run typeorm migration:run",
     "prestart": "npx run typeorm migration:run",
     "start": "node --trace-warnings --es-module-specifier-resolution=node ./dist/Server.js"
   }

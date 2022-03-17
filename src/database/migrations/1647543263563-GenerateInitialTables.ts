@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class GenerateTables1647513471484 implements MigrationInterface {
-    name = 'GenerateTables1647513471484'
+export class GenerateInitialTables1647543263563 implements MigrationInterface {
+    name = 'GenerateInitialTables1647543263563'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "companies_address" ("id" SERIAL NOT NULL, "street" character varying, "district" character varying, "number" character varying, "complement" character varying, "cityId" integer, CONSTRAINT "PK_ad150e1e829fc0c9013267f3e4c" PRIMARY KEY ("id"))`);
@@ -26,7 +26,6 @@ export class GenerateTables1647513471484 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "companies" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "corporateName" character varying NOT NULL, "fantasyName" character varying NOT NULL, "registeredNumber" character varying NOT NULL, "email" character varying NOT NULL, "phone" character varying NOT NULL, "customIndustryFee" numeric(10,4) NOT NULL DEFAULT '0', "customIndustryFeeActive" boolean NOT NULL DEFAULT false, "positiveBalance" numeric(10,4) NOT NULL DEFAULT '0', "negativeBalance" numeric(10,4) NOT NULL DEFAULT '0', "monthlyPayment" numeric(10,4) NOT NULL DEFAULT '0', "customMonthlyPayment" boolean NOT NULL DEFAULT false, "currentMonthlyPaymentPaid" boolean NOT NULL DEFAULT false, "firstAccessAllowedAt" date, "provisionalAccessAllowedAt" date, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "addressId" integer, "industryId" integer, "statusId" integer, "paymentPlanId" integer, CONSTRAINT "REL_2bb6583d4cf35554e19694c8a9" UNIQUE ("addressId"), CONSTRAINT "PK_d4bc3e82a314fa9e29f652c2c22" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "take_back_user_types" ("id" SERIAL NOT NULL, "description" character varying NOT NULL, "isRoot" boolean NOT NULL DEFAULT false, CONSTRAINT "PK_0d6de4433e9fdb82f55d7d9a68a" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "take_back_users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "cpf" character varying NOT NULL, "password" character varying NOT NULL, "isActive" boolean NOT NULL DEFAULT true, "email" character varying NOT NULL, "phone" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "userTypeId" integer, CONSTRAINT "PK_764061e99182bd434106e00c341" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "transaction_types" ("id" SERIAL NOT NULL, "description" character varying NOT NULL, "isUp" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_2a49fe7879bf8a02812639cea61" PRIMARY KEY ("id"))`);
         await queryRunner.query(`ALTER TABLE "companies_address" ADD CONSTRAINT "FK_f5e207e2b37aaeff6d68a11fe1d" FOREIGN KEY ("cityId") REFERENCES "city"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "consumer_address" ADD CONSTRAINT "FK_8a5879957ffa4ceab700ee332a3" FOREIGN KEY ("cityId") REFERENCES "city"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "city" ADD CONSTRAINT "FK_e99de556ee56afe72154f3ed04a" FOREIGN KEY ("stateId") REFERENCES "state"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -80,7 +79,6 @@ export class GenerateTables1647513471484 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "city" DROP CONSTRAINT "FK_e99de556ee56afe72154f3ed04a"`);
         await queryRunner.query(`ALTER TABLE "consumer_address" DROP CONSTRAINT "FK_8a5879957ffa4ceab700ee332a3"`);
         await queryRunner.query(`ALTER TABLE "companies_address" DROP CONSTRAINT "FK_f5e207e2b37aaeff6d68a11fe1d"`);
-        await queryRunner.query(`DROP TABLE "transaction_types"`);
         await queryRunner.query(`DROP TABLE "take_back_users"`);
         await queryRunner.query(`DROP TABLE "take_back_user_types"`);
         await queryRunner.query(`DROP TABLE "companies"`);
