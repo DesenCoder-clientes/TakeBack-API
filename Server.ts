@@ -35,7 +35,11 @@ app.use("/costumer", CostumerRoutes);
 app.use("/company", CompanyRoutes);
 app.use("/manager", ManagerRoutes);
 
-var mailList = ["wesleyleandro.dev@gmail.com", "izaquenunes560@gmail.com"];
+var mailList = [
+  "wesleyleandro.dev@gmail.com",
+  "izaquenunes560@gmail.com",
+  "leo.sousa3108@gmail.com",
+];
 
 cron
   .schedule(

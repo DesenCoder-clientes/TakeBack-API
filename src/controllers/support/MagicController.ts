@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import { GenerateSeedData } from "./SeedDataUseCase";
+import { GenerateSeedDataUseCase } from "./GenerateSeedDataUseCase";
 
 interface SeedProps {
   cpf: string;
@@ -11,7 +11,7 @@ interface SeedProps {
 class MagicController {
   async generateAllSeeds(request: Request, response: Response) {
     const req: SeedProps = request.body;
-    const generateSeeds = new GenerateSeedData();
+    const generateSeeds = new GenerateSeedDataUseCase();
 
     const result = await generateSeeds.execute(req);
 

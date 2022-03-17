@@ -23,7 +23,7 @@ interface Props {
   name: string;
 }
 
-class GenerateSeedData {
+class GenerateSeedDataUseCase {
   async execute({ cpf, email, name }: Props) {
     const [, count] = await getRepository(State).findAndCount();
 
@@ -167,4 +167,4 @@ class GenerateSeedData {
   }
 }
 
-export { GenerateSeedData };
+export { GenerateSeedDataUseCase };
