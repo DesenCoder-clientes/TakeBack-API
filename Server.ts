@@ -30,10 +30,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/support", SupportRoutes);
+app.get("/", (request: Request, response: Response) => {
+  return response.status(200).send("TAKE BACK!");
+});
+
 app.use("/costumer", CostumerRoutes);
 app.use("/company", CompanyRoutes);
 app.use("/manager", ManagerRoutes);
+app.use("/support", SupportRoutes);
 
 var mailList = [
   "wesleyleandro.dev@gmail.com",

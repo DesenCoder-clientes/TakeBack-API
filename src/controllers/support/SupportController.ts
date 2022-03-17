@@ -8,8 +8,8 @@ interface SeedProps {
   name: string;
 }
 
-class MagicController {
-  async generateAllSeeds(request: Request, response: Response) {
+class SupportController {
+  async generateSeeds(request: Request, response: Response) {
     const req: SeedProps = request.body;
     const generateSeeds = new GenerateSeedDataUseCase();
 
@@ -19,4 +19,4 @@ class MagicController {
   }
 }
 
-export { MagicController };
+export { SupportController };

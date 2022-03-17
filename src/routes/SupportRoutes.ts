@@ -1,11 +1,11 @@
 import { Router } from "express";
 
-import { MagicController } from "../controllers/support/MagicController";
+import { SupportController } from "../controllers/support/SupportController";
 
-const magic = new MagicController();
+const support = new SupportController();
 
 const routes = Router();
 
-routes.post("/seed", magic.generateAllSeeds);
+routes.post("/seed", support.generateSeeds);
 
 export default routes;
