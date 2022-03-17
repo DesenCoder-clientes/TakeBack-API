@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { FindCompanyDataUseCase } from "./FindCompanyDataUseCase";
+import { FindIndustriesUseCase } from "./FindIndustriesUseCase";
 import { UpdateCompanyDataUseCase } from "./UpdateCompanyDataUseCase";
 
 interface UpdateProps {
@@ -39,6 +40,14 @@ class CompanyDataController {
       industry,
       phone,
     });
+
+    return response.status(200).json(result);
+  }
+
+  async findIndustries(request: Request, response: Response) {
+    const findIndustries = new FindIndustriesUseCase();
+
+    const result = await findIndustries.execute();
 
     return response.status(200).json(result);
   }

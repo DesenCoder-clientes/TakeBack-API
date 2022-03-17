@@ -1,6 +1,8 @@
 import "reflect-metadata";
 import "express-async-errors";
 
+import "./src/database";
+
 import * as dotenv from "dotenv";
 import * as cors from "cors";
 import * as express from "express";
@@ -8,21 +10,17 @@ import * as cron from "node-cron";
 import * as http from "http";
 
 import { Request, Response, NextFunction } from "express";
+import { InternalError } from "./src/config/GenerateErros";
+import { sendMail } from "./src/utils/SendMail";
+import { VerifyProvisionalAccessUseCase } from "./src/controllers/manager/managerCompanies/VerifyProvisionalAccessUseCase";
 import { UpdateCompanyPaymentMonthlyToFalseUseCase } from "./src/controllers/manager/managerCompanies/UpdateCompanyPaymentMonthlyToFalseUseCase";
 import { VerifyCompanyMonthlyPaymentUseCase } from "./src/controllers/manager/managerCompanies/VerifyCompanyMonthlyPaymentUseCase";
 import { VerifyCashbacksExpired } from "./src/controllers/manager/managerCompanies/VerifyCashbacksExpired";
 
-import "./src/database";
-
-import PublicRoutes from "./src/routes/PublicRoutes";
 import SupportRoutes from "./src/routes/SupportRoutes";
 import CostumerRoutes from "./src/routes/CostumerRoutes";
 import CompanyRoutes from "./src/routes/CompanyRoutes";
 import ManagerRoutes from "./src/routes/ManagerRoutes";
-
-import { InternalError } from "./src/config/GenerateErros";
-import { sendMail } from "./src/utils/SendMail";
-import { VerifyProvisionalAccessUseCase } from "./src/controllers/manager/managerCompanies/VerifyProvisionalAccessUseCase";
 
 const app = express();
 
@@ -32,8 +30,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/public", PublicRoutes);
-app.use("/magic", SupportRoutes);
+app.use("/support", SupportRoutes);
 app.use("/costumer", CostumerRoutes);
 app.use("/company", CompanyRoutes);
 app.use("/manager", ManagerRoutes);
