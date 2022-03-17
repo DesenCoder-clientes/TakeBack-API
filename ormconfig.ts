@@ -5,7 +5,7 @@ module.exports = {
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  logging: true,
+  logging: false,
   entities: [process.env.ENTITIES],
   migrations: [process.env.MIGRATIONS],
   subscribers: [process.env.SUBSCRIBERS],
