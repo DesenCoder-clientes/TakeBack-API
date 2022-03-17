@@ -126,6 +126,7 @@ routes.post(
   managerPaymentOrder.sendPaymentInfoToEmail
 );
 
+routes.get("/report/find/filters", managerReports.findFilterOptions);
 routes.get("/report/payment-order", managerReports.paymentOrderReport);
 routes.get("/report/monthly-payment", managerReports.monthlyReport);
 
