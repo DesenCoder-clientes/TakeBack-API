@@ -1,5 +1,5 @@
 import { getRepository } from "typeorm";
-import { Industries } from "../../models/Industry";
+import { Industries } from "../../../models/Industry";
 
 class FindIndustriesUseCase {
   async execute() {

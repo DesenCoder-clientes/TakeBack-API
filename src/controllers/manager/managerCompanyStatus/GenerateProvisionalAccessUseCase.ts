@@ -18,7 +18,7 @@ class GenerateProvisionalAccessUseCase {
       relations: ["companies"],
     });
 
-    if (company.companies.length === 0) {
+    if (company.users.length === 0) {
       throw new InternalError(
         "Não é permitido gerar liberação provisória para empresas que não possuem usuários",
         400

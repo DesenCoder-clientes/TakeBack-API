@@ -40,13 +40,16 @@ export class CompanyUsers {
   })
   isActive: boolean;
 
-  @ManyToOne(() => Companies, companies => companies.companies)
+  @ManyToOne(() => Companies, (companies) => companies.users)
   company: Companies;
 
-  @ManyToOne(() => CompanyUserTypes, companyUserTypes => companyUserTypes.users)
+  @ManyToOne(
+    () => CompanyUserTypes,
+    (companyUserTypes) => companyUserTypes.users
+  )
   companyUserTypes: CompanyUserTypes;
 
-  @OneToMany(() => Transactions, transactions => transactions.companyUsers)
+  @OneToMany(() => Transactions, (transactions) => transactions.companyUsers)
   transaction: Transactions[];
 
   @CreateDateColumn()
@@ -55,4 +58,3 @@ export class CompanyUsers {
   @UpdateDateColumn()
   updatedAt: Date;
 }
-

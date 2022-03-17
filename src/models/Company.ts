@@ -125,7 +125,7 @@ export class Companies {
   industry: Industries;
 
   @OneToMany(() => CompanyUsers, (companyUser) => companyUser.company)
-  companies: CompanyUsers[];
+  users: CompanyUsers[];
 
   @ManyToOne(() => CompanyStatus, (status) => status.company)
   status: CompanyStatus;
