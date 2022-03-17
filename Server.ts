@@ -5,6 +5,7 @@ import * as dotenv from "dotenv";
 import * as cors from "cors";
 import * as express from "express";
 import * as cron from "node-cron";
+import * as http from "http";
 
 import { Request, Response, NextFunction } from "express";
 import { UpdateCompanyPaymentMonthlyToFalseUseCase } from "./src/controllers/manager/managerCompanies/UpdateCompanyPaymentMonthlyToFalseUseCase";
@@ -90,4 +91,9 @@ app.use(
   }
 );
 
-app.listen(process.env.PORT || 3333);
+const server = http.createServer(app);
+
+const PORT = 3333;
+const HOST = "0.0.0.0";
+
+server.listen(PORT, HOST);
