@@ -98,7 +98,7 @@ app.use(
 
 const server = http.createServer(app);
 
-const PORT = 3333;
+const PORT = parseInt(process.env.PORT) || 3333;
 const HOST = "0.0.0.0";
 
 server.listen(PORT, HOST);
